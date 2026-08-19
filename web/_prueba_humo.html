@@ -1,0 +1,42 @@
+<!doctype html><meta charset="utf-8"><title>humo</title>
+<!-- PRUEBA DE HUMO — correr SIEMPRE antes de publicar.
+     `node --check` sólo ve la SINTAXIS. El 2026-08-19 un parche borró
+     `const SIN_DATO` sin querer y el script murió con un ReferenceError al
+     montar `mun-fill`: sintaxis perfecta, tablero en blanco, cero errores
+     visibles. Lo único que lo agarra es comprobar que las capas EXISTEN. -->
+<style>body{margin:0;background:#111;color:#eee;font:13px/1.7 ui-monospace,monospace;padding:14px}
+.ok{color:#8bc53f}.mal{color:#ff6b6b;font-weight:700}h2{color:#7ecbdd;font-size:14px;margin:14px 0 4px}
+iframe{position:absolute;left:-4000px;width:1100px;height:650px}</style>
+<div id="o">…</div><iframe id="fr"></iframe>
+<script>
+const P=new URLSearchParams(location.search), tab=P.get('t')||'manzana';
+const fr=document.getElementById('fr'),o=document.getElementById('o');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+fr.src='/'+tab+'/';
+fr.addEventListener('load',async()=>{
+  await sleep(9000);
+  const w=fr.contentWindow; let t='<h2>'+tab.toUpperCase()+'</h2>', fallos=0;
+  const chk=(k,cond,extra='')=>{const ok=!!cond;if(!ok)fallos++;
+    t+=`<div><span class="${ok?'ok':'mal'}">${ok?'ok  ':'FALLA'}</span>  ${k} ${extra}</div>`;o.innerHTML=t};
+  const ev=x=>{try{return w.eval(x)}catch(e){return '⟪'+e.message+'⟫'}};
+  chk('CAT cargado', ev('typeof CAT!=="undefined"&&!!CAT'));
+  chk('indicadores > 50', ev('typeof CAT!=="undefined"&&CAT?CAT.grupos.reduce((a,g)=>a+g.indicadores.length,0):0')>50,
+      '· '+ev('typeof CAT!=="undefined"&&CAT?CAT.grupos.reduce((a,g)=>a+g.indicadores.length,0):0'));
+  chk('mapa construido', ev('typeof map!=="undefined"&&!!map'));
+  const capas = ev('typeof map!=="undefined"&&map?map.getStyle().layers.map(l=>l.id):[]');
+  for (const c of ['fondo','region-halo','mun-fill','mun-line','mun-sel'])
+    chk('capa '+c, Array.isArray(capas)&&capas.includes(c));
+  if (tab==='manzana'){
+    chk('fuente mz (pmtiles)', ev('!!map.getSource("mz")'));
+    for (const c of ['mz-fill','mz-line']) chk('capa '+c, Array.isArray(capas)&&capas.includes(c));
+    chk('MZS (estadísticas)', ev('typeof MZS!=="undefined"&&MZS&&Object.keys(MZS).length>50'));
+  }
+  chk('indicador elegido', ev('typeof ind_actual!=="undefined"&&!!ind_actual'), '· '+ev('typeof ind_actual!=="undefined"&&ind_actual?ind_actual.key:"-"'));
+  chk('lista en el DOM', ev('document.querySelectorAll("#lista .ind").length')>0);
+  chk('panel derecho con barras', ev('document.querySelectorAll("#cmp rect").length')>0);
+  chk('leyenda con rampa', ev('!!document.getElementById("tm-bar").style.background'));
+  chk('data-listo', ev('!!document.body.getAttribute("data-listo")'));
+  o.innerHTML = t + `<h2 class="${fallos?'mal':'ok'}">${fallos? fallos+' FALLAS':'TODO OK'}</h2>`;
+  document.title = fallos ? 'FALLA' : 'OK';
+});
+</script>

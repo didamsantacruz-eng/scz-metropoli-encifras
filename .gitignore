@@ -1,0 +1,30 @@
+# ── Insumos, no producto ─────────────────────────────────────────────────────
+# Todo lo de acá se puede reconstruir corriendo el pipeline. Lo que el repo
+# guarda son las REGLAS (motores, catálogo, validadores) y el PRODUCTO
+# (`web/`), no los pasos intermedios.
+
+# GeoJSON intermedio del derivador (78,9 MB) — insumo de empaquetar_web.py
+datos/manzanas_*.geojson
+
+# nivel manzana crudo, 93 MB — sale de motor_manzana.py
+catalogo/manzana_2024.csv
+
+# insumos del geoportal del INE
+fuente/
+
+# ⚠️ `web/datos/` SÍ VA AL REPO: es lo que sirve GitHub Pages. Son ~53 MB entre
+#    las teselas (`manzanas.pmtiles`, 25 MB) y la geometría con sus datos
+#    (`geo_*` + `dat_*`, 29 MB), que son el insumo con el que se regeneran las
+#    teselas. Sin eso el tablero da 404 al bajar de nivel.
+
+__pycache__/
+*.pyc
+*.bak
+
+# arneses de prueba (el guion bajo marca que no son producto)
+web/_prueba_*.html
+# ...salvo la PRUEBA DE HUMO, que sí viaja: el README la documenta como el paso
+# obligatorio antes de publicar. Comprueba que las capas del mapa existen de
+# verdad, que es lo único que agarra una constante borrada — un error de runtime
+# no rompe la sintaxis y deja el tablero en blanco sin avisar.
+!web/_prueba_humo.html
