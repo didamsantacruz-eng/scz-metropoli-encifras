@@ -32,8 +32,8 @@ SITIOS = {
    "municipios": "municipios_municipal.json",
  },
  "manzana": {
-   "titulo": "Santa Cruz Metrópoli en Datos — Municipio y manzana",
-   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos <span class=\"t-sub\">· manzana</span>",
+   "titulo": "Santa Cruz Metrópoli en Datos — A Nivel Manzana",
+   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos <span class=\"t-sub\">· A Nivel Manzana</span>",
    "catalogo": "catalogo_manzana.json",
    "municipios": "municipios_manzana.json",
  },
