@@ -96,6 +96,13 @@ def main():
                 v.sort()
                 dist[sigep[s]] = {
                     "n": len(v),
+                    # ★ min y max, además de los deciles. El bigote p10-p90 cubre
+                    #   el 80% CENTRAL y deja fuera una manzana de cada diez en
+                    #   cada punta: no es el rango. La lámina dibuja las dos
+                    #   cosas —el rango entero en hilo fino y el 80% central en
+                    #   trazo grueso— porque son lecturas distintas y confundirlas
+                    #   hace parecer que el mínimo del municipio es el p10.
+                    "min": r1(v[0]), "max": r1(v[-1]),
                     "p10": r1(cuantil(v, .10)), "p25": r1(cuantil(v, .25)),
                     "p50": r1(cuantil(v, .50)), "p75": r1(cuantil(v, .75)),
                     "p90": r1(cuantil(v, .90)),

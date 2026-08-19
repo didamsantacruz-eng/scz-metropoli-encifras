@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo de Gráficos · Santa Cruz Metrópoli En Cifras</title>
+<meta name="description" content="Catálogo de 375 láminas descargables de la Región Metropolitana de Santa Cruz y su área de influencia, a nivel municipal y por manzana. Censo 2024.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CATÁLOGO DE GRÁFICOS — Santa Cruz Metrópoli En Cifras
+   ───────────────────────────────────────────────────────────────────────
+   La página hereda la identidad de las láminas, no la de los tableros: el
+   mismo papel crema, el mismo verde institucional y la misma pareja
+   tipográfica, para que abrir una lámina descargada al lado del sitio no
+   se sienta como cambiar de producto.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --verde:#8bc53f;          /* el del logotipo — SEÑAL, nunca dato */
+  --verde-ins:#00733b;      /* institucional: acciones y estados activos */
+  --verde-hondo:#043520;    /* la barra */
+  --papel:#eeebe1;
+  --tarjeta:#fffefb;
+  --tinta:#1d2321;
+  --suave:#5f6a63;
+  --tenue:#8b938d;
+  --linea:#ddd8ca;
+  --franja:#e4e0d2;
+  --f:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ft:'Newsreader',Georgia,serif;
+  --r:14px;
+  --sombra:0 1px 2px rgba(29,35,33,.05), 0 8px 20px -12px rgba(29,35,33,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--f);
+     font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.envoltura{max-width:1320px;margin:0 auto;padding:0 24px}
+
+/* ── barra ───────────────────────────────────────────────────────────── */
+.barra{background:var(--verde-hondo);position:sticky;top:0;z-index:60;
+       border-bottom:1px solid #032b19}
+.barra .envoltura{display:flex;align-items:center;gap:16px;height:64px}
+.barra img{height:34px;width:auto;display:block}
+.marca{font-size:17px;letter-spacing:.005em}
+.marca b{color:var(--verde);font-weight:700}
+.marca span{color:#fff;font-weight:600;margin-left:.45em}
+.barra nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.barra nav a{color:#cfe0c8;text-decoration:none;font-weight:500;
+             padding:4px 0;border-bottom:2px solid transparent}
+.barra nav a:hover{color:#fff;border-bottom-color:var(--verde)}
+
+/* ── hero: el mapa se repinta solo ───────────────────────────────────── */
+.hero{padding:52px 0 40px}
+.hero .envoltura{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;
+                 align-items:center}
+.antetitulo{font-size:12.5px;font-weight:700;letter-spacing:.12em;
+            text-transform:uppercase;color:var(--verde-ins);margin:0 0 14px}
+.hero h1{font-family:var(--ft);font-weight:400;font-size:clamp(34px,4.4vw,54px);
+         line-height:1.08;margin:0 0 30px;letter-spacing:-.012em;
+         text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--verde-ins)}
+.cifras{display:flex;gap:34px;flex-wrap:wrap}
+.cifra b{display:block;font-family:var(--ft);font-size:34px;font-weight:500;
+         line-height:1;letter-spacing:-.01em}
+.cifra span{font-size:12.5px;color:var(--tenue);font-weight:500;
+            text-transform:uppercase;letter-spacing:.07em}
+
+.escenario{position:relative}
+.escenario svg{width:100%;height:auto;max-height:340px;display:block;
+               overflow:visible}
+.escenario path{stroke:#1d2321;stroke-width:.35;stroke-linejoin:round;
+                transition:fill 1.1s cubic-bezier(.4,0,.2,1)}
+.pie-hero{margin:14px 0 0;min-height:44px}
+.pie-hero b{display:block;font-family:var(--ft);font-size:20px;font-weight:500;
+            line-height:1.25}
+.pie-hero span{font-size:13px;color:var(--tenue)}
+.escala{margin-top:14px}
+.rampa{height:9px;border-radius:5px;border:1px solid rgba(29,35,33,.10)}
+.limites{display:flex;justify-content:space-between;margin-top:5px;
+         font-size:12px;color:var(--tenue);font-variant-numeric:tabular-nums}
+.puntos{display:flex;gap:6px;margin-top:14px}
+.puntos i{width:22px;height:3px;border-radius:2px;background:var(--linea);
+          transition:background .3s}
+.puntos i.on{background:var(--verde-ins)}
+
+/* ── filtros ─────────────────────────────────────────────────────────── */
+.filtros{position:sticky;top:64px;z-index:50;background:var(--papel);
+         border-bottom:1px solid var(--linea);padding:14px 0 12px}
+/* ── la barra de herramientas ────────────────────────────────────────────
+   Todo a escuadra y todo del mismo alto. Con esquinas redondeadas cada
+   control se leía como una pieza suelta; a 90 grados y alineados forman una
+   sola regla horizontal, que es lo que sostiene la página. */
+.fila{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.pestanas{display:flex;border:1px solid var(--linea);background:var(--tarjeta)}
+.pestanas button{border:0;background:transparent;font:inherit;font-weight:600;
+                 font-size:14px;color:var(--suave);padding:0 22px;height:46px;
+                 cursor:pointer;white-space:nowrap;letter-spacing:.005em;
+                 transition:color .15s, background .15s}
+.pestanas button + button{border-left:1px solid var(--linea)}
+.pestanas button:hover{color:var(--verde-ins)}
+.pestanas button[aria-selected=true]{background:var(--verde-ins);color:#fff}
+.busca{position:relative;flex:1;min-width:220px;display:flex}
+.busca input{width:100%;font:inherit;font-size:15px;padding:0 14px 0 42px;
+             height:46px;border:1px solid var(--linea);border-radius:0;
+             background:var(--tarjeta);color:var(--tinta)}
+.busca input::placeholder{color:var(--tenue)}
+.busca input:focus{outline:0;border-color:var(--verde-ins);
+                   box-shadow:inset 0 -2px 0 var(--verde-ins)}
+.busca svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+           width:17px;height:17px;stroke:var(--tenue);fill:none;stroke-width:2;
+           pointer-events:none}
+.conteo{font-size:13px;color:var(--tenue);white-space:nowrap;
+        align-self:center;font-variant-numeric:tabular-nums}
+
+/* ── el menú de temas ────────────────────────────────────────────────────
+   Un <select> del sistema no se puede vestir por dentro y en Windows abre una
+   lista gris que no tiene nada que ver con el resto. Este es propio: mismo
+   papel, misma línea, y cada tema con su cuenta alineada a la derecha. */
+.menu{position:relative;display:flex}
+.disparador{display:flex;align-items:center;gap:12px;height:46px;padding:0 15px;
+            background:var(--tarjeta);border:1px solid var(--linea);
+            border-radius:0;font:inherit;cursor:pointer;min-width:265px;
+            text-align:left;transition:border-color .15s}
+.disparador:hover{border-color:#b7b0a0}
+.disparador[aria-expanded=true]{border-color:var(--verde-ins)}
+.disparador .etq{font-size:10px;font-weight:700;letter-spacing:.14em;
+                 text-transform:uppercase;color:var(--tenue)}
+.disparador .val{flex:1;font-size:14.5px;font-weight:600;color:var(--tinta);
+                 white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.disparador svg{width:15px;height:15px;stroke:var(--suave);fill:none;
+                stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;
+                transition:transform .22s ease}
+.disparador[aria-expanded=true] svg{transform:rotate(180deg);
+                                    stroke:var(--verde-ins)}
+.panel{position:absolute;top:calc(100% + 5px);left:0;min-width:100%;
+       background:var(--tarjeta);border:1px solid #b7b0a0;
+       box-shadow:0 22px 46px -24px rgba(29,35,33,.6);z-index:80;padding:5px;
+       max-height:min(56vh,420px);overflow:auto;overscroll-behavior:contain}
+.panel button{display:flex;width:100%;align-items:center;gap:14px;
+              background:transparent;border:0;border-left:3px solid transparent;
+              font:inherit;font-size:14px;color:var(--tinta);cursor:pointer;
+              padding:9px 13px;text-align:left;line-height:1.3;
+              transition:background .12s, border-color .12s, color .12s}
+.panel button:hover{background:#f3f0e5;border-left-color:var(--verde)}
+.panel button[aria-current=true]{color:var(--verde-ins);font-weight:700;
+                                 background:#f0efe3;
+                                 border-left-color:var(--verde-ins)}
+.panel button span{flex:1}
+.panel button b{font-weight:500;font-size:12.5px;color:var(--tenue);
+                font-variant-numeric:tabular-nums}
+.panel button[aria-current=true] b{color:var(--verde-ins)}
+.panel hr{border:0;border-top:1px solid var(--linea);margin:5px 8px}
+
+
+/* ── grilla de tarjetas, todas del mismo alto ────────────────────────── */
+main{padding:26px 0 60px}
+.grilla{display:grid;gap:20px;
+        grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+/* Esquina viva, no redondeada: la lámina que va adentro es un rectángulo
+   impreso y la tarjeta que la contiene tiene que comportarse igual. El
+   redondeo la volvía un widget; así es una ficha de archivo. */
+.tarjeta{background:var(--tarjeta);border:1px solid var(--linea);border-radius:0;
+         overflow:hidden;display:flex;flex-direction:column;position:relative;
+         transition:border-color .2s ease, box-shadow .25s ease}
+/* el filete superior entra al pasar el mouse: dice «esto es interactivo» sin
+   mover la tarjeta de sitio, que en una grilla de 24 es un temblor colectivo */
+.tarjeta::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+                 background:var(--verde-ins);transform:scaleX(0);z-index:3;
+                 transform-origin:left;
+                 transition:transform .3s cubic-bezier(.2,.7,.3,1)}
+.tarjeta:hover::before{transform:scaleX(1)}
+.tarjeta:hover{border-color:#b7b0a0;box-shadow:0 14px 30px -22px rgba(29,35,33,.55)}
+.lienzo{aspect-ratio:16/9;background:var(--papel);display:block;overflow:hidden;
+        border-bottom:1px solid var(--linea)}
+.lienzo img{width:100%;height:100%;object-fit:cover;display:block;
+            transition:transform .55s cubic-bezier(.2,.7,.3,1)}
+.tarjeta:hover .lienzo img{transform:scale(1.04)}
+.cuerpo{padding:16px 17px 14px;display:flex;flex-direction:column;flex:1;gap:7px}
+.tema{font-size:10px;font-weight:700;letter-spacing:.13em;
+      text-transform:uppercase;color:var(--verde-ins)}
+/* el título en la serif del catálogo: es lo que hermana la tarjeta con la
+   lámina que se va a descargar, y le da el peso editorial que un sans de
+   15 px no alcanza a dar */
+.tarjeta h3{margin:0;font-family:var(--ft);font-size:19.5px;font-weight:500;
+            line-height:1.22;letter-spacing:-.006em;
+            /* dos renglones FIJOS: es lo que mantiene todas las tarjetas
+               exactamente del mismo alto, con título largo o corto */
+            display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+            overflow:hidden;min-height:2.44em}
+.donde{font-size:12.5px;color:var(--tenue);margin:0;
+       display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
+       overflow:hidden}
+.pie-t{margin-top:auto;border-top:1px solid var(--linea);padding:11px 17px;
+       display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ficha{font-size:11.5px;color:var(--tenue);font-variant-numeric:tabular-nums;
+       white-space:nowrap}
+.baja{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
+      font-weight:700;letter-spacing:.02em;text-decoration:none;
+      color:var(--verde-ins);white-space:nowrap}
+.baja svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1;
+          stroke-linecap:round;stroke-linejoin:round;
+          transition:transform .25s ease}
+.baja:hover svg{transform:translateY(2px)}
+.vacio{padding:70px 0;text-align:center;color:var(--tenue)}
+.vacio b{display:block;font-family:var(--ft);font-size:22px;color:var(--tinta);
+         font-weight:500;margin-bottom:6px}
+.mas{display:block;margin:28px auto 0;font:inherit;font-size:14px;
+     font-weight:600;color:var(--verde-ins);background:var(--tarjeta);
+     border:1px solid var(--linea);border-radius:0;padding:12px 30px;
+     cursor:pointer;letter-spacing:.02em}
+.mas:hover{border-color:var(--verde-ins)}
+
+/* ── pie ─────────────────────────────────────────────────────────────── */
+footer{background:var(--franja);border-top:1px solid var(--linea);
+        padding:30px 0 38px;font-size:13px;color:var(--suave)}
+footer p{margin:0 0 7px;font-style:italic}
+footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
+               margin-bottom:12px}
+
+@media (max-width:900px){
+  .hero .envoltura{grid-template-columns:1fr;gap:34px}
+  .escenario{order:-1}
+  .filtros{top:56px}
+  .barra .envoltura{height:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  .escenario path{transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="envoltura">
+    <img src="../img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
+    <div class="marca"><b>Santa Cruz Metrópoli</b><span>En Cifras</span></div>
+    <nav>
+      <a href="../municipal/">Tablero municipal</a>
+      <a href="../manzana/">A nivel manzana</a>
+      <a href="../flujos/">Flujos</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="envoltura">
+    <div>
+      <p class="antetitulo">Catálogo de gráficos</p>
+      <h1>Indicadores socioeconómicos para la <em>elaboración de políticas públicas</em></h1>
+      <div class="cifras">
+        <div class="cifra"><b id="c-total">—</b><span>láminas</span></div>
+        <div class="cifra"><b>9</b><span>municipios</span></div>
+        <div class="cifra"><b>38.892</b><span>manzanas</span></div>
+      </div>
+    </div>
+
+    <!-- ★ EL HERO ES EL PRODUCTO. En vez de un adorno animado, la silueta real
+         de los nueve municipios se repinta sola con un indicador tras otro: en
+         diez segundos el visitante ya vio qué hace este sitio. -->
+    <div class="escenario">
+      <svg id="mapa" role="img"
+           aria-label="Mapa de los nueve municipios que se repinta con distintos indicadores"></svg>
+      <div class="pie-hero">
+        <b id="h-nombre">—</b>
+        <span id="h-detalle"></span>
+      </div>
+      <!-- ★ LA ESCALA VIAJA CON EL MAPA. Sin ella el color del hero es
+           decorativo: se ve que algo cambia pero no se sabe en qué sentido.
+           Con la rampa y sus dos extremos, el mapa ya es una lectura. -->
+      <div class="escala">
+        <div class="rampa" id="h-rampa"></div>
+        <div class="limites">
+          <span id="h-lo">—</span><span id="h-hi">—</span>
+        </div>
+      </div>
+      <div class="puntos" id="h-puntos"></div>
+    </div>
+  </div>
+</section>
+
+<div class="filtros">
+  <div class="envoltura">
+    <div class="fila">
+      <div class="pestanas" role="tablist">
+        <button role="tab" aria-selected="true"  data-nivel="municipal">Mapas municipales</button>
+        <button role="tab" aria-selected="false" data-nivel="manzana">A nivel manzana</button>
+      </div>
+      <label class="busca">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscar por indicador o municipio…"
+               autocomplete="off" aria-label="Buscar">
+      </label>
+      <div class="menu" id="menu-tema">
+        <button class="disparador" id="disp-tema" aria-expanded="false" aria-haspopup="listbox">
+          <span class="etq">Tema</span>
+          <span class="val" id="val-tema">Todos</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="panel" id="panel-tema" role="listbox" hidden></div>
+      </div>
+      <!-- El filtro por municipio sólo existe a nivel manzana: en el municipal
+           cada lámina ES los nueve juntos y filtrar por uno no querría decir
+           nada. Se muestra y se esconde según la pestaña. -->
+      <div class="menu" id="menu-muni" hidden>
+        <button class="disparador" id="disp-muni" aria-expanded="false" aria-haspopup="listbox">
+          <span class="etq">Municipio</span>
+          <span class="val" id="val-muni">Todos</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="panel" id="panel-muni" role="listbox" hidden></div>
+      </div>
+      <span class="conteo" id="conteo"></span>
+    </div>
+  </div>
+</div>
+
+<main><div class="envoltura">
+  <div class="grilla" id="grilla"></div>
+  <button class="mas" id="mas" hidden>Ver más</button>
+  <div class="vacio" id="vacio" hidden>
+    <b>Sin resultados</b>
+    Probá con el nombre del indicador, del municipio o del tema.
+  </div>
+</div></main>
+
+<footer><div class="envoltura">
+  <p class="fuerte">RMSC + 3 es la Región Metropolitana de Santa Cruz —Santa Cruz
+    de la Sierra, Cotoca, Porongo, La Guardia, El Torno y Warnes— más su área de
+    influencia: Montero, Pailón y Colpa Bélgica.</p>
+  <p>Fuente: Instituto Nacional de Estadística, Censo de Población y Vivienda
+    2024. El nivel manzana proviene de las fichas por manzano del geoportal.</p>
+  <p>Elaboración: DIDAM (Dirección de la Instancia Departamental de Asuntos
+    Metropolitanos) en base a CPV 2024 — INE y POPULI.</p>
+</div></footer>
+
+<script>
+const DATOS = /*__DATOS__*/;
+
+/* ── la rampa, igual que en las láminas ─────────────────────────────────
+   ⚠️ Está duplicada a propósito: la lámina la pinta en Python y esto en el
+   navegador. Si cambia una, hay que cambiar la otra — no hay forma de que
+   una se entere sola de la otra. */
+const DIV = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
+const SEC = ["#dce6d8","#bed4bc","#99bc9d","#6da280","#3d865d","#0c683b"];
+const mezcla = (a, b, t) => {
+  const h = c => [1,3,5].map(i => parseInt(c.substr(i,2),16));
+  const [r1,g1,b1] = h(a), [r2,g2,b2] = h(b);
+  const v = n => Math.round(n).toString(16).padStart(2,"0");
+  return "#" + v(r1+(r2-r1)*t) + v(g1+(g2-g1)*t) + v(b1+(b2-b1)*t);
+};
+function tono(v, lo, piv, hi, dir){
+  if (v === null || v === undefined) return "#8b8f95";
+  let p;                                     /* pivote clavado en la mitad */
+  if (v <= piv) p = piv > lo ? .5*(v-lo)/(piv-lo) : 0;
+  else          p = hi > piv ? .5+.5*(v-piv)/(hi-piv) : 1;
+  p = Math.max(0, Math.min(1, p));
+  const r = dir === 0 ? SEC : (dir === 1 ? [...DIV].reverse() : DIV);
+  const x = p*(r.length-1), i = Math.min(Math.floor(x), r.length-2);
+  return mezcla(r[i], r[i+1], x-i);
+}
+const fmt = (v,u) => v===null||v===undefined ? "s/d"
+  : u==="%" ? v.toFixed(1).replace(".",",")+"%"
+  : (u==="hab"||u==="viv") ? Math.round(v).toLocaleString("es-BO")
+  : v.toFixed(1).replace(".",",")+(u?" "+u:"");
+
+/* ── hero ────────────────────────────────────────────────────────────── */
+const svg = document.getElementById("mapa");
+const formas = {};
+svg.setAttribute("viewBox", DATOS.caja);
+for (const [sigep, d] of Object.entries(DATOS.siluetas)){
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("d", d);
+  p.setAttribute("fill", "#e6e2d5");
+  svg.appendChild(p);
+  formas[sigep] = p;
+}
+const puntos = document.getElementById("h-puntos");
+DATOS.hero.forEach((_, k) => {
+  const i = document.createElement("i");
+  if (!k) i.className = "on";
+  puntos.appendChild(i);
+});
+let paso = -1, temporizador = null;
+function pintar(k){
+  const h = DATOS.hero[k];
+  const vs = Object.values(h.v).filter(x => x !== null).sort((a,b) => a-b);
+  const lo = vs[0], hi = vs[vs.length-1], piv = vs[(vs.length/2)|0];
+  for (const [sigep, p] of Object.entries(formas))
+    p.setAttribute("fill", tono(h.v[sigep], lo, piv, hi, h.dir));
+  document.getElementById("h-nombre").textContent = h.label;
+  document.getElementById("h-detalle").textContent =
+    "Región Metropolitana y área de influencia";
+  document.getElementById("h-lo").textContent = fmt(lo, h.unit);
+  document.getElementById("h-hi").textContent = fmt(hi, h.unit);
+  const pasos = [];
+  for (let n = 0; n <= 24; n++)
+    pasos.push(tono(lo + (hi-lo)*n/24, lo, piv, hi, h.dir));
+  document.getElementById("h-rampa").style.background =
+    "linear-gradient(90deg," + pasos.join(",") + ")";
+  [...puntos.children].forEach((i, n) => i.className = n === k ? "on" : "");
+}
+function avanzar(){ paso = (paso+1) % DATOS.hero.length; pintar(paso); }
+avanzar();
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+  temporizador = setInterval(avanzar, 3200);
+
+/* ── catálogo ────────────────────────────────────────────────────────── */
+const sinTilde = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+DATOS.laminas.forEach(l => l._b = sinTilde(l.t + " " + (l.m||"") + " " + l.g));
+document.getElementById("c-total").textContent =
+  DATOS.laminas.length.toLocaleString("es-BO");
+
+let nivel = "municipal", texto = "", tope = 24;
+const grilla = document.getElementById("grilla");
+
+/* ★ UN SOLO MOTOR PARA LOS DOS MENÚS. Tema y municipio filtran igual y se ven
+   igual; escribirlos dos veces era garantizar que en algún momento se separen.
+   `solo` dice en qué pestaña existe cada uno: el de municipio no tiene sentido
+   en el nivel municipal, donde cada lámina ES los nueve juntos. */
+const MENUS = [
+  {id:"tema", campo:"g", todos:"Todos los temas",      solo:null,       sel:null},
+  {id:"muni", campo:"m", todos:"Todos los municipios", solo:"manzana",  sel:null}
+];
+const el = i => document.getElementById(i);
+const cerrarMenus = () => MENUS.forEach(m => {
+  el("panel-" + m.id).hidden = true;
+  el("disp-" + m.id).setAttribute("aria-expanded", "false");
+});
+document.addEventListener("click", cerrarMenus);
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarMenus(); });
+
+MENUS.forEach(m => {
+  const disp = el("disp-" + m.id), panel = el("panel-" + m.id);
+  disp.onclick = e => {
+    e.stopPropagation();
+    const abierto = !panel.hidden;
+    cerrarMenus();
+    if (!abierto){ panel.hidden = false; disp.setAttribute("aria-expanded","true"); }
+  };
+  panel.onclick = e => e.stopPropagation();
+});
+
+function filtrar(){
+  const q = sinTilde(texto.trim());
+  return DATOS.laminas.filter(l =>
+    l.n === nivel
+    && MENUS.every(m => !m.sel || l[m.campo] === m.sel)
+    && (!q || l._b.includes(q)));
+}
+
+function pintarMenus(){
+  MENUS.forEach(m => {
+    const caja = el("menu-" + m.id);
+    caja.hidden = !!m.solo && m.solo !== nivel;
+    if (caja.hidden){ m.sel = null; return; }
+    /* las opciones se cuentan sobre lo que YA filtraron los otros menús, así
+       el número que muestra cada opción es el que se va a ver al elegirla */
+    const base = DATOS.laminas.filter(l =>
+      l.n === nivel && MENUS.every(o => o === m || !o.sel || l[o.campo] === o.sel));
+    const hay = new Map();
+    base.forEach(l => { if (l[m.campo]) hay.set(l[m.campo], (hay.get(l[m.campo])||0)+1); });
+    const panel = el("panel-" + m.id);
+    panel.innerHTML = "";
+    const fila = (valor, texto2, n) => {
+      const b = document.createElement("button");
+      b.setAttribute("role", "option");
+      b.setAttribute("aria-current", (m.sel || "") === valor);
+      b.innerHTML = "<span></span><b></b>";
+      b.firstChild.textContent = texto2;
+      b.lastChild.textContent = n;
+      b.onclick = () => {
+        m.sel = valor || null; tope = 24;
+        cerrarMenus(); pintarMenus(); render();
+      };
+      return b;
+    };
+    panel.appendChild(fila("", m.todos, base.length));
+    panel.appendChild(document.createElement("hr"));
+    [...hay.entries()].sort((a,b) => a[0].localeCompare(b[0],"es"))
+      .forEach(([g,n]) => panel.appendChild(fila(g, g, n)));
+    el("val-" + m.id).textContent = m.sel || "Todos";
+  });
+}
+
+function render(){
+  const r = filtrar();
+  el("conteo").textContent = r.length + (r.length === 1 ? " lámina" : " láminas");
+  el("vacio").hidden = r.length > 0;
+  grilla.innerHTML = "";
+  r.slice(0, tope).forEach(l => {
+    const a = document.createElement("article");
+    a.className = "tarjeta";
+    a.innerHTML =
+      '<a class="lienzo" href="' + l.f + '" target="_blank" rel="noopener" ' +
+         'aria-label="Ver ' + l.t + ' en tamaño completo">' +
+        '<img loading="lazy" width="400" height="225" src="' + l.mi + '" alt="' + l.t + '">' +
+      '</a>' +
+      '<div class="cuerpo">' +
+        '<span class="tema">' + l.g + '</span>' +
+        '<h3>' + l.t + '</h3>' +
+        '<p class="donde">' + (l.m || "Región Metropolitana y área de influencia") + '</p>' +
+      '</div>' +
+      '<div class="pie-t">' +
+        '<span class="ficha">3200 &times; 1800 &middot; ' + l.kb + ' KB</span>' +
+        '<a class="baja" href="' + l.f + '" download>' +
+          '<svg viewBox="0 0 24 24"><path d="M12 4v12"/>' +
+          '<path d="M6.5 11.5 12 17l5.5-5.5"/><path d="M5 20h14"/></svg>Descargar</a>' +
+      '</div>';
+    grilla.appendChild(a);
+  });
+  const mas = el("mas");
+  mas.hidden = r.length <= tope;
+  mas.textContent = "Ver más — quedan " + (r.length - tope);
+}
+
+el("mas").onclick = () => { tope += 36; render(); };
+el("q").oninput = e => { texto = e.target.value; tope = 24; render(); };
+document.querySelectorAll(".pestanas button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".pestanas button").forEach(x =>
+      x.setAttribute("aria-selected", x === b));
+    nivel = b.dataset.nivel; tope = 24;
+    MENUS.forEach(m => m.sel = null);
+    cerrarMenus(); pintarMenus(); render();
+  };
+});
+pintarMenus(); render();
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo de Gráficos · Santa Cruz Metrópoli En Cifras</title>
+<meta name="description" content="Catálogo de 375 láminas descargables de la Región Metropolitana de Santa Cruz y su área de influencia, a nivel municipal y por manzana. Censo 2024.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CATÁLOGO DE GRÁFICOS — Santa Cruz Metrópoli En Cifras
+   ───────────────────────────────────────────────────────────────────────
+   La página hereda la identidad de las láminas, no la de los tableros: el
+   mismo papel crema, el mismo verde institucional y la misma pareja
+   tipográfica, para que abrir una lámina descargada al lado del sitio no
+   se sienta como cambiar de producto.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --verde:#8bc53f;          /* el del logotipo — SEÑAL, nunca dato */
+  --verde-ins:#00733b;      /* institucional: acciones y estados activos */
+  --verde-hondo:#043520;    /* la barra */
+  --papel:#eeebe1;
+  --tarjeta:#fffefb;
+  --tinta:#1d2321;
+  --suave:#5f6a63;
+  --tenue:#8b938d;
+  --linea:#ddd8ca;
+  --franja:#e4e0d2;
+  --f:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ft:'Newsreader',Georgia,serif;
+  --r:14px;
+  --sombra:0 1px 2px rgba(29,35,33,.05), 0 8px 20px -12px rgba(29,35,33,.22);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--f);
+     font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.envoltura{max-width:1320px;margin:0 auto;padding:0 24px}
+
+/* ── barra ───────────────────────────────────────────────────────────── */
+.barra{background:var(--verde-hondo);position:sticky;top:0;z-index:60;
+       border-bottom:1px solid #032b19}
+.barra .envoltura{display:flex;align-items:center;gap:16px;height:64px}
+.barra img{height:34px;width:auto;display:block}
+.marca{font-size:17px;letter-spacing:.005em}
+.marca b{color:var(--verde);font-weight:700}
+.marca span{color:#fff;font-weight:600;margin-left:.45em}
+.barra nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.barra nav a{color:#cfe0c8;text-decoration:none;font-weight:500;
+             padding:4px 0;border-bottom:2px solid transparent}
+.barra nav a:hover{color:#fff;border-bottom-color:var(--verde)}
+
+/* ── hero: el mapa se repinta solo ───────────────────────────────────── */
+.hero{padding:52px 0 40px}
+.hero .envoltura{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;
+                 align-items:center}
+.antetitulo{font-size:12.5px;font-weight:700;letter-spacing:.12em;
+            text-transform:uppercase;color:var(--verde-ins);margin:0 0 14px}
+.hero h1{font-family:var(--ft);font-weight:400;font-size:clamp(34px,4.4vw,54px);
+         line-height:1.08;margin:0 0 30px;letter-spacing:-.012em;
+         text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--verde-ins)}
+.cifras{display:flex;gap:34px;flex-wrap:wrap}
+.cifra b{display:block;font-family:var(--ft);font-size:34px;font-weight:500;
+         line-height:1;letter-spacing:-.01em}
+.cifra span{font-size:12.5px;color:var(--tenue);font-weight:500;
+            text-transform:uppercase;letter-spacing:.07em}
+
+.escenario{position:relative}
+.escenario svg{width:100%;height:auto;max-height:340px;display:block;
+               overflow:visible}
+.escenario path{stroke:#1d2321;stroke-width:.35;stroke-linejoin:round;
+                transition:fill 1.1s cubic-bezier(.4,0,.2,1)}
+.pie-hero{margin:14px 0 0;min-height:44px}
+.pie-hero b{display:block;font-family:var(--ft);font-size:20px;font-weight:500;
+            line-height:1.25}
+.pie-hero span{font-size:13px;color:var(--tenue)}
+.escala{margin-top:14px}
+.rampa{height:9px;border-radius:5px;border:1px solid rgba(29,35,33,.10)}
+.limites{display:flex;justify-content:space-between;margin-top:5px;
+         font-size:12px;color:var(--tenue);font-variant-numeric:tabular-nums}
+.puntos{display:flex;gap:6px;margin-top:14px}
+.puntos i{width:22px;height:3px;border-radius:2px;background:var(--linea);
+          transition:background .3s}
+.puntos i.on{background:var(--verde-ins)}
+
+/* ── filtros ─────────────────────────────────────────────────────────── */
+.filtros{position:sticky;top:64px;z-index:50;background:var(--papel);
+         border-bottom:1px solid var(--linea);padding:14px 0 12px}
+/* ── la barra de herramientas ────────────────────────────────────────────
+   Todo a escuadra y todo del mismo alto. Con esquinas redondeadas cada
+   control se leía como una pieza suelta; a 90 grados y alineados forman una
+   sola regla horizontal, que es lo que sostiene la página. */
+.fila{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.pestanas{display:flex;border:1px solid var(--linea);background:var(--tarjeta)}
+.pestanas button{border:0;background:transparent;font:inherit;font-weight:600;
+                 font-size:14px;color:var(--suave);padding:0 22px;height:46px;
+                 cursor:pointer;white-space:nowrap;letter-spacing:.005em;
+                 transition:color .15s, background .15s}
+.pestanas button + button{border-left:1px solid var(--linea)}
+.pestanas button:hover{color:var(--verde-ins)}
+.pestanas button[aria-selected=true]{background:var(--verde-ins);color:#fff}
+.busca{position:relative;flex:1;min-width:220px;display:flex}
+.busca input{width:100%;font:inherit;font-size:15px;padding:0 14px 0 42px;
+             height:46px;border:1px solid var(--linea);border-radius:0;
+             background:var(--tarjeta);color:var(--tinta)}
+.busca input::placeholder{color:var(--tenue)}
+.busca input:focus{outline:0;border-color:var(--verde-ins);
+                   box-shadow:inset 0 -2px 0 var(--verde-ins)}
+.busca svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+           width:17px;height:17px;stroke:var(--tenue);fill:none;stroke-width:2;
+           pointer-events:none}
+.conteo{font-size:13px;color:var(--tenue);white-space:nowrap;
+        align-self:center;font-variant-numeric:tabular-nums}
+
+/* ── el menú de temas ────────────────────────────────────────────────────
+   Un <select> del sistema no se puede vestir por dentro y en Windows abre una
+   lista gris que no tiene nada que ver con el resto. Este es propio: mismo
+   papel, misma línea, y cada tema con su cuenta alineada a la derecha. */
+.menu{position:relative;display:flex}
+.disparador{display:flex;align-items:center;gap:12px;height:46px;padding:0 15px;
+            background:var(--tarjeta);border:1px solid var(--linea);
+            border-radius:0;font:inherit;cursor:pointer;min-width:265px;
+            text-align:left;transition:border-color .15s}
+.disparador:hover{border-color:#b7b0a0}
+.disparador[aria-expanded=true]{border-color:var(--verde-ins)}
+.disparador .etq{font-size:10px;font-weight:700;letter-spacing:.14em;
+                 text-transform:uppercase;color:var(--tenue)}
+.disparador .val{flex:1;font-size:14.5px;font-weight:600;color:var(--tinta);
+                 white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.disparador svg{width:15px;height:15px;stroke:var(--suave);fill:none;
+                stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;
+                transition:transform .22s ease}
+.disparador[aria-expanded=true] svg{transform:rotate(180deg);
+                                    stroke:var(--verde-ins)}
+.panel{position:absolute;top:calc(100% + 5px);left:0;min-width:100%;
+       background:var(--tarjeta);border:1px solid #b7b0a0;
+       box-shadow:0 22px 46px -24px rgba(29,35,33,.6);z-index:80;padding:5px;
+       max-height:min(56vh,420px);overflow:auto;overscroll-behavior:contain}
+.panel button{display:flex;width:100%;align-items:center;gap:14px;
+              background:transparent;border:0;border-left:3px solid transparent;
+              font:inherit;font-size:14px;color:var(--tinta);cursor:pointer;
+              padding:9px 13px;text-align:left;line-height:1.3;
+              transition:background .12s, border-color .12s, color .12s}
+.panel button:hover{background:#f3f0e5;border-left-color:var(--verde)}
+.panel button[aria-current=true]{color:var(--verde-ins);font-weight:700;
+                                 background:#f0efe3;
+                                 border-left-color:var(--verde-ins)}
+.panel button span{flex:1}
+.panel button b{font-weight:500;font-size:12.5px;color:var(--tenue);
+                font-variant-numeric:tabular-nums}
+.panel button[aria-current=true] b{color:var(--verde-ins)}
+.panel hr{border:0;border-top:1px solid var(--linea);margin:5px 8px}
+
+
+/* ── grilla de tarjetas, todas del mismo alto ────────────────────────── */
+main{padding:26px 0 60px}
+.grilla{display:grid;gap:20px;
+        grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+/* Esquina viva, no redondeada: la lámina que va adentro es un rectángulo
+   impreso y la tarjeta que la contiene tiene que comportarse igual. El
+   redondeo la volvía un widget; así es una ficha de archivo. */
+.tarjeta{background:var(--tarjeta);border:1px solid var(--linea);border-radius:0;
+         overflow:hidden;display:flex;flex-direction:column;position:relative;
+         transition:border-color .2s ease, box-shadow .25s ease}
+/* el filete superior entra al pasar el mouse: dice «esto es interactivo» sin
+   mover la tarjeta de sitio, que en una grilla de 24 es un temblor colectivo */
+.tarjeta::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+                 background:var(--verde-ins);transform:scaleX(0);z-index:3;
+                 transform-origin:left;
+                 transition:transform .3s cubic-bezier(.2,.7,.3,1)}
+.tarjeta:hover::before{transform:scaleX(1)}
+.tarjeta:hover{border-color:#b7b0a0;box-shadow:0 14px 30px -22px rgba(29,35,33,.55)}
+.lienzo{aspect-ratio:16/9;background:var(--papel);display:block;overflow:hidden;
+        border-bottom:1px solid var(--linea)}
+.lienzo img{width:100%;height:100%;object-fit:cover;display:block;
+            transition:transform .55s cubic-bezier(.2,.7,.3,1)}
+.tarjeta:hover .lienzo img{transform:scale(1.04)}
+.cuerpo{padding:16px 17px 14px;display:flex;flex-direction:column;flex:1;gap:7px}
+.tema{font-size:10px;font-weight:700;letter-spacing:.13em;
+      text-transform:uppercase;color:var(--verde-ins)}
+/* el título en la serif del catálogo: es lo que hermana la tarjeta con la
+   lámina que se va a descargar, y le da el peso editorial que un sans de
+   15 px no alcanza a dar */
+.tarjeta h3{margin:0;font-family:var(--ft);font-size:19.5px;font-weight:500;
+            line-height:1.22;letter-spacing:-.006em;
+            /* dos renglones FIJOS: es lo que mantiene todas las tarjetas
+               exactamente del mismo alto, con título largo o corto */
+            display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+            overflow:hidden;min-height:2.44em}
+.donde{font-size:12.5px;color:var(--tenue);margin:0;
+       display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
+       overflow:hidden}
+.pie-t{margin-top:auto;border-top:1px solid var(--linea);padding:11px 17px;
+       display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ficha{font-size:11.5px;color:var(--tenue);font-variant-numeric:tabular-nums;
+       white-space:nowrap}
+.baja{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
+      font-weight:700;letter-spacing:.02em;text-decoration:none;
+      color:var(--verde-ins);white-space:nowrap}
+.baja svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1;
+          stroke-linecap:round;stroke-linejoin:round;
+          transition:transform .25s ease}
+.baja:hover svg{transform:translateY(2px)}
+.vacio{padding:70px 0;text-align:center;color:var(--tenue)}
+.vacio b{display:block;font-family:var(--ft);font-size:22px;color:var(--tinta);
+         font-weight:500;margin-bottom:6px}
+.mas{display:block;margin:28px auto 0;font:inherit;font-size:14px;
+     font-weight:600;color:var(--verde-ins);background:var(--tarjeta);
+     border:1px solid var(--linea);border-radius:0;padding:12px 30px;
+     cursor:pointer;letter-spacing:.02em}
+.mas:hover{border-color:var(--verde-ins)}
+
+/* ── pie ─────────────────────────────────────────────────────────────── */
+footer{background:var(--franja);border-top:1px solid var(--linea);
+        padding:30px 0 38px;font-size:13px;color:var(--suave)}
+footer p{margin:0 0 7px;font-style:italic}
+footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
+               margin-bottom:12px}
+
+@media (max-width:900px){
+  .hero .envoltura{grid-template-columns:1fr;gap:34px}
+  .escenario{order:-1}
+  .filtros{top:56px}
+  .barra .envoltura{height:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  .escenario path{transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="envoltura">
+    <img src="../img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
+    <div class="marca"><b>Santa Cruz Metrópoli</b><span>En Cifras</span></div>
+    <nav>
+      <a href="../municipal/">Tablero municipal</a>
+      <a href="../manzana/">A nivel manzana</a>
+      <a href="../flujos/">Flujos</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="envoltura">
+    <div>
+      <p class="antetitulo">Catálogo de gráficos</p>
+      <h1>Indicadores socioeconómicos para la <em>elaboración de políticas públicas</em></h1>
+      <div class="cifras">
+        <div class="cifra"><b id="c-total">—</b><span>láminas</span></div>
+        <div class="cifra"><b>9</b><span>municipios</span></div>
+        <div class="cifra"><b>38.892</b><span>manzanas</span></div>
+      </div>
+    </div>
+
+    <!-- ★ EL HERO ES EL PRODUCTO. En vez de un adorno animado, la silueta real
+         de los nueve municipios se repinta sola con un indicador tras otro: en
+         diez segundos el visitante ya vio qué hace este sitio. -->
+    <div class="escenario">
+      <svg id="mapa" role="img"
+           aria-label="Mapa de los nueve municipios que se repinta con distintos indicadores"></svg>
+      <div class="pie-hero">
+        <b id="h-nombre">—</b>
+        <span id="h-detalle"></span>
+      </div>
+      <!-- ★ LA ESCALA VIAJA CON EL MAPA. Sin ella el color del hero es
+           decorativo: se ve que algo cambia pero no se sabe en qué sentido.
+           Con la rampa y sus dos extremos, el mapa ya es una lectura. -->
+      <div class="escala">
+        <div class="rampa" id="h-rampa"></div>
+        <div class="limites">
+          <span id="h-lo">—</span><span id="h-hi">—</span>
+        </div>
+      </div>
+      <div class="puntos" id="h-puntos"></div>
+    </div>
+  </div>
+</section>
+
+<div class="filtros">
+  <div class="envoltura">
+    <div class="fila">
+      <div class="pestanas" role="tablist">
+        <button role="tab" aria-selected="true"  data-nivel="municipal">Mapas municipales</button>
+        <button role="tab" aria-selected="false" data-nivel="manzana">A nivel manzana</button>
+      </div>
+      <label class="busca">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscar por indicador o municipio…"
+               autocomplete="off" aria-label="Buscar">
+      </label>
+      <div class="menu" id="menu-tema">
+        <button class="disparador" id="disp-tema" aria-expanded="false" aria-haspopup="listbox">
+          <span class="etq">Tema</span>
+          <span class="val" id="val-tema">Todos</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="panel" id="panel-tema" role="listbox" hidden></div>
+      </div>
+      <!-- El filtro por municipio sólo existe a nivel manzana: en el municipal
+           cada lámina ES los nueve juntos y filtrar por uno no querría decir
+           nada. Se muestra y se esconde según la pestaña. -->
+      <div class="menu" id="menu-muni" hidden>
+        <button class="disparador" id="disp-muni" aria-expanded="false" aria-haspopup="listbox">
+          <span class="etq">Municipio</span>
+          <span class="val" id="val-muni">Todos</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="panel" id="panel-muni" role="listbox" hidden></div>
+      </div>
+      <span class="conteo" id="conteo"></span>
+    </div>
+  </div>
+</div>
+
+<main><div class="envoltura">
+  <div class="grilla" id="grilla"></div>
+  <button class="mas" id="mas" hidden>Ver más</button>
+  <div class="vacio" id="vacio" hidden>
+    <b>Sin resultados</b>
+    Probá con el nombre del indicador, del municipio o del tema.
+  </div>
+</div></main>
+
+<footer><div class="envoltura">
+  <p class="fuerte">RMSC + 3 es la Región Metropolitana de Santa Cruz —Santa Cruz
+    de la Sierra, Cotoca, Porongo, La Guardia, El Torno y Warnes— más su área de
+    influencia: Montero, Pailón y Colpa Bélgica.</p>
+  <p>Fuente: Instituto Nacional de Estadística, Censo de Población y Vivienda
+    2024. El nivel manzana proviene de las fichas por manzano del geoportal.</p>
+  <p>Elaboración: DIDAM (Dirección de la Instancia Departamental de Asuntos
+    Metropolitanos) en base a CPV 2024 — INE y POPULI.</p>
+</div></footer>
+
+<script>
+const DATOS = {"laminas":[{"n":"municipal","t":"Autocontención laboral","g":"Flujos metropolitanos","m":"","f":"municipal/autocontencion_laboral.png","mi":"mini/municipal/autocontencion_laboral.webp","kb":406},{"n":"municipal","t":"Brecha de género en alfabetismo","g":"Educación","m":"","f":"municipal/brecha_alfabetismo.png","mi":"mini/municipal/brecha_alfabetismo.webp","kb":450},{"n":"municipal","t":"Brecha de género en años de estudio","g":"Educación","m":"","f":"municipal/brecha_anios_estudio.png","mi":"mini/municipal/brecha_anios_estudio.webp","kb":479},{"n":"municipal","t":"Brecha de género en educación superior","g":"Educación","m":"","f":"municipal/brecha_edu_superior.png","mi":"mini/municipal/brecha_edu_superior.webp","kb":454},{"n":"municipal","t":"Brecha de género en participación","g":"Empleo","m":"","f":"municipal/brecha_participacion.png","mi":"mini/municipal/brecha_participacion.webp","kb":463},{"n":"municipal","t":"Densidad","g":"Demografía y estructura","m":"","f":"municipal/densidad.png","mi":"mini/municipal/densidad.webp","kb":417},{"n":"municipal","t":"Dependencia juvenil","g":"Demografía y estructura","m":"","f":"municipal/dep_juvenil.png","mi":"mini/municipal/dep_juvenil.webp","kb":451},{"n":"municipal","t":"Dependencia senil","g":"Demografía y estructura","m":"","f":"municipal/dep_senil.png","mi":"mini/municipal/dep_senil.webp","kb":452},{"n":"municipal","t":"Ocupados que trabajan en la capital","g":"Flujos metropolitanos","m":"","f":"municipal/dependencia_capital.png","mi":"mini/municipal/dependencia_capital.webp","kb":414},{"n":"municipal","t":"Edad promedio al primer hijo","g":"Salud","m":"","f":"municipal/edad_1er_hijo.png","mi":"mini/municipal/edad_1er_hijo.webp","kb":424},{"n":"municipal","t":"Edad mediana","g":"Demografía y estructura","m":"","f":"municipal/edad_mediana.png","mi":"mini/municipal/edad_mediana.webp","kb":492},{"n":"municipal","t":"Edad promedio al emigrar","g":"Emigración internacional y mortalidad","m":"","f":"municipal/edad_prom_emigracion.png","mi":"mini/municipal/edad_prom_emigracion.webp","kb":474},{"n":"municipal","t":"Edad promedio de fallecimiento","g":"Emigración internacional y mortalidad","m":"","f":"municipal/edad_prom_fallecimiento.png","mi":"mini/municipal/edad_prom_fallecimiento.webp","kb":478},{"n":"municipal","t":"Edad promedio","g":"Demografía y estructura","m":"","f":"municipal/edad_promedio.png","mi":"mini/municipal/edad_promedio.webp","kb":465},{"n":"municipal","t":"Emigrantes por 1.000 habitantes","g":"Emigración internacional y mortalidad","m":"","f":"municipal/emigrantes_x1000.png","mi":"mini/municipal/emigrantes_x1000.webp","kb":471},{"n":"municipal","t":"Índice de envejecimiento","g":"Demografía y estructura","m":"","f":"municipal/indice_envejecimiento.png","mi":"mini/municipal/indice_envejecimiento.webp","kb":498},{"n":"municipal","t":"Índice de juventud","g":"Demografía y estructura","m":"","f":"municipal/indice_juventud.png","mi":"mini/municipal/indice_juventud.webp","kb":489},{"n":"municipal","t":"Índice de masculinidad","g":"Demografía y estructura","m":"","f":"municipal/indice_masculinidad.png","mi":"mini/municipal/indice_masculinidad.webp","kb":498},{"n":"municipal","t":"Paridez media (12+)","g":"Salud","m":"","f":"municipal/paridez_media.png","mi":"mini/municipal/paridez_media.webp","kb":449},{"n":"municipal","t":"Población 0–14 años","g":"Demografía y estructura","m":"","f":"municipal/pct_0_14.png","mi":"mini/municipal/pct_0_14.webp","kb":460},{"n":"municipal","t":"Primera infancia (0-4)","g":"Demografía y estructura","m":"","f":"municipal/pct_0_4.png","mi":"mini/municipal/pct_0_4.webp","kb":454},{"n":"municipal","t":"Jóvenes (15-29)","g":"Demografía y estructura","m":"","f":"municipal/pct_15_29.png","mi":"mini/municipal/pct_15_29.webp","kb":451},{"n":"municipal","t":"Población en edad activa (15-64)","g":"Demografía y estructura","m":"","f":"municipal/pct_15_64.png","mi":"mini/municipal/pct_15_64.webp","kb":463},{"n":"municipal","t":"60 años y más","g":"Demografía y estructura","m":"","f":"municipal/pct_60_mas.png","mi":"mini/municipal/pct_60_mas.webp","kb":454},{"n":"municipal","t":"Adultos mayores (65+)","g":"Demografía y estructura","m":"","f":"municipal/pct_65_mas.png","mi":"mini/municipal/pct_65_mas.webp","kb":453},{"n":"municipal","t":"Cuarta edad (80+)","g":"Demografía y estructura","m":"","f":"municipal/pct_80_mas.png","mi":"mini/municipal/pct_80_mas.webp","kb":448},{"n":"municipal","t":"Empleo en administración pública","g":"Empleo","m":"","f":"municipal/pct_admin_publica.png","mi":"mini/municipal/pct_admin_publica.webp","kb":457},{"n":"municipal","t":"Ocupados en agricultura","g":"Empleo","m":"","f":"municipal/pct_agricultura.png","mi":"mini/municipal/pct_agricultura.webp","kb":447},{"n":"municipal","t":"Agua por cañería de red","g":"Agua","m":"","f":"municipal/pct_agua_caneria.png","mi":"mini/municipal/pct_agua_caneria.webp","kb":455},{"n":"municipal","t":"Carro repartidor (aguatero)","g":"Agua","m":"","f":"municipal/pct_agua_carro.png","mi":"mini/municipal/pct_agua_carro.webp","kb":482},{"n":"municipal","t":"Agua dentro de la vivienda","g":"Agua","m":"","f":"municipal/pct_agua_interior.png","mi":"mini/municipal/pct_agua_interior.webp","kb":458},{"n":"municipal","t":"Cosecha de agua de lluvia","g":"Agua","m":"","f":"municipal/pct_agua_lluvia.png","mi":"mini/municipal/pct_agua_lluvia.webp","kb":460},{"n":"municipal","t":"Agua por cañería fuera pero en el lote","g":"Agua","m":"","f":"municipal/pct_agua_lote.png","mi":"mini/municipal/pct_agua_lote.webp","kb":462},{"n":"municipal","t":"Acceso a fuente mejorada","g":"Agua","m":"","f":"municipal/pct_agua_mejorada.png","mi":"mini/municipal/pct_agua_mejorada.webp","kb":423},{"n":"municipal","t":"Fuente no mejorada","g":"Agua","m":"","f":"municipal/pct_agua_no_mejorada.png","mi":"mini/municipal/pct_agua_no_mejorada.webp","kb":407},{"n":"municipal","t":"Pileta pública","g":"Agua","m":"","f":"municipal/pct_agua_pileta.png","mi":"mini/municipal/pct_agua_pileta.webp","kb":466},{"n":"municipal","t":"Agua de pozo","g":"Agua","m":"","f":"municipal/pct_agua_pozo.png","mi":"mini/municipal/pct_agua_pozo.webp","kb":441},{"n":"municipal","t":"Pozo con bomba","g":"Agua","m":"","f":"municipal/pct_agua_pozo_bomba.png","mi":"mini/municipal/pct_agua_pozo_bomba.webp","kb":438},{"n":"municipal","t":"Río, acequia o vertiente no protegida","g":"Agua","m":"","f":"municipal/pct_agua_rio.png","mi":"mini/municipal/pct_agua_rio.webp","kb":419},{"n":"municipal","t":"Sin distribución por cañería","g":"Agua","m":"","f":"municipal/pct_agua_sin_caneria.png","mi":"mini/municipal/pct_agua_sin_caneria.webp","kb":460},{"n":"municipal","t":"Hogares con aire acondicionado","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_aire_acond.png","mi":"mini/municipal/pct_aire_acond.webp","kb":419},{"n":"municipal","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"","f":"municipal/pct_alcantarillado.png","mi":"mini/municipal/pct_alcantarillado.webp","kb":449},{"n":"municipal","t":"Ocupados en alojamiento y comida","g":"Empleo","m":"","f":"municipal/pct_alojamiento.png","mi":"mini/municipal/pct_alojamiento.webp","kb":461},{"n":"municipal","t":"Adultos mayores viviendo solos","g":"Hogares y jefatura","m":"","f":"municipal/pct_am_solo.png","mi":"mini/municipal/pct_am_solo.webp","kb":459},{"n":"municipal","t":"Analfabetismo (15+)","g":"Educación","m":"","f":"municipal/pct_analfabetismo.png","mi":"mini/municipal/pct_analfabetismo.webp","kb":449},{"n":"municipal","t":"Asalariados","g":"Empleo","m":"","f":"municipal/pct_asalariados.png","mi":"mini/municipal/pct_asalariados.webp","kb":443},{"n":"municipal","t":"Asistencia escolar (6–17)","g":"Educación","m":"","f":"municipal/pct_asistencia_escolar.png","mi":"mini/municipal/pct_asistencia_escolar.webp","kb":459},{"n":"municipal","t":"Hogares con vehículo automotor","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_auto.png","mi":"mini/municipal/pct_auto.webp","kb":461},{"n":"municipal","t":"Autoidentificación indígena","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_autoident_indigena.png","mi":"mini/municipal/pct_autoident_indigena.webp","kb":452},{"n":"municipal","t":"Se automedica o va a la farmacia","g":"Salud","m":"","f":"municipal/pct_automedicacion.png","mi":"mini/municipal/pct_automedicacion.webp","kb":456},{"n":"municipal","t":"Autoidentificación aymara","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_aymara.png","mi":"mini/municipal/pct_aymara.webp","kb":461},{"n":"municipal","t":"Entrega al carro basurero","g":"Residuos","m":"","f":"municipal/pct_basura_carro.png","mi":"mini/municipal/pct_basura_carro.webp","kb":457},{"n":"municipal","t":"Deposita en contenedor público","g":"Residuos","m":"","f":"municipal/pct_basura_contenedor.png","mi":"mini/municipal/pct_basura_contenedor.webp","kb":450},{"n":"municipal","t":"Entierra la basura","g":"Residuos","m":"","f":"municipal/pct_basura_entierra.png","mi":"mini/municipal/pct_basura_entierra.webp","kb":450},{"n":"municipal","t":"Recojo formal de basura","g":"Residuos","m":"","f":"municipal/pct_basura_formal.png","mi":"mini/municipal/pct_basura_formal.webp","kb":467},{"n":"municipal","t":"Basura a terreno baldío, calle o río","g":"Residuos","m":"","f":"municipal/pct_basura_informal.png","mi":"mini/municipal/pct_basura_informal.webp","kb":467},{"n":"municipal","t":"Quema la basura","g":"Residuos","m":"","f":"municipal/pct_basura_quema.png","mi":"mini/municipal/pct_basura_quema.webp","kb":443},{"n":"municipal","t":"Hogares con bicicleta","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_bicicleta.png","mi":"mini/municipal/pct_bicicleta.webp","kb":462},{"n":"municipal","t":"Habla dos o más idiomas","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_bilingue.png","mi":"mini/municipal/pct_bilingue.webp","kb":450},{"n":"municipal","t":"Hogares con bote o canoa","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_bote.png","mi":"mini/municipal/pct_bote.webp","kb":465},{"n":"municipal","t":"Acude a caja de salud","g":"Salud","m":"","f":"municipal/pct_caja_salud.png","mi":"mini/municipal/pct_caja_salud.webp","kb":440},{"n":"municipal","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"","f":"municipal/pct_camara_septica.png","mi":"mini/municipal/pct_camara_septica.webp","kb":459},{"n":"municipal","t":"Hogares con carreta o carretón","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_carreta.png","mi":"mini/municipal/pct_carreta.webp","kb":446},{"n":"municipal","t":"Con cédula de identidad","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_cedula_identidad.png","mi":"mini/municipal/pct_cedula_identidad.webp","kb":460},{"n":"municipal","t":"Hogares con celular","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_celular.png","mi":"mini/municipal/pct_celular.webp","kb":412},{"n":"municipal","t":"Autoidentificación chiquitano","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_chiquitano.png","mi":"mini/municipal/pct_chiquitano.webp","kb":460},{"n":"municipal","t":"Chozas o pahuichis","g":"Vivienda y materiales","m":"","f":"municipal/pct_choza.png","mi":"mini/municipal/pct_choza.webp","kb":410},{"n":"municipal","t":"Cuarto sólo para cocinar","g":"Energía y cocina","m":"","f":"municipal/pct_cocina_exclusiva.png","mi":"mini/municipal/pct_cocina_exclusiva.webp","kb":459},{"n":"municipal","t":"Combustible limpio para cocinar","g":"Energía y cocina","m":"","f":"municipal/pct_combustible_limpio.png","mi":"mini/municipal/pct_combustible_limpio.webp","kb":466},{"n":"municipal","t":"Ocupados en comercio","g":"Empleo","m":"","f":"municipal/pct_comercio.png","mi":"mini/municipal/pct_comercio.webp","kb":455},{"n":"municipal","t":"Hogares con computadora","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_computadora.png","mi":"mini/municipal/pct_computadora.webp","kb":458},{"n":"municipal","t":"Hogares con emigrante","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_con_emigrante.png","mi":"mini/municipal/pct_con_emigrante.webp","kb":449},{"n":"municipal","t":"Ocupados en construcción","g":"Empleo","m":"","f":"municipal/pct_construccion.png","mi":"mini/municipal/pct_construccion.webp","kb":456},{"n":"municipal","t":"Trabajadores por cuenta propia","g":"Empleo","m":"","f":"municipal/pct_cuenta_propia.png","mi":"mini/municipal/pct_cuenta_propia.webp","kb":461},{"n":"municipal","t":"Departamentos","g":"Vivienda y materiales","m":"","f":"municipal/pct_departamento.png","mi":"mini/municipal/pct_departamento.webp","kb":446},{"n":"municipal","t":"Desagüe a la superficie","g":"Saneamiento","m":"","f":"municipal/pct_desague_superficie.png","mi":"mini/municipal/pct_desague_superficie.webp","kb":458},{"n":"municipal","t":"Dificultad severa para caminar","g":"Discapacidad","m":"","f":"municipal/pct_disc_caminar.png","mi":"mini/municipal/pct_disc_caminar.webp","kb":413},{"n":"municipal","t":"Dificultad severa para comunicarse","g":"Discapacidad","m":"","f":"municipal/pct_disc_comunicar.png","mi":"mini/municipal/pct_disc_comunicar.webp","kb":421},{"n":"municipal","t":"Dificultad severa para oír","g":"Discapacidad","m":"","f":"municipal/pct_disc_oir.png","mi":"mini/municipal/pct_disc_oir.webp","kb":411},{"n":"municipal","t":"Dificultad severa para ver","g":"Discapacidad","m":"","f":"municipal/pct_disc_ver.png","mi":"mini/municipal/pct_disc_ver.webp","kb":415},{"n":"municipal","t":"Con alguna discapacidad","g":"Discapacidad","m":"","f":"municipal/pct_discapacidad.png","mi":"mini/municipal/pct_discapacidad.webp","kb":415},{"n":"municipal","t":"Sólo primaria (19+)","g":"Educación","m":"","f":"municipal/pct_edu_primaria.png","mi":"mini/municipal/pct_edu_primaria.webp","kb":450},{"n":"municipal","t":"Secundaria (19+)","g":"Educación","m":"","f":"municipal/pct_edu_secundaria.png","mi":"mini/municipal/pct_edu_secundaria.webp","kb":451},{"n":"municipal","t":"Educación superior (19+)","g":"Educación","m":"","f":"municipal/pct_edu_superior.png","mi":"mini/municipal/pct_edu_superior.webp","kb":454},{"n":"municipal","t":"Estudia en sistema público","g":"Educación","m":"","f":"municipal/pct_educacion_publica.png","mi":"mini/municipal/pct_educacion_publica.webp","kb":460},{"n":"municipal","t":"Energía de la red pública","g":"Energía y cocina","m":"","f":"municipal/pct_elec_red.png","mi":"mini/municipal/pct_elec_red.webp","kb":458},{"n":"municipal","t":"Con energía eléctrica","g":"Energía y cocina","m":"","f":"municipal/pct_electricidad.png","mi":"mini/municipal/pct_electricidad.webp","kb":460},{"n":"municipal","t":"Emigrantes en Argentina","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_emi_argentina.png","mi":"mini/municipal/pct_emi_argentina.webp","kb":469},{"n":"municipal","t":"Emigrantes en Brasil","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_emi_brasil.png","mi":"mini/municipal/pct_emi_brasil.webp","kb":446},{"n":"municipal","t":"Emigrantes en Chile","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_emi_chile.png","mi":"mini/municipal/pct_emi_chile.webp","kb":456},{"n":"municipal","t":"Emigrantes en EE.UU.","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_emi_eeuu.png","mi":"mini/municipal/pct_emi_eeuu.webp","kb":444},{"n":"municipal","t":"Emigrantes en España","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_emi_espana.png","mi":"mini/municipal/pct_emi_espana.webp","kb":457},{"n":"municipal","t":"Empleadores","g":"Empleo","m":"","f":"municipal/pct_empleadores.png","mi":"mini/municipal/pct_empleadores.webp","kb":448},{"n":"municipal","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"","f":"municipal/pct_gas_garrafa.png","mi":"mini/municipal/pct_gas_garrafa.webp","kb":463},{"n":"municipal","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"","f":"municipal/pct_gas_red.png","mi":"mini/municipal/pct_gas_red.webp","kb":456},{"n":"municipal","t":"Autoidentificación guaraní","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_guarani.png","mi":"mini/municipal/pct_guarani.webp","kb":456},{"n":"municipal","t":"Hacinamiento (>3 personas por dormitorio)","g":"Vivienda y materiales","m":"","f":"municipal/pct_hacinamiento.png","mi":"mini/municipal/pct_hacinamiento.webp","kb":446},{"n":"municipal","t":"Hijos fallecidos","g":"Salud","m":"","f":"municipal/pct_hijos_fallecidos.png","mi":"mini/municipal/pct_hijos_fallecidos.webp","kb":454},{"n":"municipal","t":"Hogares compuestos","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_compuesto.png","mi":"mini/municipal/pct_hogar_compuesto.webp","kb":410},{"n":"municipal","t":"Hogares con adulto mayor","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_con_am.png","mi":"mini/municipal/pct_hogar_con_am.webp","kb":453},{"n":"municipal","t":"Hogares con menores de 15","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_con_menores.png","mi":"mini/municipal/pct_hogar_con_menores.webp","kb":456},{"n":"municipal","t":"Hogares extendidos","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_extendido.png","mi":"mini/municipal/pct_hogar_extendido.webp","kb":410},{"n":"municipal","t":"Hogares con fallecido reciente","g":"Emigración internacional y mortalidad","m":"","f":"municipal/pct_hogar_fallecido.png","mi":"mini/municipal/pct_hogar_fallecido.webp","kb":465},{"n":"municipal","t":"Hogares monoparentales","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_monoparental.png","mi":"mini/municipal/pct_hogar_monoparental.webp","kb":416},{"n":"municipal","t":"Hogares nucleares","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_nuclear.png","mi":"mini/municipal/pct_hogar_nuclear.webp","kb":407},{"n":"municipal","t":"Hogares unipersonales","g":"Hogares y jefatura","m":"","f":"municipal/pct_hogar_unipersonal.png","mi":"mini/municipal/pct_hogar_unipersonal.webp","kb":464},{"n":"municipal","t":"Idioma materno castellano","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_idioma_materno_castellano.png","mi":"mini/municipal/pct_idioma_materno_castellano.webp","kb":460},{"n":"municipal","t":"Idioma materno originario","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_idioma_materno_originario.png","mi":"mini/municipal/pct_idioma_materno_originario.webp","kb":448},{"n":"municipal","t":"Hogares con internet","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_internet.png","mi":"mini/municipal/pct_internet.webp","kb":459},{"n":"municipal","t":"Internet fijo","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_internet_fijo.png","mi":"mini/municipal/pct_internet_fijo.webp","kb":401},{"n":"municipal","t":"Internet móvil","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_internet_movil.png","mi":"mini/municipal/pct_internet_movil.webp","kb":407},{"n":"municipal","t":"Jefatura femenina","g":"Hogares y jefatura","m":"","f":"municipal/pct_jefatura_femenina.png","mi":"mini/municipal/pct_jefatura_femenina.webp","kb":453},{"n":"municipal","t":"Hogares con lavadora","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_lavadora.png","mi":"mini/municipal/pct_lavadora.webp","kb":415},{"n":"municipal","t":"Cocina con leña o guano","g":"Energía y cocina","m":"","f":"municipal/pct_lena_guano.png","mi":"mini/municipal/pct_lena_guano.webp","kb":447},{"n":"municipal","t":"Madres adolescentes (15-19)","g":"Salud","m":"","f":"municipal/pct_madres_adolescentes.png","mi":"mini/municipal/pct_madres_adolescentes.webp","kb":458},{"n":"municipal","t":"Ocupados en manufactura","g":"Empleo","m":"","f":"municipal/pct_manufactura.png","mi":"mini/municipal/pct_manufactura.webp","kb":444},{"n":"municipal","t":"Menores de 20 años","g":"Demografía y estructura","m":"","f":"municipal/pct_menor20.png","mi":"mini/municipal/pct_menor20.webp","kb":458},{"n":"municipal","t":"Hogares con microondas","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_microondas.png","mi":"mini/municipal/pct_microondas.webp","kb":421},{"n":"municipal","t":"Migrantes recientes (últimos 5 años)","g":"Migración y territorio","m":"","f":"municipal/pct_migrante_reciente.png","mi":"mini/municipal/pct_migrante_reciente.webp","kb":447},{"n":"municipal","t":"Viviendas de un solo cuarto","g":"Vivienda y materiales","m":"","f":"municipal/pct_monoambiente.png","mi":"mini/municipal/pct_monoambiente.webp","kb":473},{"n":"municipal","t":"Hogares con motocicleta","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_moto.png","mi":"mini/municipal/pct_moto.webp","kb":460},{"n":"municipal","t":"Motor propio o generador","g":"Energía y cocina","m":"","f":"municipal/pct_motor_propio.png","mi":"mini/municipal/pct_motor_propio.webp","kb":446},{"n":"municipal","t":"Nacidos en el extranjero","g":"Migración y territorio","m":"","f":"municipal/pct_nacido_extranjero.png","mi":"mini/municipal/pct_nacido_extranjero.webp","kb":453},{"n":"municipal","t":"Nacidos en otro municipio","g":"Migración y territorio","m":"","f":"municipal/pct_nacido_otro_municipio.png","mi":"mini/municipal/pct_nacido_otro_municipio.webp","kb":461},{"n":"municipal","t":"NBI: agua y saneamiento","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_agua_sanea.png","mi":"mini/municipal/pct_nbi_agua_sanea.webp","kb":453},{"n":"municipal","t":"NBI: educación","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_educacion.png","mi":"mini/municipal/pct_nbi_educacion.webp","kb":446},{"n":"municipal","t":"NBI: insumos energéticos","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_energia.png","mi":"mini/municipal/pct_nbi_energia.webp","kb":448},{"n":"municipal","t":"NBI: espacios de la vivienda","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_espacios.png","mi":"mini/municipal/pct_nbi_espacios.webp","kb":453},{"n":"municipal","t":"Indigencia","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_indigente.png","mi":"mini/municipal/pct_nbi_indigente.webp","kb":452},{"n":"municipal","t":"Marginalidad","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_marginal.png","mi":"mini/municipal/pct_nbi_marginal.webp","kb":473},{"n":"municipal","t":"NBI: materiales de la vivienda","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_materiales.png","mi":"mini/municipal/pct_nbi_materiales.webp","kb":447},{"n":"municipal","t":"Pobreza moderada","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_moderada.png","mi":"mini/municipal/pct_nbi_moderada.webp","kb":465},{"n":"municipal","t":"Población no pobre (NBI)","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_no_pobre.png","mi":"mini/municipal/pct_nbi_no_pobre.webp","kb":454},{"n":"municipal","t":"Población pobre (NBI)","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_pobre.png","mi":"mini/municipal/pct_nbi_pobre.webp","kb":447},{"n":"municipal","t":"NBI: atención en salud","g":"Componentes NBI","m":"","f":"municipal/pct_nbi_salud.png","mi":"mini/municipal/pct_nbi_salud.webp","kb":446},{"n":"municipal","t":"Necesidades básicas satisfechas","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_satisfechas.png","mi":"mini/municipal/pct_nbi_satisfechas.webp","kb":453},{"n":"municipal","t":"En el umbral de pobreza","g":"Pobreza (NBI)","m":"","f":"municipal/pct_nbi_umbral.png","mi":"mini/municipal/pct_nbi_umbral.webp","kb":451},{"n":"municipal","t":"No cocina en la vivienda","g":"Energía y cocina","m":"","f":"municipal/pct_no_cocina.png","mi":"mini/municipal/pct_no_cocina.webp","kb":458},{"n":"municipal","t":"Trabajadores no calificados","g":"Empleo","m":"","f":"municipal/pct_ocu_no_calificado.png","mi":"mini/municipal/pct_ocu_no_calificado.webp","kb":458},{"n":"municipal","t":"Profesionales y técnicos","g":"Empleo","m":"","f":"municipal/pct_ocu_profesionales.png","mi":"mini/municipal/pct_ocu_profesionales.webp","kb":448},{"n":"municipal","t":"Energía por panel solar","g":"Energía y cocina","m":"","f":"municipal/pct_panel_solar.png","mi":"mini/municipal/pct_panel_solar.webp","kb":445},{"n":"municipal","t":"Paredes de adobe o tapial","g":"Vivienda y materiales","m":"","f":"municipal/pct_pared_adobe.png","mi":"mini/municipal/pct_pared_adobe.webp","kb":457},{"n":"municipal","t":"Paredes de ladrillo o bloque","g":"Vivienda y materiales","m":"","f":"municipal/pct_pared_ladrillo.png","mi":"mini/municipal/pct_pared_ladrillo.webp","kb":460},{"n":"municipal","t":"Paredes de madera","g":"Vivienda y materiales","m":"","f":"municipal/pct_pared_madera.png","mi":"mini/municipal/pct_pared_madera.webp","kb":438},{"n":"municipal","t":"Paredes precarias (caña, palma, tronco)","g":"Vivienda y materiales","m":"","f":"municipal/pct_pared_precaria.png","mi":"mini/municipal/pct_pared_precaria.webp","kb":453},{"n":"municipal","t":"Parto con personal calificado","g":"Salud","m":"","f":"municipal/pct_parto_calificado.png","mi":"mini/municipal/pct_parto_calificado.webp","kb":414},{"n":"municipal","t":"Piso de cemento","g":"Vivienda y materiales","m":"","f":"municipal/pct_piso_cemento.png","mi":"mini/municipal/pct_piso_cemento.webp","kb":453},{"n":"municipal","t":"Piso de cerámica o porcelanato","g":"Vivienda y materiales","m":"","f":"municipal/pct_piso_ceramica.png","mi":"mini/municipal/pct_piso_ceramica.webp","kb":463},{"n":"municipal","t":"Piso de tierra","g":"Vivienda y materiales","m":"","f":"municipal/pct_piso_tierra.png","mi":"mini/municipal/pct_piso_tierra.webp","kb":436},{"n":"municipal","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"","f":"municipal/pct_pozo_ciego.png","mi":"mini/municipal/pct_pozo_ciego.webp","kb":454},{"n":"municipal","t":"Completó primaria (19+)","g":"Educación","m":"","f":"municipal/pct_primaria_completa.png","mi":"mini/municipal/pct_primaria_completa.webp","kb":457},{"n":"municipal","t":"Autoidentificación quechua","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_quechua.png","mi":"mini/municipal/pct_quechua.webp","kb":447},{"n":"municipal","t":"Hogares con radio","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_radio.png","mi":"mini/municipal/pct_radio.webp","kb":459},{"n":"municipal","t":"Trabaja en enseñanza","g":"Empleo","m":"","f":"municipal/pct_rama_ensenanza.png","mi":"mini/municipal/pct_rama_ensenanza.webp","kb":454},{"n":"municipal","t":"Trabaja en salud y asistencia","g":"Empleo","m":"","f":"municipal/pct_rama_salud.png","mi":"mini/municipal/pct_rama_salud.webp","kb":457},{"n":"municipal","t":"Hogares con refrigerador","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_refrigerador.png","mi":"mini/municipal/pct_refrigerador.webp","kb":417},{"n":"municipal","t":"Inscritos en registro civil","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_registro_civil.png","mi":"mini/municipal/pct_registro_civil.webp","kb":473},{"n":"municipal","t":"Nacimientos inscritos (menores de 5)","g":"Pueblos, idiomas y ciudadanía","m":"","f":"municipal/pct_registro_menores5.png","mi":"mini/municipal/pct_registro_menores5.webp","kb":458},{"n":"municipal","t":"Soluciones caseras","g":"Salud","m":"","f":"municipal/pct_remedios_caseros.png","mi":"mini/municipal/pct_remedios_caseros.webp","kb":455},{"n":"municipal","t":"Residía en otro municipio","g":"Migración y territorio","m":"","f":"municipal/pct_residia_otro_mun.png","mi":"mini/municipal/pct_residia_otro_mun.webp","kb":453},{"n":"municipal","t":"Paredes con revoque","g":"Vivienda y materiales","m":"","f":"municipal/pct_revoque.png","mi":"mini/municipal/pct_revoque.webp","kb":459},{"n":"municipal","t":"Rezago escolar (12-17)","g":"Educación","m":"","f":"municipal/pct_rezago_escolar.png","mi":"mini/municipal/pct_rezago_escolar.webp","kb":440},{"n":"municipal","t":"Acude a salud privada","g":"Salud","m":"","f":"municipal/pct_salud_privada.png","mi":"mini/municipal/pct_salud_privada.webp","kb":451},{"n":"municipal","t":"Acude a establecimiento público","g":"Salud","m":"","f":"municipal/pct_salud_publica.png","mi":"mini/municipal/pct_salud_publica.webp","kb":462},{"n":"municipal","t":"Acude a medicina tradicional","g":"Salud","m":"","f":"municipal/pct_salud_tradicional.png","mi":"mini/municipal/pct_salud_tradicional.webp","kb":448},{"n":"municipal","t":"Saneamiento mejorado","g":"Saneamiento","m":"","f":"municipal/pct_saneamiento_mejorado.png","mi":"mini/municipal/pct_saneamiento_mejorado.webp","kb":507},{"n":"municipal","t":"Baño compartido","g":"Saneamiento","m":"","f":"municipal/pct_sanitario_compartido.png","mi":"mini/municipal/pct_sanitario_compartido.webp","kb":453},{"n":"municipal","t":"Baño de uso exclusivo del hogar","g":"Saneamiento","m":"","f":"municipal/pct_sanitario_exclusivo.png","mi":"mini/municipal/pct_sanitario_exclusivo.webp","kb":472},{"n":"municipal","t":"Sector primario","g":"Empleo","m":"","f":"municipal/pct_sector_primario.png","mi":"mini/municipal/pct_sector_primario.webp","kb":442},{"n":"municipal","t":"Sector secundario","g":"Empleo","m":"","f":"municipal/pct_sector_secundario.png","mi":"mini/municipal/pct_sector_secundario.webp","kb":446},{"n":"municipal","t":"Sector servicios","g":"Empleo","m":"","f":"municipal/pct_sector_servicios.png","mi":"mini/municipal/pct_sector_servicios.webp","kb":455},{"n":"municipal","t":"Secundaria o más (19+)","g":"Educación","m":"","f":"municipal/pct_secundaria_mas.png","mi":"mini/municipal/pct_secundaria_mas.webp","kb":453},{"n":"municipal","t":"Con seguro privado","g":"Salud","m":"","f":"municipal/pct_seguro_privado.png","mi":"mini/municipal/pct_seguro_privado.webp","kb":400},{"n":"municipal","t":"Con seguro de salud","g":"Salud","m":"","f":"municipal/pct_seguro_salud.png","mi":"mini/municipal/pct_seguro_salud.webp","kb":404},{"n":"municipal","t":"Con baño o letrina","g":"Saneamiento","m":"","f":"municipal/pct_servicio_sanitario.png","mi":"mini/municipal/pct_servicio_sanitario.webp","kb":454},{"n":"municipal","t":"Sin nivel educativo (19+)","g":"Educación","m":"","f":"municipal/pct_sin_educacion.png","mi":"mini/municipal/pct_sin_educacion.webp","kb":458},{"n":"municipal","t":"Sin energía eléctrica","g":"Energía y cocina","m":"","f":"municipal/pct_sin_energia.png","mi":"mini/municipal/pct_sin_energia.webp","kb":445},{"n":"municipal","t":"Sin baño ni letrina","g":"Saneamiento","m":"","f":"municipal/pct_sin_sanitario.png","mi":"mini/municipal/pct_sin_sanitario.webp","kb":443},{"n":"municipal","t":"Sin afiliación a salud","g":"Salud","m":"","f":"municipal/pct_sin_seguro.png","mi":"mini/municipal/pct_sin_seguro.webp","kb":406},{"n":"municipal","t":"Afiliados al SUS","g":"Salud","m":"","f":"municipal/pct_sus.png","mi":"mini/municipal/pct_sus.webp","kb":409},{"n":"municipal","t":"Techo de calamina","g":"Vivienda y materiales","m":"","f":"municipal/pct_techo_calamina.png","mi":"mini/municipal/pct_techo_calamina.webp","kb":449},{"n":"municipal","t":"Techo de losa de hormigón","g":"Vivienda y materiales","m":"","f":"municipal/pct_techo_losa.png","mi":"mini/municipal/pct_techo_losa.webp","kb":448},{"n":"municipal","t":"Techo de paja o palma","g":"Vivienda y materiales","m":"","f":"municipal/pct_techo_paja.png","mi":"mini/municipal/pct_techo_paja.webp","kb":455},{"n":"municipal","t":"Techo de teja","g":"Vivienda y materiales","m":"","f":"municipal/pct_techo_teja.png","mi":"mini/municipal/pct_techo_teja.webp","kb":450},{"n":"municipal","t":"Hogares con televisor","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_televisor.png","mi":"mini/municipal/pct_televisor.webp","kb":460},{"n":"municipal","t":"Trabajo familiar sin pago","g":"Empleo","m":"","f":"municipal/pct_trab_familiar.png","mi":"mini/municipal/pct_trab_familiar.webp","kb":459},{"n":"municipal","t":"Trabaja fuera del municipio","g":"Migración y territorio","m":"","f":"municipal/pct_trabaja_fuera.png","mi":"mini/municipal/pct_trabaja_fuera.webp","kb":410},{"n":"municipal","t":"Ocupados en transporte","g":"Empleo","m":"","f":"municipal/pct_transporte.png","mi":"mini/municipal/pct_transporte.webp","kb":455},{"n":"municipal","t":"Hogares con TV por cable","g":"Tecnología y equipamiento","m":"","f":"municipal/pct_tv_cable.png","mi":"mini/municipal/pct_tv_cable.webp","kb":419},{"n":"municipal","t":"Urbanización","g":"Demografía y estructura","m":"","f":"municipal/pct_urbano.png","mi":"mini/municipal/pct_urbano.webp","kb":453},{"n":"municipal","t":"Vivienda en alquiler","g":"Tenencia","m":"","f":"municipal/pct_viv_alquilada.png","mi":"mini/municipal/pct_viv_alquilada.webp","kb":448},{"n":"municipal","t":"Vivienda en anticrético","g":"Tenencia","m":"","f":"municipal/pct_viv_anticretico.png","mi":"mini/municipal/pct_viv_anticretico.webp","kb":454},{"n":"municipal","t":"Vivienda prestada o cedida","g":"Tenencia","m":"","f":"municipal/pct_viv_prestada.png","mi":"mini/municipal/pct_viv_prestada.webp","kb":463},{"n":"municipal","t":"Vivienda propia","g":"Tenencia","m":"","f":"municipal/pct_viv_propia.png","mi":"mini/municipal/pct_viv_propia.webp","kb":448},{"n":"municipal","t":"Viviendas desocupadas","g":"Vivienda y materiales","m":"","f":"municipal/pct_vivienda_desocupada.png","mi":"mini/municipal/pct_vivienda_desocupada.webp","kb":467},{"n":"municipal","t":"Personas por dormitorio","g":"Vivienda y materiales","m":"","f":"municipal/pers_x_dormitorio.png","mi":"mini/municipal/pers_x_dormitorio.webp","kb":458},{"n":"municipal","t":"Personas por habitación","g":"Vivienda y materiales","m":"","f":"municipal/pers_x_habitacion.png","mi":"mini/municipal/pers_x_habitacion.webp","kb":449},{"n":"municipal","t":"Personas por vivienda","g":"Vivienda y materiales","m":"","f":"municipal/pers_x_vivienda.png","mi":"mini/municipal/pers_x_vivienda.webp","kb":457},{"n":"municipal","t":"Hombres","g":"Demografía y estructura","m":"","f":"municipal/pob_hombres.png","mi":"mini/municipal/pob_hombres.webp","kb":445},{"n":"municipal","t":"Mujeres","g":"Demografía y estructura","m":"","f":"municipal/pob_mujeres.png","mi":"mini/municipal/pob_mujeres.webp","kb":448},{"n":"municipal","t":"Población total","g":"Demografía y estructura","m":"","f":"municipal/pob_total.png","mi":"mini/municipal/pob_total.webp","kb":457},{"n":"municipal","t":"Población flotante diurna","g":"Flujos metropolitanos","m":"","f":"municipal/poblacion_flotante.png","mi":"mini/municipal/poblacion_flotante.webp","kb":396},{"n":"municipal","t":"Años promedio de estudio (19+)","g":"Educación","m":"","f":"municipal/prom_anios_estudio.png","mi":"mini/municipal/prom_anios_estudio.webp","kb":459},{"n":"municipal","t":"Razón de dependencia","g":"Demografía y estructura","m":"","f":"municipal/razon_dependencia.png","mi":"mini/municipal/razon_dependencia.webp","kb":456},{"n":"municipal","t":"Saldo migratorio absoluto","g":"Migración y territorio","m":"","f":"municipal/saldo_migratorio.png","mi":"mini/municipal/saldo_migratorio.webp","kb":402},{"n":"municipal","t":"Personas por hogar","g":"Hogares y jefatura","m":"","f":"municipal/tam_hogar.png","mi":"mini/municipal/tam_hogar.webp","kb":455},{"n":"municipal","t":"Asistencia 18-24","g":"Educación","m":"","f":"municipal/tasa_asistencia_18_24.png","mi":"mini/municipal/tasa_asistencia_18_24.webp","kb":455},{"n":"municipal","t":"Asistencia inicial (4-5)","g":"Educación","m":"","f":"municipal/tasa_asistencia_4_5.png","mi":"mini/municipal/tasa_asistencia_4_5.webp","kb":460},{"n":"municipal","t":"Tasa de desocupación","g":"Empleo","m":"","f":"municipal/tasa_desocupacion.png","mi":"mini/municipal/tasa_desocupacion.webp","kb":457},{"n":"municipal","t":"Tasa de mortalidad declarada","g":"Emigración internacional y mortalidad","m":"","f":"municipal/tasa_mortalidad.png","mi":"mini/municipal/tasa_mortalidad.webp","kb":406},{"n":"municipal","t":"Tasa de ocupación (15+)","g":"Empleo","m":"","f":"municipal/tasa_ocupacion.png","mi":"mini/municipal/tasa_ocupacion.webp","kb":457},{"n":"municipal","t":"Tasa de participación (15+)","g":"Empleo","m":"","f":"municipal/tasa_participacion.png","mi":"mini/municipal/tasa_participacion.webp","kb":459},{"n":"municipal","t":"Viviendas","g":"Vivienda y materiales","m":"","f":"municipal/viviendas.png","mi":"mini/municipal/viviendas.webp","kb":457},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Colpa Bélgica","f":"manzana/colpa_belgica__densidad.png","mi":"mini/manzana/colpa_belgica__densidad.webp","kb":422},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_agua_caneria.png","mi":"mini/manzana/colpa_belgica__pct_agua_caneria.webp","kb":391},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_alcantarillado.png","mi":"mini/manzana/colpa_belgica__pct_alcantarillado.webp","kb":394},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_basura_carro.png","mi":"mini/manzana/colpa_belgica__pct_basura_carro.webp","kb":382},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_basura_formal.png","mi":"mini/manzana/colpa_belgica__pct_basura_formal.webp","kb":391},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_basura_quema.png","mi":"mini/manzana/colpa_belgica__pct_basura_quema.webp","kb":381},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_camara_septica.png","mi":"mini/manzana/colpa_belgica__pct_camara_septica.webp","kb":389},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_edu_primaria.png","mi":"mini/manzana/colpa_belgica__pct_edu_primaria.webp","kb":394},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_edu_secundaria.png","mi":"mini/manzana/colpa_belgica__pct_edu_secundaria.webp","kb":383},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_edu_superior.png","mi":"mini/manzana/colpa_belgica__pct_edu_superior.webp","kb":395},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_gas_garrafa.png","mi":"mini/manzana/colpa_belgica__pct_gas_garrafa.webp","kb":399},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_gas_red.png","mi":"mini/manzana/colpa_belgica__pct_gas_red.webp","kb":396},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_menor20.png","mi":"mini/manzana/colpa_belgica__pct_menor20.webp","kb":396},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_pozo_ciego.png","mi":"mini/manzana/colpa_belgica__pct_pozo_ciego.webp","kb":384},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_sin_educacion.png","mi":"mini/manzana/colpa_belgica__pct_sin_educacion.webp","kb":406},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_sin_seguro.png","mi":"mini/manzana/colpa_belgica__pct_sin_seguro.webp","kb":394},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pct_sus.png","mi":"mini/manzana/colpa_belgica__pct_sus.webp","kb":392},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Colpa Bélgica","f":"manzana/colpa_belgica__pob_total.png","mi":"mini/manzana/colpa_belgica__pob_total.webp","kb":394},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Cotoca","f":"manzana/cotoca__densidad.png","mi":"mini/manzana/cotoca__densidad.webp","kb":936},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Cotoca","f":"manzana/cotoca__pct_agua_caneria.png","mi":"mini/manzana/cotoca__pct_agua_caneria.webp","kb":965},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Cotoca","f":"manzana/cotoca__pct_alcantarillado.png","mi":"mini/manzana/cotoca__pct_alcantarillado.webp","kb":970},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Cotoca","f":"manzana/cotoca__pct_basura_carro.png","mi":"mini/manzana/cotoca__pct_basura_carro.webp","kb":970},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Cotoca","f":"manzana/cotoca__pct_basura_formal.png","mi":"mini/manzana/cotoca__pct_basura_formal.webp","kb":983},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Cotoca","f":"manzana/cotoca__pct_basura_quema.png","mi":"mini/manzana/cotoca__pct_basura_quema.webp","kb":967},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Cotoca","f":"manzana/cotoca__pct_camara_septica.png","mi":"mini/manzana/cotoca__pct_camara_septica.webp","kb":949},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Cotoca","f":"manzana/cotoca__pct_edu_primaria.png","mi":"mini/manzana/cotoca__pct_edu_primaria.webp","kb":970},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Cotoca","f":"manzana/cotoca__pct_edu_secundaria.png","mi":"mini/manzana/cotoca__pct_edu_secundaria.webp","kb":948},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Cotoca","f":"manzana/cotoca__pct_edu_superior.png","mi":"mini/manzana/cotoca__pct_edu_superior.webp","kb":975},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Cotoca","f":"manzana/cotoca__pct_gas_garrafa.png","mi":"mini/manzana/cotoca__pct_gas_garrafa.webp","kb":975},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Cotoca","f":"manzana/cotoca__pct_gas_red.png","mi":"mini/manzana/cotoca__pct_gas_red.webp","kb":980},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Cotoca","f":"manzana/cotoca__pct_menor20.png","mi":"mini/manzana/cotoca__pct_menor20.webp","kb":966},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Cotoca","f":"manzana/cotoca__pct_pozo_ciego.png","mi":"mini/manzana/cotoca__pct_pozo_ciego.webp","kb":964},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Cotoca","f":"manzana/cotoca__pct_sin_educacion.png","mi":"mini/manzana/cotoca__pct_sin_educacion.webp","kb":987},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Cotoca","f":"manzana/cotoca__pct_sin_seguro.png","mi":"mini/manzana/cotoca__pct_sin_seguro.webp","kb":975},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Cotoca","f":"manzana/cotoca__pct_sus.png","mi":"mini/manzana/cotoca__pct_sus.webp","kb":954},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Cotoca","f":"manzana/cotoca__pob_total.png","mi":"mini/manzana/cotoca__pob_total.webp","kb":940},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"El Torno","f":"manzana/el_torno__densidad.png","mi":"mini/manzana/el_torno__densidad.webp","kb":558},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"El Torno","f":"manzana/el_torno__pct_agua_caneria.png","mi":"mini/manzana/el_torno__pct_agua_caneria.webp","kb":565},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"El Torno","f":"manzana/el_torno__pct_alcantarillado.png","mi":"mini/manzana/el_torno__pct_alcantarillado.webp","kb":555},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"El Torno","f":"manzana/el_torno__pct_basura_carro.png","mi":"mini/manzana/el_torno__pct_basura_carro.webp","kb":553},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"El Torno","f":"manzana/el_torno__pct_basura_formal.png","mi":"mini/manzana/el_torno__pct_basura_formal.webp","kb":562},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"El Torno","f":"manzana/el_torno__pct_basura_quema.png","mi":"mini/manzana/el_torno__pct_basura_quema.webp","kb":546},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"El Torno","f":"manzana/el_torno__pct_camara_septica.png","mi":"mini/manzana/el_torno__pct_camara_septica.webp","kb":558},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"El Torno","f":"manzana/el_torno__pct_edu_primaria.png","mi":"mini/manzana/el_torno__pct_edu_primaria.webp","kb":570},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"El Torno","f":"manzana/el_torno__pct_edu_secundaria.png","mi":"mini/manzana/el_torno__pct_edu_secundaria.webp","kb":549},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"El Torno","f":"manzana/el_torno__pct_edu_superior.png","mi":"mini/manzana/el_torno__pct_edu_superior.webp","kb":566},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"El Torno","f":"manzana/el_torno__pct_gas_garrafa.png","mi":"mini/manzana/el_torno__pct_gas_garrafa.webp","kb":562},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"El Torno","f":"manzana/el_torno__pct_gas_red.png","mi":"mini/manzana/el_torno__pct_gas_red.webp","kb":559},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"El Torno","f":"manzana/el_torno__pct_menor20.png","mi":"mini/manzana/el_torno__pct_menor20.webp","kb":575},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"El Torno","f":"manzana/el_torno__pct_pozo_ciego.png","mi":"mini/manzana/el_torno__pct_pozo_ciego.webp","kb":555},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"El Torno","f":"manzana/el_torno__pct_sin_educacion.png","mi":"mini/manzana/el_torno__pct_sin_educacion.webp","kb":570},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"El Torno","f":"manzana/el_torno__pct_sin_seguro.png","mi":"mini/manzana/el_torno__pct_sin_seguro.webp","kb":552},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"El Torno","f":"manzana/el_torno__pct_sus.png","mi":"mini/manzana/el_torno__pct_sus.webp","kb":554},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"El Torno","f":"manzana/el_torno__pob_total.png","mi":"mini/manzana/el_torno__pob_total.webp","kb":543},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"La Guardia","f":"manzana/la_guardia__densidad.png","mi":"mini/manzana/la_guardia__densidad.webp","kb":694},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"La Guardia","f":"manzana/la_guardia__pct_agua_caneria.png","mi":"mini/manzana/la_guardia__pct_agua_caneria.webp","kb":720},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"La Guardia","f":"manzana/la_guardia__pct_alcantarillado.png","mi":"mini/manzana/la_guardia__pct_alcantarillado.webp","kb":712},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"La Guardia","f":"manzana/la_guardia__pct_basura_carro.png","mi":"mini/manzana/la_guardia__pct_basura_carro.webp","kb":702},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"La Guardia","f":"manzana/la_guardia__pct_basura_formal.png","mi":"mini/manzana/la_guardia__pct_basura_formal.webp","kb":713},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"La Guardia","f":"manzana/la_guardia__pct_basura_quema.png","mi":"mini/manzana/la_guardia__pct_basura_quema.webp","kb":698},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"La Guardia","f":"manzana/la_guardia__pct_camara_septica.png","mi":"mini/manzana/la_guardia__pct_camara_septica.webp","kb":698},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"La Guardia","f":"manzana/la_guardia__pct_edu_primaria.png","mi":"mini/manzana/la_guardia__pct_edu_primaria.webp","kb":710},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"La Guardia","f":"manzana/la_guardia__pct_edu_secundaria.png","mi":"mini/manzana/la_guardia__pct_edu_secundaria.webp","kb":693},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"La Guardia","f":"manzana/la_guardia__pct_edu_superior.png","mi":"mini/manzana/la_guardia__pct_edu_superior.webp","kb":705},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"La Guardia","f":"manzana/la_guardia__pct_gas_garrafa.png","mi":"mini/manzana/la_guardia__pct_gas_garrafa.webp","kb":705},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"La Guardia","f":"manzana/la_guardia__pct_gas_red.png","mi":"mini/manzana/la_guardia__pct_gas_red.webp","kb":707},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"La Guardia","f":"manzana/la_guardia__pct_menor20.png","mi":"mini/manzana/la_guardia__pct_menor20.webp","kb":705},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"La Guardia","f":"manzana/la_guardia__pct_pozo_ciego.png","mi":"mini/manzana/la_guardia__pct_pozo_ciego.webp","kb":703},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"La Guardia","f":"manzana/la_guardia__pct_sin_educacion.png","mi":"mini/manzana/la_guardia__pct_sin_educacion.webp","kb":724},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"La Guardia","f":"manzana/la_guardia__pct_sin_seguro.png","mi":"mini/manzana/la_guardia__pct_sin_seguro.webp","kb":713},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"La Guardia","f":"manzana/la_guardia__pct_sus.png","mi":"mini/manzana/la_guardia__pct_sus.webp","kb":699},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"La Guardia","f":"manzana/la_guardia__pob_total.png","mi":"mini/manzana/la_guardia__pob_total.webp","kb":680},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Montero","f":"manzana/montero__densidad.png","mi":"mini/manzana/montero__densidad.webp","kb":1332},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Montero","f":"manzana/montero__pct_agua_caneria.png","mi":"mini/manzana/montero__pct_agua_caneria.webp","kb":1414},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Montero","f":"manzana/montero__pct_alcantarillado.png","mi":"mini/manzana/montero__pct_alcantarillado.webp","kb":1407},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Montero","f":"manzana/montero__pct_basura_carro.png","mi":"mini/manzana/montero__pct_basura_carro.webp","kb":1397},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Montero","f":"manzana/montero__pct_basura_formal.png","mi":"mini/manzana/montero__pct_basura_formal.webp","kb":1431},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Montero","f":"manzana/montero__pct_basura_quema.png","mi":"mini/manzana/montero__pct_basura_quema.webp","kb":1417},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Montero","f":"manzana/montero__pct_camara_septica.png","mi":"mini/manzana/montero__pct_camara_septica.webp","kb":1345},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Montero","f":"manzana/montero__pct_edu_primaria.png","mi":"mini/manzana/montero__pct_edu_primaria.webp","kb":1386},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Montero","f":"manzana/montero__pct_edu_secundaria.png","mi":"mini/manzana/montero__pct_edu_secundaria.webp","kb":1355},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Montero","f":"manzana/montero__pct_edu_superior.png","mi":"mini/manzana/montero__pct_edu_superior.webp","kb":1386},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Montero","f":"manzana/montero__pct_gas_garrafa.png","mi":"mini/manzana/montero__pct_gas_garrafa.webp","kb":1387},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Montero","f":"manzana/montero__pct_gas_red.png","mi":"mini/manzana/montero__pct_gas_red.webp","kb":1394},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Montero","f":"manzana/montero__pct_menor20.png","mi":"mini/manzana/montero__pct_menor20.webp","kb":1382},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Montero","f":"manzana/montero__pct_pozo_ciego.png","mi":"mini/manzana/montero__pct_pozo_ciego.webp","kb":1409},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Montero","f":"manzana/montero__pct_sin_educacion.png","mi":"mini/manzana/montero__pct_sin_educacion.webp","kb":1429},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Montero","f":"manzana/montero__pct_sin_seguro.png","mi":"mini/manzana/montero__pct_sin_seguro.webp","kb":1412},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Montero","f":"manzana/montero__pct_sus.png","mi":"mini/manzana/montero__pct_sus.webp","kb":1378},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Montero","f":"manzana/montero__pob_total.png","mi":"mini/manzana/montero__pob_total.webp","kb":1340},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Pailón","f":"manzana/pailon__densidad.png","mi":"mini/manzana/pailon__densidad.webp","kb":397},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Pailón","f":"manzana/pailon__pct_agua_caneria.png","mi":"mini/manzana/pailon__pct_agua_caneria.webp","kb":384},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Pailón","f":"manzana/pailon__pct_alcantarillado.png","mi":"mini/manzana/pailon__pct_alcantarillado.webp","kb":380},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Pailón","f":"manzana/pailon__pct_basura_carro.png","mi":"mini/manzana/pailon__pct_basura_carro.webp","kb":371},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Pailón","f":"manzana/pailon__pct_basura_formal.png","mi":"mini/manzana/pailon__pct_basura_formal.webp","kb":383},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Pailón","f":"manzana/pailon__pct_basura_quema.png","mi":"mini/manzana/pailon__pct_basura_quema.webp","kb":370},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Pailón","f":"manzana/pailon__pct_camara_septica.png","mi":"mini/manzana/pailon__pct_camara_septica.webp","kb":379},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Pailón","f":"manzana/pailon__pct_edu_primaria.png","mi":"mini/manzana/pailon__pct_edu_primaria.webp","kb":385},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Pailón","f":"manzana/pailon__pct_edu_secundaria.png","mi":"mini/manzana/pailon__pct_edu_secundaria.webp","kb":376},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Pailón","f":"manzana/pailon__pct_edu_superior.png","mi":"mini/manzana/pailon__pct_edu_superior.webp","kb":381},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Pailón","f":"manzana/pailon__pct_gas_garrafa.png","mi":"mini/manzana/pailon__pct_gas_garrafa.webp","kb":390},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Pailón","f":"manzana/pailon__pct_gas_red.png","mi":"mini/manzana/pailon__pct_gas_red.webp","kb":386},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Pailón","f":"manzana/pailon__pct_menor20.png","mi":"mini/manzana/pailon__pct_menor20.webp","kb":384},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Pailón","f":"manzana/pailon__pct_pozo_ciego.png","mi":"mini/manzana/pailon__pct_pozo_ciego.webp","kb":377},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Pailón","f":"manzana/pailon__pct_sin_educacion.png","mi":"mini/manzana/pailon__pct_sin_educacion.webp","kb":390},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Pailón","f":"manzana/pailon__pct_sin_seguro.png","mi":"mini/manzana/pailon__pct_sin_seguro.webp","kb":386},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Pailón","f":"manzana/pailon__pct_sus.png","mi":"mini/manzana/pailon__pct_sus.webp","kb":377},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Pailón","f":"manzana/pailon__pob_total.png","mi":"mini/manzana/pailon__pob_total.webp","kb":363},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Porongo","f":"manzana/porongo__densidad.png","mi":"mini/manzana/porongo__densidad.webp","kb":522},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Porongo","f":"manzana/porongo__pct_agua_caneria.png","mi":"mini/manzana/porongo__pct_agua_caneria.webp","kb":515},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Porongo","f":"manzana/porongo__pct_alcantarillado.png","mi":"mini/manzana/porongo__pct_alcantarillado.webp","kb":503},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Porongo","f":"manzana/porongo__pct_basura_carro.png","mi":"mini/manzana/porongo__pct_basura_carro.webp","kb":500},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Porongo","f":"manzana/porongo__pct_basura_formal.png","mi":"mini/manzana/porongo__pct_basura_formal.webp","kb":512},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Porongo","f":"manzana/porongo__pct_basura_quema.png","mi":"mini/manzana/porongo__pct_basura_quema.webp","kb":500},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Porongo","f":"manzana/porongo__pct_camara_septica.png","mi":"mini/manzana/porongo__pct_camara_septica.webp","kb":506},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Porongo","f":"manzana/porongo__pct_edu_primaria.png","mi":"mini/manzana/porongo__pct_edu_primaria.webp","kb":510},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Porongo","f":"manzana/porongo__pct_edu_secundaria.png","mi":"mini/manzana/porongo__pct_edu_secundaria.webp","kb":505},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Porongo","f":"manzana/porongo__pct_edu_superior.png","mi":"mini/manzana/porongo__pct_edu_superior.webp","kb":508},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Porongo","f":"manzana/porongo__pct_gas_garrafa.png","mi":"mini/manzana/porongo__pct_gas_garrafa.webp","kb":511},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Porongo","f":"manzana/porongo__pct_gas_red.png","mi":"mini/manzana/porongo__pct_gas_red.webp","kb":511},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Porongo","f":"manzana/porongo__pct_menor20.png","mi":"mini/manzana/porongo__pct_menor20.webp","kb":519},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Porongo","f":"manzana/porongo__pct_pozo_ciego.png","mi":"mini/manzana/porongo__pct_pozo_ciego.webp","kb":505},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Porongo","f":"manzana/porongo__pct_sin_educacion.png","mi":"mini/manzana/porongo__pct_sin_educacion.webp","kb":523},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Porongo","f":"manzana/porongo__pct_sin_seguro.png","mi":"mini/manzana/porongo__pct_sin_seguro.webp","kb":507},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Porongo","f":"manzana/porongo__pct_sus.png","mi":"mini/manzana/porongo__pct_sus.webp","kb":502},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Porongo","f":"manzana/porongo__pob_total.png","mi":"mini/manzana/porongo__pob_total.webp","kb":493},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__densidad.png","mi":"mini/manzana/santa_cruz_de_la_sierra__densidad.webp","kb":1825},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_agua_caneria.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_agua_caneria.webp","kb":2026},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_alcantarillado.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_alcantarillado.webp","kb":2013},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_basura_carro.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_basura_carro.webp","kb":1980},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_basura_formal.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_basura_formal.webp","kb":2026},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_basura_quema.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_basura_quema.webp","kb":2003},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_camara_septica.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_camara_septica.webp","kb":1837},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_edu_primaria.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_edu_primaria.webp","kb":1900},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_edu_secundaria.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_edu_secundaria.webp","kb":1884},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_edu_superior.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_edu_superior.webp","kb":1967},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_gas_garrafa.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_gas_garrafa.webp","kb":1927},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_gas_red.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_gas_red.webp","kb":1964},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_menor20.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_menor20.webp","kb":1934},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_pozo_ciego.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_pozo_ciego.webp","kb":2004},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_sin_educacion.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_sin_educacion.webp","kb":2026},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_sin_seguro.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_sin_seguro.webp","kb":1972},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pct_sus.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pct_sus.webp","kb":1883},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Santa Cruz de la Sierra","f":"manzana/santa_cruz_de_la_sierra__pob_total.png","mi":"mini/manzana/santa_cruz_de_la_sierra__pob_total.webp","kb":1862},{"n":"manzana","t":"Densidad","g":"Demografía y estructura","m":"Warnes","f":"manzana/warnes__densidad.png","mi":"mini/manzana/warnes__densidad.webp","kb":700},{"n":"manzana","t":"Agua por cañería de red","g":"Agua","m":"Warnes","f":"manzana/warnes__pct_agua_caneria.png","mi":"mini/manzana/warnes__pct_agua_caneria.webp","kb":729},{"n":"manzana","t":"Desagüe a alcantarillado","g":"Saneamiento","m":"Warnes","f":"manzana/warnes__pct_alcantarillado.png","mi":"mini/manzana/warnes__pct_alcantarillado.webp","kb":714},{"n":"manzana","t":"Entrega al carro basurero","g":"Residuos","m":"Warnes","f":"manzana/warnes__pct_basura_carro.png","mi":"mini/manzana/warnes__pct_basura_carro.webp","kb":712},{"n":"manzana","t":"Recojo formal de basura","g":"Residuos","m":"Warnes","f":"manzana/warnes__pct_basura_formal.png","mi":"mini/manzana/warnes__pct_basura_formal.webp","kb":722},{"n":"manzana","t":"Quema la basura","g":"Residuos","m":"Warnes","f":"manzana/warnes__pct_basura_quema.png","mi":"mini/manzana/warnes__pct_basura_quema.webp","kb":717},{"n":"manzana","t":"Desagüe a cámara séptica","g":"Saneamiento","m":"Warnes","f":"manzana/warnes__pct_camara_septica.png","mi":"mini/manzana/warnes__pct_camara_septica.webp","kb":710},{"n":"manzana","t":"Sólo primaria (19+)","g":"Educación","m":"Warnes","f":"manzana/warnes__pct_edu_primaria.png","mi":"mini/manzana/warnes__pct_edu_primaria.webp","kb":725},{"n":"manzana","t":"Secundaria (19+)","g":"Educación","m":"Warnes","f":"manzana/warnes__pct_edu_secundaria.png","mi":"mini/manzana/warnes__pct_edu_secundaria.webp","kb":712},{"n":"manzana","t":"Educación superior (19+)","g":"Educación","m":"Warnes","f":"manzana/warnes__pct_edu_superior.png","mi":"mini/manzana/warnes__pct_edu_superior.webp","kb":731},{"n":"manzana","t":"Cocina con gas en garrafa","g":"Energía y cocina","m":"Warnes","f":"manzana/warnes__pct_gas_garrafa.png","mi":"mini/manzana/warnes__pct_gas_garrafa.webp","kb":718},{"n":"manzana","t":"Gas por cañería a domicilio","g":"Energía y cocina","m":"Warnes","f":"manzana/warnes__pct_gas_red.png","mi":"mini/manzana/warnes__pct_gas_red.webp","kb":720},{"n":"manzana","t":"Menores de 20 años","g":"Demografía y estructura","m":"Warnes","f":"manzana/warnes__pct_menor20.png","mi":"mini/manzana/warnes__pct_menor20.webp","kb":729},{"n":"manzana","t":"Desagüe a pozo ciego","g":"Saneamiento","m":"Warnes","f":"manzana/warnes__pct_pozo_ciego.png","mi":"mini/manzana/warnes__pct_pozo_ciego.webp","kb":713},{"n":"manzana","t":"Sin nivel educativo (19+)","g":"Educación","m":"Warnes","f":"manzana/warnes__pct_sin_educacion.png","mi":"mini/manzana/warnes__pct_sin_educacion.webp","kb":737},{"n":"manzana","t":"Sin afiliación a salud","g":"Salud","m":"Warnes","f":"manzana/warnes__pct_sin_seguro.png","mi":"mini/manzana/warnes__pct_sin_seguro.webp","kb":728},{"n":"manzana","t":"Afiliados al SUS","g":"Salud","m":"Warnes","f":"manzana/warnes__pct_sus.png","mi":"mini/manzana/warnes__pct_sus.webp","kb":711},{"n":"manzana","t":"Población total","g":"Demografía y estructura","m":"Warnes","f":"manzana/warnes__pob_total.png","mi":"mini/manzana/warnes__pob_total.webp","kb":691}],"hero":[{"label":"Educación superior (19+)","unit":"%","dir":1,"v":{"1701":40.636,"1702":21.592,"1703":46.999,"1704":28.834,"1705":22.783,"1706":22.601,"1734":30.908,"1714":12.228,"1756":14.698}},{"label":"Población total","unit":"hab","dir":0,"v":{"1701":1610982.0,"1702":106603.0,"1703":23126.0,"1704":147726.0,"1705":55697.0,"1706":151248.0,"1734":126886.0,"1714":54495.0,"1756":6007.0}},{"label":"Sin afiliación a salud","unit":"%","dir":-1,"v":{"1701":35.627,"1702":21.557,"1703":18.017,"1704":27.045,"1705":27.105,"1706":21.214,"1734":19.093,"1714":54.77,"1756":12.396}},{"label":"Agua por cañería de red","unit":"%","dir":1,"v":{"1701":95.118,"1702":83.555,"1703":78.937,"1704":90.297,"1705":86.347,"1706":87.519,"1734":85.924,"1714":47.594,"1756":77.691}},{"label":"Desagüe a alcantarillado","unit":"%","dir":1,"v":{"1701":70.381,"1702":15.981,"1703":33.092,"1704":13.003,"1705":23.935,"1706":22.778,"1734":41.801,"1714":7.764,"1756":13.894}},{"label":"Densidad","unit":"hab/ha","dir":0,"v":{"1701":12.901,"1702":1.625,"1703":0.246,"1704":1.546,"1705":0.575,"1706":1.127,"1734":5.146,"1714":0.04,"1756":0.206}},{"label":"Gas por cañería a domicilio","unit":"%","dir":1,"v":{"1701":34.051,"1702":9.701,"1703":18.278,"1704":25.629,"1705":15.615,"1706":15.878,"1734":20.824,"1714":2.452,"1756":0.196}},{"label":"Recojo formal de basura","unit":"%","dir":1,"v":{"1701":96.975,"1702":50.192,"1703":57.98,"1704":83.768,"1705":63.906,"1706":60.731,"1734":90.564,"1714":30.601,"1756":61.579}}],"siluetas":{"1734":"M20.4,35.0 20.5,35.1 19.7,35.7 19.6,36.1 20.0,36.2 19.9,36.6 20.1,37.0 19.9,37.2 19.7,37.2 19.4,37.9 18.3,37.9 18.1,38.2 18.0,38.9 18.1,39.0 18.0,39.1 17.0,38.7 16.3,38.8 16.1,39.2 15.8,39.1 16.5,40.1 15.4,40.8 14.9,40.3 14.0,40.3 13.1,39.2 12.5,39.0 12.4,38.7 12.3,37.6 12.6,36.9 12.6,35.9 13.0,35.4 13.1,34.3 12.9,34.0 15.8,34.0 16.2,35.3 16.8,35.1 17.1,35.4 18.5,35.3 20.4,35.0Z","1756":"M17.7,47.4 17.7,48.1 17.1,48.3 15.8,47.8 15.4,48.0 15.0,48.5 13.9,49.0 13.0,48.1 12.7,48.3 12.3,48.2 12.6,48.7 12.5,49.0 11.4,48.6 11.5,47.8 11.1,46.7 10.7,46.5 10.3,46.5 10.2,46.3 9.6,46.3 9.5,46.1 8.9,46.3 8.5,46.1 11.0,44.4 12.6,42.6 15.4,41.4 15.9,41.8 16.8,43.3 17.2,44.2 17.2,46.2 17.7,47.4Z","1706":"M26.2,25.9 24.1,28.0 24.9,29.1 26.6,29.9 26.5,31.2 27.2,32.3 26.5,33.4 26.9,34.3 27.6,34.1 28.2,34.4 28.7,36.6 28.7,37.5 28.2,37.8 28.1,38.3 27.3,39.1 27.3,39.4 27.4,40.1 27.6,40.4 27.5,40.8 27.7,41.1 28.1,41.1 28.0,41.8 27.6,42.4 27.6,46.9 27.3,47.6 26.8,47.6 25.5,48.6 23.6,48.9 23.5,49.4 23.0,49.7 22.2,49.8 21.9,50.5 19.9,50.5 19.4,50.7 19.4,49.5 19.2,49.5 18.9,49.0 18.2,48.7 18.1,48.1 17.5,46.9 17.1,45.5 17.2,44.2 16.8,43.3 15.9,41.8 15.4,41.4 15.4,40.8 16.5,40.1 15.8,39.1 16.1,39.2 16.3,38.8 17.0,38.7 18.0,39.1 18.1,39.0 18.0,38.9 18.1,38.2 18.3,37.9 19.4,37.9 19.7,37.2 19.9,37.2 20.1,37.0 19.9,36.6 20.0,36.2 19.6,36.1 19.7,35.7 20.5,35.1 20.4,35.0 20.8,34.3 22.2,32.7 22.1,32.0 22.6,31.3 22.8,29.6 23.2,28.3 22.5,26.9 24.3,25.2 24.5,25.6 24.9,25.4 24.9,25.7 25.3,26.0 26.2,25.9Z","1702":"M34.3,49.8 34.5,51.3 35.2,52.6 35.4,54.1 35.2,55.6 34.5,56.9 33.4,57.1 33.2,57.0 32.7,57.4 32.4,57.2 31.2,57.7 30.3,57.6 29.9,57.8 28.9,57.6 28.6,57.8 27.8,57.4 28.0,57.9 27.4,58.0 27.2,57.2 26.9,57.1 26.9,57.3 26.5,57.5 26.7,58.5 26.1,58.3 25.7,58.4 25.7,57.9 25.1,57.9 25.0,57.5 23.7,57.3 23.5,56.6 23.2,56.6 23.4,56.1 23.7,56.2 23.7,55.9 23.5,55.9 23.5,55.2 23.2,55.2 23.7,54.9 23.7,54.6 23.2,54.7 23.3,54.5 22.9,54.4 23.0,53.7 22.7,53.0 23.0,52.5 22.8,52.3 22.6,52.5 22.2,52.0 23.0,51.7 22.9,51.4 23.2,51.0 22.8,50.6 23.1,50.1 23.4,50.5 24.6,49.7 24.9,50.2 25.5,49.7 25.6,49.8 26.1,49.6 27.2,49.8 27.8,50.2 28.3,50.0 28.7,50.4 29.0,50.2 29.6,50.1 31.1,50.1 31.3,50.4 32.4,50.2 32.6,50.3 32.8,50.0 33.3,50.0 33.3,50.2 33.8,50.2 34.3,49.8Z","1714":"M95.0,39.8 94.7,40.0 95.0,40.3 94.9,40.6 95.3,41.0 95.6,40.7 95.9,40.9 96.4,40.7 96.6,40.9 96.1,41.3 96.1,41.7 96.9,42.1 96.9,42.4 97.4,43.0 97.4,43.3 97.2,43.4 97.9,43.7 98.2,44.2 98.1,44.3 98.8,44.4 98.8,44.9 99.3,45.0 99.4,45.9 99.1,45.9 99.0,46.2 98.4,46.5 98.3,46.9 98.4,47.1 99.3,47.4 99.5,47.9 100.0,48.3 99.6,49.1 99.8,49.1 99.6,49.4 99.8,49.4 99.9,50.1 99.5,50.2 99.3,50.4 99.0,51.3 97.8,51.6 97.4,52.2 96.7,52.5 96.5,52.4 96.2,52.7 96.3,53.5 96.6,53.8 97.5,54.2 97.7,54.1 97.7,54.3 98.1,54.9 97.8,55.3 97.5,55.0 97.0,55.2 96.8,55.8 96.8,56.4 97.0,57.0 97.0,57.3 96.7,57.4 95.6,67.7 94.7,73.4 49.6,66.3 33.2,64.3 33.1,63.0 34.4,62.3 33.8,60.9 33.1,60.1 33.6,58.9 34.3,58.6 34.5,56.9 35.2,55.6 35.4,54.1 35.2,52.6 34.5,51.3 34.1,49.0 35.0,46.6 34.9,45.9 33.9,45.3 33.9,45.2 34.0,44.2 34.6,43.7 36.9,43.3 38.0,43.4 39.5,44.7 40.3,44.5 40.7,42.4 43.9,42.2 63.5,39.0 74.2,37.4 82.5,34.1 83.4,34.5 83.8,35.1 85.2,35.3 85.4,35.8 85.0,35.9 84.9,36.8 85.6,36.6 85.7,37.6 86.0,37.6 86.1,37.4 86.5,37.4 86.5,36.9 87.1,37.0 87.5,36.8 87.8,37.2 87.4,37.9 87.7,38.1 88.3,37.9 88.3,37.5 88.9,37.3 89.3,37.4 89.4,37.7 89.5,37.5 89.9,37.4 91.1,37.9 91.3,38.6 91.6,38.5 91.9,38.7 92.2,38.5 92.8,38.6 93.0,38.9 94.0,39.6 94.5,39.5 94.7,39.8 95.0,39.6 95.0,39.8Z","1705":"M10.9,60.9 11.6,61.5 11.3,61.9 11.6,62.3 11.7,63.2 11.9,63.5 12.0,64.3 12.1,64.4 12.7,64.1 13.0,64.4 13.5,64.6 13.7,64.2 14.3,64.3 14.5,64.4 14.4,64.7 14.9,64.9 14.6,65.3 14.1,65.5 13.7,66.6 13.9,67.7 12.3,67.9 11.4,68.6 11.8,69.4 12.3,69.9 12.3,70.1 12.0,70.4 11.5,70.6 11.4,70.9 10.4,71.2 10.3,71.6 9.8,72.0 9.8,72.3 9.3,72.4 8.8,72.2 8.5,72.2 5.2,74.7 4.5,73.5 4.3,72.1 4.3,71.6 4.9,70.8 3.8,69.9 3.5,69.1 3.3,69.1 3.0,68.5 2.8,66.7 2.4,65.1 1.1,64.3 0.9,62.0 0.4,61.5 0.2,61.6 -0.0,61.2 0.3,61.1 1.0,60.5 1.7,60.2 1.7,59.9 1.8,59.6 2.5,59.4 3.1,58.8 3.6,58.8 3.7,58.5 4.0,58.4 3.8,58.1 4.4,57.0 4.3,56.6 5.1,55.9 5.8,56.8 6.3,57.0 6.5,58.6 7.0,60.1 7.0,60.9 7.5,61.2 8.7,61.2 9.0,61.5 9.9,61.3 10.1,61.1 10.7,61.1 10.9,60.9Z","1703":"M8.3,46.2 8.9,46.3 9.5,46.1 9.6,46.3 10.2,46.3 10.3,46.5 10.7,46.5 11.1,46.7 11.5,47.8 11.4,48.6 12.5,49.0 12.6,48.7 12.3,48.2 12.7,48.3 13.0,48.1 13.9,49.0 15.0,48.5 15.4,48.0 15.8,47.8 17.1,48.3 17.7,48.1 17.8,49.7 17.8,50.1 17.4,50.5 17.8,51.9 17.2,53.3 17.2,54.1 16.7,54.7 16.3,55.6 14.9,56.4 14.5,56.9 14.1,58.6 13.7,58.7 13.0,58.6 12.4,58.8 11.8,59.5 11.7,60.4 11.2,61.1 10.9,60.9 10.7,61.1 10.1,61.1 9.9,61.3 9.0,61.5 8.8,61.2 7.5,61.2 7.0,60.8 7.0,60.1 6.5,58.6 6.3,57.0 5.8,56.8 4.8,55.7 4.7,55.4 5.4,53.5 6.1,52.4 6.3,51.4 7.2,50.4 7.1,49.1 7.4,48.9 7.2,48.6 8.0,48.3 7.8,47.8 8.3,47.6 8.4,47.1 8.3,46.2Z","1701":"M34.3,49.8 33.8,50.2 33.3,50.2 33.3,50.0 32.8,50.0 32.6,50.3 32.4,50.2 31.3,50.4 31.1,50.1 29.6,50.1 29.0,50.2 28.7,50.4 28.3,50.0 27.8,50.2 27.2,49.8 26.1,49.6 25.6,49.8 25.5,49.7 24.9,50.2 24.6,49.7 23.4,50.5 23.1,50.1 22.8,50.4 23.2,51.0 22.9,51.4 23.0,51.7 22.2,52.0 22.6,52.5 22.8,52.3 23.0,52.5 22.7,53.0 23.0,53.7 22.9,54.4 23.3,54.5 23.2,54.7 23.7,54.6 23.7,54.9 23.2,55.2 23.5,55.2 23.5,55.9 23.7,55.9 23.7,56.2 23.4,56.1 23.2,56.6 23.5,56.6 23.7,57.3 25.0,57.5 25.1,57.9 25.7,57.9 25.7,58.4 26.1,58.3 26.7,58.5 26.5,57.5 26.9,57.3 26.9,57.1 27.2,57.2 27.4,58.0 28.0,57.9 27.8,57.4 28.6,57.8 28.9,57.6 29.9,57.8 30.3,57.6 31.2,57.7 32.4,57.2 32.7,57.4 33.2,57.0 33.4,57.1 34.5,56.9 34.3,58.6 33.6,58.9 33.1,60.1 33.8,60.9 34.4,62.3 33.1,63.0 33.2,64.3 32.6,64.6 26.7,64.6 25.9,62.8 25.4,62.7 25.2,62.8 24.9,62.7 24.9,62.6 24.3,62.5 23.0,61.5 22.4,61.6 19.8,60.3 19.3,60.3 17.6,58.9 16.7,58.5 16.6,57.5 15.7,56.9 15.3,56.2 16.3,55.6 16.7,54.7 17.2,54.1 17.2,53.3 17.8,51.9 17.4,50.8 17.8,50.0 17.6,48.3 17.7,47.4 18.2,48.7 18.9,49.0 19.2,49.5 19.4,49.5 19.4,50.7 19.9,50.5 21.9,50.5 22.2,49.8 23.0,49.7 23.5,49.4 23.6,48.9 25.5,48.6 26.8,47.6 29.0,47.0 29.5,47.0 31.6,45.3 34.0,45.0 33.9,45.3 34.9,45.9 35.0,46.6 34.1,49.0 34.3,49.8Z","1704":"M15.3,56.2 15.7,56.9 16.6,57.5 16.7,58.5 17.6,58.9 19.3,60.3 19.8,60.3 22.4,61.6 23.0,61.5 24.3,62.5 24.9,62.6 24.9,62.7 25.2,62.8 25.4,62.7 25.9,62.8 26.7,64.6 22.2,64.7 22.1,64.2 21.8,64.7 18.4,64.9 18.4,65.4 18.7,65.4 18.7,66.5 19.7,66.5 19.7,68.0 20.3,67.9 20.4,70.4 18.9,70.5 19.0,71.2 18.0,71.2 18.0,70.5 17.1,70.5 17.0,71.6 15.2,71.9 15.2,72.1 14.6,72.2 14.7,72.7 13.6,72.8 13.7,73.5 12.8,73.7 12.5,73.1 11.4,73.8 11.0,73.5 9.8,74.0 7.4,74.8 7.4,74.3 6.1,74.1 6.9,73.4 7.5,73.1 8.5,72.2 8.8,72.2 9.3,72.4 9.8,72.3 9.8,72.0 10.3,71.6 10.4,71.2 10.8,71.2 11.0,70.9 11.4,70.9 11.5,70.6 12.0,70.4 12.3,69.9 11.8,69.4 11.4,68.6 12.3,67.9 13.9,67.7 13.7,66.6 14.1,65.5 14.6,65.3 14.9,64.9 14.4,64.7 14.5,64.4 14.3,64.3 13.7,64.2 13.5,64.6 13.0,64.4 12.7,64.1 12.1,64.4 12.0,64.3 11.9,63.5 11.7,63.2 11.6,62.3 11.3,61.9 11.6,61.5 11.2,61.1 11.7,60.4 11.8,59.5 12.4,58.8 13.0,58.6 13.7,58.7 14.1,58.6 14.5,56.9 14.9,56.4 15.3,56.2Z"},"caja":"-2.00 23.20 104.00 53.60"};
+
+/* ── la rampa, igual que en las láminas ─────────────────────────────────
+   ⚠️ Está duplicada a propósito: la lámina la pinta en Python y esto en el
+   navegador. Si cambia una, hay que cambiar la otra — no hay forma de que
+   una se entere sola de la otra. */
+const DIV = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
+const SEC = ["#dce6d8","#bed4bc","#99bc9d","#6da280","#3d865d","#0c683b"];
+const mezcla = (a, b, t) => {
+  const h = c => [1,3,5].map(i => parseInt(c.substr(i,2),16));
+  const [r1,g1,b1] = h(a), [r2,g2,b2] = h(b);
+  const v = n => Math.round(n).toString(16).padStart(2,"0");
+  return "#" + v(r1+(r2-r1)*t) + v(g1+(g2-g1)*t) + v(b1+(b2-b1)*t);
+};
+function tono(v, lo, piv, hi, dir){
+  if (v === null || v === undefined) return "#8b8f95";
+  let p;                                     /* pivote clavado en la mitad */
+  if (v <= piv) p = piv > lo ? .5*(v-lo)/(piv-lo) : 0;
+  else          p = hi > piv ? .5+.5*(v-piv)/(hi-piv) : 1;
+  p = Math.max(0, Math.min(1, p));
+  const r = dir === 0 ? SEC : (dir === 1 ? [...DIV].reverse() : DIV);
+  const x = p*(r.length-1), i = Math.min(Math.floor(x), r.length-2);
+  return mezcla(r[i], r[i+1], x-i);
+}
+const fmt = (v,u) => v===null||v===undefined ? "s/d"
+  : u==="%" ? v.toFixed(1).replace(".",",")+"%"
+  : (u==="hab"||u==="viv") ? Math.round(v).toLocaleString("es-BO")
+  : v.toFixed(1).replace(".",",")+(u?" "+u:"");
+
+/* ── hero ────────────────────────────────────────────────────────────── */
+const svg = document.getElementById("mapa");
+const formas = {};
+svg.setAttribute("viewBox", DATOS.caja);
+for (const [sigep, d] of Object.entries(DATOS.siluetas)){
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  p.setAttribute("d", d);
+  p.setAttribute("fill", "#e6e2d5");
+  svg.appendChild(p);
+  formas[sigep] = p;
+}
+const puntos = document.getElementById("h-puntos");
+DATOS.hero.forEach((_, k) => {
+  const i = document.createElement("i");
+  if (!k) i.className = "on";
+  puntos.appendChild(i);
+});
+let paso = -1, temporizador = null;
+function pintar(k){
+  const h = DATOS.hero[k];
+  const vs = Object.values(h.v).filter(x => x !== null).sort((a,b) => a-b);
+  const lo = vs[0], hi = vs[vs.length-1], piv = vs[(vs.length/2)|0];
+  for (const [sigep, p] of Object.entries(formas))
+    p.setAttribute("fill", tono(h.v[sigep], lo, piv, hi, h.dir));
+  document.getElementById("h-nombre").textContent = h.label;
+  document.getElementById("h-detalle").textContent =
+    "Región Metropolitana y área de influencia";
+  document.getElementById("h-lo").textContent = fmt(lo, h.unit);
+  document.getElementById("h-hi").textContent = fmt(hi, h.unit);
+  const pasos = [];
+  for (let n = 0; n <= 24; n++)
+    pasos.push(tono(lo + (hi-lo)*n/24, lo, piv, hi, h.dir));
+  document.getElementById("h-rampa").style.background =
+    "linear-gradient(90deg," + pasos.join(",") + ")";
+  [...puntos.children].forEach((i, n) => i.className = n === k ? "on" : "");
+}
+function avanzar(){ paso = (paso+1) % DATOS.hero.length; pintar(paso); }
+avanzar();
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+  temporizador = setInterval(avanzar, 3200);
+
+/* ── catálogo ────────────────────────────────────────────────────────── */
+const sinTilde = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+DATOS.laminas.forEach(l => l._b = sinTilde(l.t + " " + (l.m||"") + " " + l.g));
+document.getElementById("c-total").textContent =
+  DATOS.laminas.length.toLocaleString("es-BO");
+
+let nivel = "municipal", texto = "", tope = 24;
+const grilla = document.getElementById("grilla");
+
+/* ★ UN SOLO MOTOR PARA LOS DOS MENÚS. Tema y municipio filtran igual y se ven
+   igual; escribirlos dos veces era garantizar que en algún momento se separen.
+   `solo` dice en qué pestaña existe cada uno: el de municipio no tiene sentido
+   en el nivel municipal, donde cada lámina ES los nueve juntos. */
+const MENUS = [
+  {id:"tema", campo:"g", todos:"Todos los temas",      solo:null,       sel:null},
+  {id:"muni", campo:"m", todos:"Todos los municipios", solo:"manzana",  sel:null}
+];
+const el = i => document.getElementById(i);
+const cerrarMenus = () => MENUS.forEach(m => {
+  el("panel-" + m.id).hidden = true;
+  el("disp-" + m.id).setAttribute("aria-expanded", "false");
+});
+document.addEventListener("click", cerrarMenus);
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarMenus(); });
+
+MENUS.forEach(m => {
+  const disp = el("disp-" + m.id), panel = el("panel-" + m.id);
+  disp.onclick = e => {
+    e.stopPropagation();
+    const abierto = !panel.hidden;
+    cerrarMenus();
+    if (!abierto){ panel.hidden = false; disp.setAttribute("aria-expanded","true"); }
+  };
+  panel.onclick = e => e.stopPropagation();
+});
+
+function filtrar(){
+  const q = sinTilde(texto.trim());
+  return DATOS.laminas.filter(l =>
+    l.n === nivel
+    && MENUS.every(m => !m.sel || l[m.campo] === m.sel)
+    && (!q || l._b.includes(q)));
+}
+
+function pintarMenus(){
+  MENUS.forEach(m => {
+    const caja = el("menu-" + m.id);
+    caja.hidden = !!m.solo && m.solo !== nivel;
+    if (caja.hidden){ m.sel = null; return; }
+    /* las opciones se cuentan sobre lo que YA filtraron los otros menús, así
+       el número que muestra cada opción es el que se va a ver al elegirla */
+    const base = DATOS.laminas.filter(l =>
+      l.n === nivel && MENUS.every(o => o === m || !o.sel || l[o.campo] === o.sel));
+    const hay = new Map();
+    base.forEach(l => { if (l[m.campo]) hay.set(l[m.campo], (hay.get(l[m.campo])||0)+1); });
+    const panel = el("panel-" + m.id);
+    panel.innerHTML = "";
+    const fila = (valor, texto2, n) => {
+      const b = document.createElement("button");
+      b.setAttribute("role", "option");
+      b.setAttribute("aria-current", (m.sel || "") === valor);
+      b.innerHTML = "<span></span><b></b>";
+      b.firstChild.textContent = texto2;
+      b.lastChild.textContent = n;
+      b.onclick = () => {
+        m.sel = valor || null; tope = 24;
+        cerrarMenus(); pintarMenus(); render();
+      };
+      return b;
+    };
+    panel.appendChild(fila("", m.todos, base.length));
+    panel.appendChild(document.createElement("hr"));
+    [...hay.entries()].sort((a,b) => a[0].localeCompare(b[0],"es"))
+      .forEach(([g,n]) => panel.appendChild(fila(g, g, n)));
+    el("val-" + m.id).textContent = m.sel || "Todos";
+  });
+}
+
+function render(){
+  const r = filtrar();
+  el("conteo").textContent = r.length + (r.length === 1 ? " lámina" : " láminas");
+  el("vacio").hidden = r.length > 0;
+  grilla.innerHTML = "";
+  r.slice(0, tope).forEach(l => {
+    const a = document.createElement("article");
+    a.className = "tarjeta";
+    a.innerHTML =
+      '<a class="lienzo" href="' + l.f + '" target="_blank" rel="noopener" ' +
+         'aria-label="Ver ' + l.t + ' en tamaño completo">' +
+        '<img loading="lazy" width="400" height="225" src="' + l.mi + '" alt="' + l.t + '">' +
+      '</a>' +
+      '<div class="cuerpo">' +
+        '<span class="tema">' + l.g + '</span>' +
+        '<h3>' + l.t + '</h3>' +
+        '<p class="donde">' + (l.m || "Región Metropolitana y área de influencia") + '</p>' +
+      '</div>' +
+      '<div class="pie-t">' +
+        '<span class="ficha">3200 &times; 1800 &middot; ' + l.kb + ' KB</span>' +
+        '<a class="baja" href="' + l.f + '" download>' +
+          '<svg viewBox="0 0 24 24"><path d="M12 4v12"/>' +
+          '<path d="M6.5 11.5 12 17l5.5-5.5"/><path d="M5 20h14"/></svg>Descargar</a>' +
+      '</div>';
+    grilla.appendChild(a);
+  });
+  const mas = el("mas");
+  mas.hidden = r.length <= tope;
+  mas.textContent = "Ver más — quedan " + (r.length - tope);
+}
+
+el("mas").onclick = () => { tope += 36; render(); };
+el("q").oninput = e => { texto = e.target.value; tope = 24; render(); };
+document.querySelectorAll(".pestanas button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".pestanas button").forEach(x =>
+      x.setAttribute("aria-selected", x === b));
+    nivel = b.dataset.nivel; tope = 24;
+    MENUS.forEach(m => m.sel = null);
+    cerrarMenus(); pintarMenus(); render();
+  };
+});
+pintarMenus(); render();
+</script>
+</body>
+</html>
