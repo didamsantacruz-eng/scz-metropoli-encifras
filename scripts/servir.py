@@ -17,7 +17,7 @@ archivo de teselas desde ahí.
 """
 import functools, http.server, os, pathlib, re, socketserver, sys
 
-RAIZ = pathlib.Path(__file__).resolve().parent.parent / "web"
+RAIZ = pathlib.Path(__file__).resolve().parent.parent / "docs"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

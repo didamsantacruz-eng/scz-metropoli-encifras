@@ -11,7 +11,7 @@ el mapa pide sólo el pedazo que está mirando.
   tesela como atributos, cambiar de indicador es cambiar la expresión de color
   —`["get", clave]`— y nada más. Hoy `pintar()` reescribe `properties.v` en los
   38.892 polígonos y llama `setData()`: 12,1 MB reserializados y todo el nivel
-  reteselado por cambiar un color. Medido en `web/_prueba_peso.html`.
+  reteselado por cambiar un color. Medido en `docs/_prueba_peso.html`.
   Por eso PMTiles vuelve a la mesa después de haberse descartado: la medición
   que lo descartó comparaba peso de red, que era la pregunta equivocada.
 
@@ -38,11 +38,11 @@ from pmtiles.writer import Writer
 from pmtiles.tile import Compression, TileType, zxy_to_tileid
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-DATOS = RAIZ / "web" / "datos"
+DATOS = RAIZ / "docs" / "datos"
 SALIDA = DATOS / "manzanas.pmtiles"
 
 # ── Banda de zoom ────────────────────────────────────────────────────────────
-# El cruce municipio→manzana ocurre entre Z_A y Z_B (ver `web/index.html`).
+# El cruce municipio→manzana ocurre entre Z_A y Z_B (ver `docs/index.html`).
 # Las teselas arrancan en ZMIN, un poco antes del cruce, para que las manzanas
 # ya estén disponibles cuando el fundido empieza a mostrarlas. Por encima de
 # ZMAX, MapLibre sobre-escala la última tesela: no hace falta teselar más.

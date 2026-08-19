@@ -30,7 +30,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 # Columnas que NO salen de la ficha del geoportal sino de `poblacion.parquet` y
 # de la geometría: existen para todos los manzanos, tengan ficha o no.
 SIN_FICHA = {"pob_total", "viviendas", "tam_hogar", "densidad"}
-SALIDA = RAIZ / "web" / "datos"
+SALIDA = RAIZ / "docs" / "datos"
 MOTOR = RAIZ / "catalogo" / "manzana_2024.csv"
 sys.path.insert(0, str(RAIZ / "catalogo"))
 

@@ -23,7 +23,7 @@ import geopandas as gpd
 
 RAIZ = Path(__file__).resolve().parent.parent
 ENTRADA = RAIZ / "datos"
-SALIDA = RAIZ / "web" / "datos"
+SALIDA = RAIZ / "docs" / "datos"
 DECIMALES = 5          # ~1,1 m
 TOLERANCIA_M = 1.5     # simplificación en metros (UTM 20S)
 

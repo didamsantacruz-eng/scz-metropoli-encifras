@@ -39,7 +39,7 @@ from generar_atlas import SIN_2012
 
 AQUI = pathlib.Path(__file__).parent
 RAIZ = AQUI.parent
-SALIDA = RAIZ / "web" / "datos"
+SALIDA = RAIZ / "docs" / "datos"
 SPINE = pathlib.Path(r"C:\Users\HP\OneDrive\Desktop\Proyectos\bo-geo-maestro\spine\municipios.csv")
 
 POR_BLOQUE = {"municipal": "n_viviendas", "municipal_urbano": "n_viviendas",

@@ -40,7 +40,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 ATLAS = (RAIZ.parent / "Observatorio de Presupuesto Fiscal Departamental"
          / "_github_atlas_fiscal" / "Mapa_Censo_2024_Bolivia.html")
-SALIDA = RAIZ / "web" / "estilo-atlas.css"
+SALIDA = RAIZ / "docs" / "estilo-atlas.css"
 
 # Selectores del motor viejo: se retiran y se deja constancia.
 CANVAS = ["#map-wrap canvas", "#pick", "#fade", "#map-wrap"]

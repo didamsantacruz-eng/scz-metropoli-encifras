@@ -42,7 +42,7 @@ AQUI = pathlib.Path(__file__).parent
 RAIZ = AQUI.parent
 PARQ = pathlib.Path(r"C:\Users\HP\cpv2024\persona_full.parquet")
 DICC = pathlib.Path(r"C:\Users\HP\cpv2024\diccionario.json")
-SALIDA = RAIZ / "web" / "datos" / "flujos_perfil.json"
+SALIDA = RAIZ / "docs" / "datos" / "flujos_perfil.json"
 
 COLS = ["cod_ine", "mun_nac", "mun_res5", "mun_trabaja", "residente", "edad",
         "mujer", "anios_estudio", "nivel", "ocupado", "ocu1d", "rama", "catocu",

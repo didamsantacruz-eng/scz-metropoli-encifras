@@ -1,5 +1,5 @@
 """
-Prepara los insumos del nivel MUNICIPIO y copia los catálogos a web/datos.
+Prepara los insumos del nivel MUNICIPIO y copia los catálogos a docs/datos.
 
   · municipios.geojson  los 9 polígonos, desde el mapa MAESTRO de bo-geo-maestro
     (343 municipios, clave `sigep`). No se recorta de ninguna otra fuente: la
@@ -16,7 +16,7 @@ import geopandas as gpd
 
 RAIZ = Path(__file__).resolve().parent.parent
 GEO = RAIZ.parent / "bo-geo-maestro" / "geo" / "atlas_muni_343.topojson"
-SALIDA = RAIZ / "web" / "datos"
+SALIDA = RAIZ / "docs" / "datos"
 
 
 def main():

@@ -11,18 +11,18 @@ dos veces sería tirar trabajo y duplicar los bugs.
 ⇒ Este script deriva los dos `index.html` del original, cambiando sólo:
 
   · qué par de archivos carga (cada tablero tiene su catálogo y sus municipios),
-  · el título y las rutas relativas (los datos quedan COMPARTIDOS en `web/datos/`,
+  · el título y las rutas relativas (los datos quedan COMPARTIDOS en `docs/datos/`,
     así la geometría de las manzanas —12,4 MB— no se duplica).
 
-⚠️ Es un DERIVADO: no editar `web/municipal/index.html` ni `web/manzana/index.html`
-   a mano. Se toca `web/index.html` y se vuelve a correr esto.
+⚠️ Es un DERIVADO: no editar `docs/municipal/index.html` ni `docs/manzana/index.html`
+   a mano. Se toca `docs/index.html` y se vuelve a correr esto.
 
     python scripts/generar_sitios.py
 """
 import pathlib, re, sys
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-FUENTE = RAIZ / "web" / "index.html"
+FUENTE = RAIZ / "docs" / "index.html"
 
 SITIOS = {
  "municipal": {
@@ -60,8 +60,8 @@ def derivar(html, cfg):
     html = html.replace('new URL("datos/', 'new URL("../datos/')
     # ── cada tablero, su par de archivos ──
     # ⚠️ La plantilla apunta al par del tablero MUNICIPAL, no al pipeline viejo.
-    #    `web/index.html` no es sólo una plantilla: es la página que responde en
-    #    `/web/`, y apuntando a `catalogo_tablero.json` servía 193 indicadores sin
+    #    `docs/index.html` no es sólo una plantilla: es la página que responde en
+    #    la raíz del sitio, y apuntando a `catalogo_tablero.json` servía 193 indicadores sin
     #    validar y con el denominador equivocado. Para el sitio municipal estos dos
     #    reemplazos quedan en no-op, que es justo lo que se quiere.
     html = html.replace('"../datos/catalogo_municipal.json"', f'"../datos/{cfg["catalogo"]}"')
@@ -84,11 +84,11 @@ def main():
         sys.exit(f"no encuentro {FUENTE}")
     base = FUENTE.read_text(encoding="utf-8")
     for slug, cfg in SITIOS.items():
-        d = RAIZ / "web" / slug
+        d = RAIZ / "docs" / slug
         d.mkdir(exist_ok=True)
         out = d / "index.html"
         out.write_text(derivar(base, cfg), encoding="utf-8")
-        print(f"  -> web/{slug}/index.html   {out.stat().st_size/1024:.0f} KB "
+        print(f"  -> docs/{slug}/index.html   {out.stat().st_size/1024:.0f} KB "
               f"· {cfg['catalogo']}")
 
 

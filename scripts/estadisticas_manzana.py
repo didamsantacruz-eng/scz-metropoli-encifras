@@ -9,7 +9,7 @@ PMTiles sólo ve las teselas del viewport, así que lo que antes se computaba ha
 que **precalcularlo**: es exactamente lo mismo que hacía `escala()`, movido de
 tiempo de ejecución a tiempo de armado.
 
-Produce `web/datos/mz_stats.json` con dos bloques por indicador:
+Produce `docs/datos/mz_stats.json` con dos bloques por indicador:
 
   `esc`  — lo que necesitaba `escala()` en el ámbito "manzana":
            q02/q98 (el dominio dibujado), pivote ponderado por personas,
@@ -36,7 +36,7 @@ Produce `web/datos/mz_stats.json` con dos bloques por indicador:
 import json, pathlib
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-DATOS = RAIZ / "web" / "datos"
+DATOS = RAIZ / "docs" / "datos"
 SALIDA = DATOS / "mz_stats.json"
 
 # Rejilla de cuantiles para el percentil del tooltip: 51 cortes (cada 2%).

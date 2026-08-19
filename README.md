@@ -7,9 +7,9 @@ Tablero territorial de la **Región Metropolitana de Santa Cruz** — 9 municipi
 
 | | |
 |---|---|
-| **Municipal** | `web/municipal/` — 243 indicadores en 25 categorías, con serie intercensal 2012 ↔ 2024 |
-| **Municipio ↔ manzana** | `web/manzana/` — 91 indicadores, **38.892 manzanas**; el nivel cambia con el zoom |
-| **Flujos** | `web/flujos/` — quién llega y quién se mueve: nacimiento, residencia 5 años y conmutación laboral |
+| **Municipal** | `docs/municipal/` — 243 indicadores en 25 categorías, con serie intercensal 2012 ↔ 2024 |
+| **Municipio ↔ manzana** | `docs/manzana/` — 91 indicadores, **38.892 manzanas**; el nivel cambia con el zoom |
+| **Flujos** | `docs/flujos/` — quién llega y quién se mueve: nacimiento, residencia 5 años y conmutación laboral |
 
 ---
 
@@ -22,7 +22,7 @@ python scripts/servir.py 8099     # http://127.0.0.1:8099/manzana/
 ```
 
 > ⚠️ Usar **este** servidor y no `python -m http.server`. El nivel manzana se
-> sirve como teselas vectoriales (`web/datos/manzanas.pmtiles`) y el navegador
+> sirve como teselas vectoriales (`docs/datos/manzanas.pmtiles`) y el navegador
 > las pide por **rango de bytes**; `http.server` no implementa `Range` y responde
 > con el archivo entero, así que la prueba local no se parece a producción.
 > GitHub Pages sí lo implementa.
@@ -41,8 +41,8 @@ python scripts/generar_pmtiles.py        # teselas vectoriales (~70 s)
 python scripts/generar_sitios.py         # deriva los dos index.html de la plantilla
 ```
 
-⚠️ **`web/index.html` es la plantilla.** No editar `web/municipal/index.html` ni
-`web/manzana/index.html` a mano: son derivados y se pisan al regenerar.
+⚠️ **`docs/index.html` es la plantilla.** No editar `docs/municipal/index.html` ni
+`docs/manzana/index.html` a mano: son derivados y se pisan al regenerar.
 
 ### Antes de publicar
 

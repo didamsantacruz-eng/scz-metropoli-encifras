@@ -46,7 +46,7 @@ import pandas as pd
 
 AQUI = pathlib.Path(__file__).parent
 RAIZ = AQUI.parent
-SALIDA = RAIZ / "web" / "datos"
+SALIDA = RAIZ / "docs" / "datos"
 
 TIPOS = {
     "trabajo":     ("Dónde trabaja", "municipio de residencia → municipio donde trabaja",
