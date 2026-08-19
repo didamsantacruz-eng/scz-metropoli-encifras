@@ -26,14 +26,14 @@ FUENTE = RAIZ / "docs" / "index.html"
 
 SITIOS = {
  "municipal": {
-   "titulo": "Santa Cruz · Atlas Metropolitano — Municipal",
-   "cabecera": "<b>Santa Cruz:</b> Atlas Metropolitano",
+   "titulo": "Santa Cruz Metrópoli en Datos — Municipal",
+   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos",
    "catalogo": "catalogo_municipal.json",
    "municipios": "municipios_municipal.json",
  },
  "manzana": {
-   "titulo": "Santa Cruz · Atlas Metropolitano — Municipio y manzana",
-   "cabecera": "<b>Santa Cruz:</b> Atlas Metropolitano <span class=\"t-sub\">· manzana</span>",
+   "titulo": "Santa Cruz Metrópoli en Datos — Municipio y manzana",
+   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos <span class=\"t-sub\">· manzana</span>",
    "catalogo": "catalogo_manzana.json",
    "municipios": "municipios_manzana.json",
  },

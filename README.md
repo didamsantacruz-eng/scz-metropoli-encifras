@@ -1,4 +1,4 @@
-# Atlas Metropolitano de Santa Cruz
+# Santa Cruz Metrópoli en Datos
 
 Tablero territorial de la **Región Metropolitana de Santa Cruz** — 9 municipios,
 **2.282.770 habitantes**, sobre el Censo de Población y Vivienda 2024 del INE.
