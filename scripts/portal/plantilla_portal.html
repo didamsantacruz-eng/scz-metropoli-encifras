@@ -404,8 +404,10 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
   <div>
     <h2>Qué territorio<br>estamos midiendo</h2>
     <dl class="cuenta">
+      <!-- ✂ SE FUE EL CONTEO DE HABITANTES (pedido de Carlos, 2026-08-20).
+           El portal presenta las herramientas y el territorio; la población de
+           la región es un DATO, y los datos viven en los tableros. -->
       <div><dt id="a-mun">9</dt><dd>municipios</dd></div>
-      <div><dt id="a-pob">—</dt><dd>habitantes</dd></div>
       <div><dt id="a-mz">—</dt><dd>manzanas</dd></div>
     </dl>
   </div>
@@ -445,7 +447,6 @@ poner("d-mun-blo", D.n.mun_bloques);
 poner("d-mz-ind",  D.n.mz_ind);
 poner("d-mz-fic",  mil(D.n.conficha));
 poner("d-lam",     D.n.laminas);
-poner("a-pob",     mil(D.n.poblacion));
 poner("a-mz",      mil(D.n.manzanas));
 
 /* ═══════════════════════════════════════════════════════════════════════
