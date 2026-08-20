@@ -245,14 +245,30 @@ footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
 @media (max-width:760px){
   .envoltura{padding:0 18px}
 
+  /* ── LA MARCA, AL LADO DEL LOGO ────────────────────────────────────────
+     ⚠️ DOS COSAS LA EMPUJABAN A UNA FILA PROPIA, y había que sacar las dos:
+       · `white-space:nowrap` la obligaba a UNA sola línea, así que su ancho
+         mínimo era el del texto entero y no había forma de que entrara;
+       · sin `flex`, su base es ese mismo ancho, y con `flex-wrap:wrap` un ítem
+         que no entra NO se encoge: salta de línea.
+       El resultado en 390 px eran tres filas —logo, marca, navegación— para un
+       encabezado. Con `flex:1 1 0` y `white-space:normal` la marca toma lo que
+       sobra al lado del logo y, si hace falta, parte en dos renglones cortos:
+       «Santa Cruz Metrópoli» arriba y «En Cifras» abajo. */
   .barra .envoltura{height:auto;flex-wrap:wrap;gap:0;padding-top:11px}
-  .barra img{height:29px}
-  .marca{font-size:15.5px;margin-left:12px}
+  .barra img{height:27px}
+  .marca{flex:1 1 0;min-width:0;margin-left:10px;white-space:normal;
+         font-size:13.5px;line-height:1.22;letter-spacing:.004em}
+  /* cada mitad es indivisible: así el corte, cuando toca, cae entre
+     «Santa Cruz Metrópoli» y «En Cifras» y no en medio del nombre. Sin esto,
+     en 320 px partía en «…Metrópoli En / Cifras». */
+  .marca b, .marca span{white-space:nowrap}
+  .marca span{margin-left:.4em}
   /* los enlaces bajan a su propio piso y se deslizan de costado: en 390 px
      no entran los tres, y esconderlos detrás de un botón hamburguesa para
      tres destinos es más ceremonia que ayuda */
   .barra nav{margin:9px -18px 0;padding:0 18px 10px;width:calc(100% + 36px);
-             gap:20px;overflow-x:auto;scrollbar-width:none;
+             gap:18px;font-size:13px;overflow-x:auto;scrollbar-width:none;
              -webkit-overflow-scrolling:touch}
   .barra nav::-webkit-scrollbar{display:none}
 
@@ -281,10 +297,11 @@ footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
   footer{padding:24px 0 30px;font-size:12.5px}
 }
 
-/* pantallas muy angostas: que la marca no empuje al logo */
+/* pantallas muy angostas: la marca ya parte en dos renglones, así que acá sólo
+   se le baja medio punto para que los dos entren sin apretar al logo */
 @media (max-width:380px){
-  .marca{font-size:14px;margin-left:9px}
-  .barra img{height:26px}
+  .marca{font-size:12.5px;margin-left:8px}
+  .barra img{height:25px}
 }
 @media (prefers-reduced-motion:reduce){
   .escenario path{transition:none}
