@@ -22,7 +22,12 @@ dos veces sería tirar trabajo y duplicar los bugs.
 import pathlib, re, sys
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-FUENTE = RAIZ / "docs" / "index.html"
+# ⚠️ LA PLANTILLA SALIÓ DE . Vivía en , así que la raíz
+#    del sitio publicaba un tablero que en realidad es el INSUMO del que se
+#    derivan los dos. Ahora la raíz es el portal y la plantilla vive acá, fuera
+#    de lo que se publica. Las rutas que reescribe  no cambian:
+#    describen dónde queda el ARCHIVO GENERADO, no de dónde se lee.
+FUENTE = RAIZ / "plantilla" / "tablero.html"
 
 SITIOS = {
  "municipal": {
