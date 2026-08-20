@@ -188,13 +188,46 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 }
 @media (max-width:760px){
   .envoltura{padding:0 18px}
-  .barra .envoltura{height:auto;flex-wrap:wrap;gap:0;padding-top:12px}
-  .barra img{height:30px}
-  .marca{font-size:15.5px;margin-left:12px}
-  .barra nav{margin:10px -18px 0;padding:0 18px 11px;width:calc(100% + 36px);
-             gap:20px;overflow-x:auto;scrollbar-width:none}
+  /* ── EL ENCABEZADO EN EL TELÉFONO ──────────────────────────────────────
+     ⚠️ LA MARCA NO ENCOGÍA: SE IBA A LA FILA DE ABAJO. `.marca` no declaraba
+        `flex`, así que su base era el ancho del TEXTO ENTERO (~490 px), y con
+        `flex-wrap:wrap` un ítem que no entra NO se encoge: salta de línea.
+        Resultado en 390 px: el logo solo en la primera fila, la marca ocupando
+        una segunda a dos renglones enteros y la navegación una tercera. Tres
+        filas para un encabezado.
+        Con `flex:1 1 0` la marca toma lo que sobra al lado del logo y parte
+        adentro, en dos renglones cortos que miden lo mismo que el logo. */
+  .barra .envoltura{height:auto;flex-wrap:wrap;gap:0;padding-top:11px}
+  .barra img{height:26px}
+  .marca{flex:1 1 0;min-width:0;max-width:none;margin-left:11px;
+         font-size:10.5px;line-height:1.3;letter-spacing:.012em}
+  .barra nav{margin:9px -18px 0;padding:0 18px 10px;width:calc(100% + 36px);
+             gap:18px;font-size:13px;overflow-x:auto;scrollbar-width:none}
   .barra nav::-webkit-scrollbar{display:none}
-  .hero .envoltura{padding-top:46px;padding-bottom:34px;min-height:0}
+
+  /* ── EL HERO: EL MAPA DEJA DE SER FONDO ────────────────────────────────
+     En el escritorio el territorio va detrás del texto y funciona. En 390 px
+     el texto lo tapa entero y el mapa —que es la pieza que muestra de qué
+     habla el sitio— se pierde. Acá pasa a ser un BLOQUE propio, en el orden
+     que corresponde leer: titular → mapa → alcance y cifras.
+     Se resuelve con `display:contents` en los dos envoltorios, para que el
+     titular y lo que sigue sean HERMANOS del lienzo y se puedan ordenar. Por
+     eso el padding lateral se vuelve a poner en cada hijo: `display:contents`
+     hace desaparecer la caja del envoltorio, y con ella su padding. */
+  .hero{display:flex;flex-direction:column}
+  .hero > .envoltura{display:contents}
+  .hero .hero-txt{display:contents}
+  .hero h1{order:1;padding:38px 18px 0;margin:0 0 22px}
+  .hero #lienzo{order:2;position:static;width:100%;height:208px;margin-bottom:26px}
+  .hero .alcance-hero{order:3;margin:0 18px 22px;max-width:none}
+  .hero .escalas{order:4;padding:0 18px}
+  .hero .pie-hero{order:5}
+  /* ⚠️ Y SE VA EL VELO. `.hero::after` es un degradado opaco al 94% que existe
+     para que el texto se lea ENCIMA del mapa. Acá ya no hay texto encima del
+     mapa, así que no protege nada: lo único que hacía era tapar el titular
+     —`display:contents` le quitó al envoltorio el `z-index:2` que lo mantenía
+     por arriba— y de paso apagar el territorio. */
+  .hero::after{display:none}
   /* el pie del hero deja de estar anclado abajo: con el hero corto del
      teléfono caía justo encima de los chips */
   .pie-hero{position:static;margin-top:20px}
