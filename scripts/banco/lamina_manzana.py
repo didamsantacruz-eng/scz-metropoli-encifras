@@ -529,14 +529,29 @@ def lamina(sl, clave, ind, mun, st, salida):
     # El rengl\u00f3n "X va de A a B entre sus manzanas" se fue: los dos n\u00fameros
     # ahora van escritos en las puntas del hilo, dentro del gr\u00e1fico, que es
     # donde se leen sin tener que buscarlos.
-    alto = y - .018 - (PIE + .026)
+    # ★ EL SUELO DEL GRÁFICO Y EL RENGLÓN DE LA LEYENDA, CON LA CUENTA HECHA
+    #   (2026-08-20). La leyenda «hilo · trazo · caja · marca» iba a `PIE + .004`
+    #   con `va="top"`: a cuerpo 8 ocupa 8/72/9 = .0123 de figura, así que
+    #   TERMINABA en .0897 mientras la franja del pie EMPIEZA en PIE − .006 =
+    #   .092. No estaba cerca del borde: estaba metida DENTRO, .0023 de figura
+    #   —unos 4 px del lienzo—. Y a cuerpo 7 caía justo encima del filo.
+    #   Ahora las tres alturas se derivan de una cuenta, no de un tanteo:
+    #     franja del pie ................................. termina en .092
+    #     leyenda (va=top, alto .0123) ....... de .1180 a .1057  → 13 px de aire
+    #     rótulos del eje (pad 3 pt + alto .0123) ... bajan hasta .1272
+    #     suelo del gráfico ............................. .1440
+    ALTO_TXT = 8 / 72 / 9            # alto de un renglón a cuerpo 8, en figura
+    PAD_EJE = 3 / 72 / 9             # el `pad` de los rótulos del eje, en figura
+    Y_LEYENDA = PIE + .020           # arranque del renglón de la leyenda
+    BASE_GRAF = Y_LEYENDA + ALTO_TXT + PAD_EJE + ALTO_TXT + .008
+    alto = y - .018 - BASE_GRAF
     # ★ EL CANAL DE LOS NOMBRES SE MIDE (2026-08-20). Era .120 a ojo; el nombre
     #   más largo —«Santa Cruz de la Sierra»— ocupa .0966 en negrita a 10 pt, y
     #   lo que sobraba se lo estaba quedando el margen en vez del gráfico.
     #   Con .108 el nombre entra con aire y el eje gana ancho, que es donde hacen
     #   falta: en las cifras de las puntas del hilo.
     CANAL_NOM = .108
-    axd = fig.add_axes([X + CANAL_NOM, PIE + .026, W - CANAL_NOM, alto])
+    axd = fig.add_axes([X + CANAL_NOM, BASE_GRAF, W - CANAL_NOM, alto])
     axd.set_facecolor(E.FONDO)
     for lado in ("top", "right", "left"):
         axd.spines[lado].set_visible(False)
@@ -645,7 +660,7 @@ def lamina(sl, clave, ind, mun, st, salida):
     fs_l = 8.0
     while fs_l > 6.5 and ancho_de(fig, ley, fs_l, E.F_TXT) > W:
         fs_l -= .25
-    fig.text(X, PIE + .004, ley, color=E.TINTA, fontsize=fs_l, family=E.F_TXT, va="top")
+    fig.text(X, Y_LEYENDA, ley, color=E.TINTA, fontsize=fs_l, family=E.F_TXT, va="top")
 
     # ══ PIE ══════════════════════════════════════════════════════════════
     # A ras del papel, la ficha técnica se leía como un renglón más de la
