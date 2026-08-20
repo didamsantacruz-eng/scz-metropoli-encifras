@@ -182,19 +182,13 @@ def minimapa(ax, geo9, sigep, esc_color):
     ax.set_aspect("equal", adjustable="datalim")
 
 
-# Los nombres de localidad vienen del INE en MAYÚSCULAS. Las partículas van en
-# minúscula salvo al principio: "SAN MIGUEL DE LOS JUNOS" -> "San Miguel de los
-# Junos", no "San Miguel De Los Junos". Misma regla que el tablero.
-PARTICULAS = {"de", "del", "la", "las", "los", "el", "y", "en"}
-
-
-def tituloCaso(s):
-    if not s:
-        return ""
-    ps = str(s).lower().split()
-    return " ".join(p if k > 0 and p in PARTICULAS else p.capitalize()
-                    for k, p in enumerate(ps))
-
+# ✂ SE FUERON `tituloCaso`, `perfil_localidades` y `puesto_regional`
+#   (2026-08-20). Servían a las dos piezas que Carlos sacó de la lámina: la
+#   banda «POR LOCALIDAD, DENTRO DE …» bajo el mapa y el renglón «N.º de 9
+#   municipios · del X al Y» sobre las cifras. Sin ellas no quedaba ningún
+#   consumidor, y código muerto con explicación larga se lee como código vivo.
+#   El perfil por localidad seguía estando bien calculado: si alguna vez vuelve,
+#   está en el historial de este archivo.
 
 def centroide(g):
     """Centro aproximado de una geometría, sin dependencias."""
@@ -223,67 +217,6 @@ def encuadre_ajustado(centros, q=.012):
     if x1 <= x0 or y1 <= y0:
         return None
     return x0, y0, x1, y1
-
-
-def perfil_localidades(dat, col, minimo=12):
-    """★ NÚCLEO + LAS DOS PUNTAS ENTRE LOS SATÉLITES.
-
-    Los nueve municipios tienen la misma estructura: una localidad homónima que
-    concentra el grueso de las manzanas —el núcleo urbano— y un rosario de
-    satelites chicos. Sacar "la mejor" y "la peor" de todas juntas devuelve casi
-    siempre el núcleo como mejor, y eso no es una punta: es el promedio del
-    municipio con otro nombre. En Santa Cruz de la Sierra el núcleo se lleva
-    20.775 de 21.406 manzanas y su mediana coincide con la municipal.
-
-    Por eso se separan los papeles: el núcleo va como REFERENCIA —la ciudad— y
-    las dos puntas se buscan entre los SATÉLITES, que es donde la brecha vive.
-
-    Devuelve (núcleo, alto, bajo); cada uno (nombre, mediana, n_manzanas) o None.
-    ⚠️ Son ALTO y BAJO, no "mejor" y "peor": cuál de los dos es el bueno depende
-    de la DIRECCIÓN del indicador, y eso lo declara el catálogo — no lo puede
-    deducir esta función mirando números. En `pct_sin_seguro` el valor bajo es
-    el bueno, y rotular por tamaño publicaba al mejor como el peor. En los
-    neutros —población, densidad, gas en garrafa— no hay bueno ni malo.
-    Se descartan las localidades con menos de `minimo` manzanas con dato: una
-    mediana de tres manzanas no es una punta, es una an\u00e9cdota.
-    """
-    from collections import defaultdict
-    g = defaultdict(list)
-    for k, v in enumerate(col):
-        if v is None:
-            continue
-        n = dat["nombre"][k] if k < len(dat["nombre"]) else None
-        if n:
-            g[n].append(v)
-    if not g:
-        return None, None, None
-    # el núcleo es el de más manzanas: no se busca por nombre, porque el nombre
-    # de la localidad y el del municipio no siempre coinciden (Porongo → Urubó)
-    nom_nucleo = max(g, key=lambda n: len(g[n]))
-
-    def resumen(n):
-        v = sorted(g[n])
-        return (n, v[len(v)//2], len(v))
-
-    nucleo = resumen(nom_nucleo)
-    sat = [n for n in g if n != nom_nucleo and len(g[n]) >= minimo]
-    if not sat:
-        return nucleo, None, None
-    med = {n: sorted(g[n])[len(g[n])//2] for n in sat}
-    orden = sorted(sat, key=lambda n: med[n])
-    if len(orden) == 1:
-        return nucleo, resumen(orden[0]), None
-    return nucleo, resumen(orden[-1]), resumen(orden[0])   # (núcleo, alto, bajo)
-
-
-def puesto_regional(dist, sigep, nom):
-    """En qué puesto de los nueve queda, por mediana de sus manzanas."""
-    orden = sorted(dist.items(), key=lambda kv: -kv[1]["p50"])
-    for n, (sg, d) in enumerate(orden, 1):
-        if sg == sigep:
-            mejor, peor = orden[0], orden[-1]
-            return n, len(orden), (nom.get(mejor[0]), mejor[1]["p50"]), (nom.get(peor[0]), peor[1]["p50"])
-    return None, len(orden), None, None
 
 
 def ancho_de(fig, txt, fs, fam):
@@ -401,13 +334,14 @@ def lamina(sl, clave, ind, mun, st, salida):
     fig.text(x_marca + ancho_de(fig, "Santa Cruz Metr\u00f3poli\u00a0\u00a0", 14.5, E.F_BOLD),
              yb, "En Cifras", color="#ffffff", fontsize=14.5,
              family=E.F_SEMI, va="center", zorder=6)
-    fig.text(1-M, yb, "Censo 2024 \u00b7 INE", color="#dfe9df", fontsize=10.5,
-             family=E.F_MED, va="center", ha="right", zorder=6)
 
     # ══ IZQUIERDA: el mapa, con todo el aire ═════════════════════════════
-    ALTO_PUNTAS = .062           # la banda del pie de foto, bajo el mapa
-    ax = fig.add_axes([M, PIE + .015 + ALTO_PUNTAS, COL_IZQ,
-                       1 - BARRA - PIE - .045 - ALTO_PUNTAS])
+    # ✂ SE FUE LA BANDA «POR LOCALIDAD, DENTRO DE …» (pedido de Carlos,
+    #   2026-08-20). Ocupaba .062 de alto bajo el mapa para nombrar el núcleo y
+    #   los dos satélites. El mapa se queda con ese espacio: es la pieza que
+    #   justifica la lámina y ahora llega hasta la banda del pie.
+    ax = fig.add_axes([M, PIE + .015, COL_IZQ,
+                       1 - BARRA - PIE - .045])
     ax.set_facecolor(E.FONDO)
     for lado in ("top", "right", "bottom", "left"):
         ax.spines[lado].set_visible(False)
@@ -453,71 +387,11 @@ def lamina(sl, clave, ind, mun, st, salida):
     ax.add_collection(PatchCollection(parches, facecolor=colores,
                                       edgecolor="#ffffff", linewidths=.10, zorder=2))
 
-    # Las dos puntas NO van encima del mapa: la cajita tapaba justo las
-    # manzanas que se estaban señalando. Van al pie, como pie de foto.
-    nucleo, sat_alto, sat_bajo = perfil_localidades(dat, col)
-
-    # ══ PIE DE FOTO DEL MAPA: quién es quién dentro del municipio ═════
-    # El mapa muestra la desigualdad pero no dice DÓNDE: sin esto el lector ve
-    # una mancha y no puede ir a buscar el lugar. Va acá abajo, alineado con el
-    # mapa y con la muestra del color que le toca en la rampa, así el ojo cierra
-    # el circuito color → lugar → cifra sin leer un renglón de prosa.
-    # \u2605 EL ROL DE CADA PUNTA LO DECIDE `dir`, NO EL N\u00daMERO. Con dir = \u22121
-    #   \u2014"sin afiliaci\u00f3n a salud", "pozo ciego", "quema la basura"\u2014 el valor
-    #   bajo es el bueno, y rotular por tama\u00f1o publicaba al mejor como el peor:
-    #   Porongo sal\u00eda de "peor sat\u00e9lite" con 5,0% sin seguro siendo el mejor de
-    #   todos. Con dir = 0 no hay juicio que hacer y se dice alto y bajo.
-    if D == 0:
-        roles = [(sat_alto, "el sat\u00e9lite m\u00e1s alto"), (sat_bajo, "el m\u00e1s bajo")]
-    elif D < 0:
-        roles = [(sat_bajo, "el mejor sat\u00e9lite"), (sat_alto, "el peor sat\u00e9lite")]
-    else:
-        roles = [(sat_alto, "el mejor sat\u00e9lite"), (sat_bajo, "el peor sat\u00e9lite")]
-    piezas = [(p, r) for p, r in [(nucleo, "el n\u00facleo urbano")] + roles if p]
-    if len(piezas) > 1:
-        yp = PIE + .015 + ALTO_PUNTAS - .018
-        fig.text(M, yp, "POR LOCALIDAD, DENTRO DE " + m["nombre"].upper(),
-                 color=E.TINTA, fontsize=8, family=E.F_BOLD, va="center")
-        paso = COL_IZQ / max(len(piezas), 3)
-        SANGRIA = .019               # del borde de la muestra al texto
-        CANAL_SLOT = .012            # aire garantizado entre una columna y la de al lado
-        util = paso - SANGRIA - CANAL_SLOT
-        for k, (p, rol) in enumerate(piezas):
-            nl, val, nmz = p
-            xx = M + paso*k
-            nombre_loc = tituloCaso(nl)
-            # \u2605 CADA COLUMNA SE MIDE ANTES DE ESCRIBIRSE. Los nombres del INE
-            #   van de "Cotoca" a "Comunidad Platanillo Brecha 7" y el rol suma
-            #   otro rengl\u00f3n: a cuerpo fijo, los largos se met\u00edan en la columna
-            #   vecina. Se baja el cuerpo hasta que entre y, si ni al m\u00ednimo
-            #   entra, se suelta primero el recuento de manzanas \u2014que es el dato
-            #   menos importante de la l\u00ednea\u2014 antes que recortar un nombre.
-            fs_n = 9.5
-            while fs_n > 7.0 and ancho_de(fig, nombre_loc, fs_n, E.F_SEMI) > util:
-                fs_n -= .5
-            largo = (E.fmt(val, u) + "  \u00b7  " + rol + ", "
-                     + f"{nmz:,}".replace(",", ".")
-                     + (" manzana" if nmz == 1 else " manzanas"))
-            corto = E.fmt(val, u) + "  \u00b7  " + rol
-            fs_d = 7.5
-            while fs_d > 6.5 and ancho_de(fig, largo, fs_d, E.F_TXT) > util:
-                fs_d -= .5
-            detalle = largo if ancho_de(fig, largo, fs_d, E.F_TXT) <= util else corto
-            # el borde va en tinta y no en gris: el centro de la rampa es del
-            # color del papel, y con borde suave la muestra desaparec\u00eda
-            fig.add_artist(Rectangle((xx, yp - .049), .013, .022,
-                                     transform=fig.transFigure, edgecolor=E.TINTA,
-                                     lw=.7, facecolor=E.tono(val, esc, D), zorder=3))
-            fig.text(xx + SANGRIA, yp - .029, nombre_loc, color=E.TINTA,
-                     fontsize=fs_n, family=E.F_SEMI, va="center")
-            fig.text(xx + SANGRIA, yp - .050, detalle,
-                     color=E.TINTA, fontsize=fs_d, family=E.F_TXT, va="center")
-
     # ★ EL RECUADRO DE UBICACIÓN, DENTRO DEL MAPA. Estaba arriba a la derecha,
     #   mordiendo el ancho del titular y obligando a bajar el cuerpo de letra.
     #   Aquí abajo cumple mejor su oficio —está al lado del mapa que ubica, no
     #   en la otra punta de la lámina— y el título se queda con toda la columna.
-    axm = fig.add_axes([M + .006, PIE + .021 + ALTO_PUNTAS, .078, .078])
+    axm = fig.add_axes([M + .006, PIE + .021, .078, .078])
     axm.set_facecolor(E.FONDO)
     # Va sin rótulo: un mapa de la región con un municipio pintado se explica
     # solo, y el renglón que lo nombraba sólo agregaba ruido en la esquina.
@@ -564,17 +438,11 @@ def lamina(sl, clave, ind, mun, st, salida):
     #   queda el 80% central y no el rango. Ahora el rango se DIBUJA completo y
     #   el espacio que ocupaba el párrafo se lo lleva el gráfico.
 
-    # dónde queda entre los nueve: escala inmediata sin leer el gráfico
-    pos, tot, mej, peo = puesto_regional(s_["dist"], m["sigep"],
-                                         {x["sigep"]: x["nombre"] for x in mun})
-    if pos:
-        y -= .050
-        fig.text(X, y, str(pos) + ".\u00ba de " + str(tot) + " municipios",
-                 color=E.VERDE_INS, fontsize=10.5, family=E.F_BOLD, va="top")
-        if mej and peo:
-            fig.text(X + .105, y, "\u00b7  del " + E.fmt(peo[1], u) + " de " + peo[0]
-                     + " al " + E.fmt(mej[1], u) + " de " + mej[0],
-                     color=E.TINTA, fontsize=9.5, family=E.F_TXT, va="top")
+    # ✂ SE FUE «N.º de 9 municipios · del X de A al Y de B» (pedido de Carlos,
+    #   2026-08-20). Era un renglón de ranking encima de las dos cifras; el
+    #   gráfico de distribución de abajo ya ordena los nueve y muestra dónde
+    #   cae éste, sin pedirle al lector que cruce dos lecturas. El alto que
+    #   suelta se lo lleva ese gráfico, que es donde estaba apretado.
 
     # LAS DOS CIFRAS, comprimidas. Bajaron de 34 a 27 pt y los dos renglones de
     # abajo se juntaron: siguen siendo lo primero que se lee \u2014nada m\u00e1s en la
@@ -609,8 +477,11 @@ def lamina(sl, clave, ind, mun, st, salida):
         axl.spines[lado].set_visible(False)
     for t in range(260):
         f = t / 259
+        # la barra va por POSICIÓN DE RAMPA, igual que el degradé del
+        # tablero: así el pivote ES la mitad y la marca de abajo
+        # señala su propio color
         axl.add_patch(Rectangle((f, 0), 1/260 + .002, 1, edgecolor="none",
-                                facecolor=E.tono(esc["lo"] + (esc["hi"]-esc["lo"])*f, esc, D)))
+                                facecolor=E.tono_en(f, D)))
     axl.set_xlim(0, 1); axl.set_ylim(0, 1)
     pp = E.pos_visual(esc["piv"], esc, D)
     axl.plot([pp, pp], [-.45, 1.45], color=E.TINTA, lw=1.2, clip_on=False, zorder=4)
@@ -620,11 +491,10 @@ def lamina(sl, clave, ind, mun, st, salida):
     fig.text(X + W, y - .048,
              E.fmt(esc["hi"], u) + (" ›" if esc.get("recorte_hi") else ""),
              color=E.TINTA, fontsize=8.5, family=E.F_TXT, va="top", ha="right")
-    # ★ EL RÓTULO DEL PIVOTE SE CORRE CUANDO CHOCA. En la rampa divergente el
-    #   pivote cae siempre en la mitad y no molesta a nadie; en la secuencial
-    #   cae donde el dato mande —la mediana de densidad de Warnes está al 18%
-    #   de la barra— y se montaba encima del rótulo del extremo. Se mide, y si
-    #   no entra abajo se escribe arriba, al lado de la nota de la escala.
+    # ★ EL RÓTULO DEL PIVOTE SE CORRE CUANDO CHOCA con el del mínimo o el del
+    #   máximo. Desde que la barra va por posición de rampa (2026-08-20) la MARCA
+    #   cae siempre en la mitad —que es lo que los comentarios de antes ya daban
+    #   por sentado, y no era cierto—; lo que se sale de sitio es el TEXTO.
     t_piv = esc.get("tipo", "mediana") + " " + E.fmt(esc["piv_real"], u)
     w_piv = ancho_de(fig, t_piv, 8.5, E.F_MED)
     w_lo = ancho_de(fig, E.fmt(esc["lo"], u), 8.5, E.F_TXT)
@@ -641,20 +511,32 @@ def lamina(sl, clave, ind, mun, st, salida):
     #   245 hab/ha contra un p90 de 79—; ahí el ángulo marca el corte y el valor
     #   verdadero va escrito. Sin esto la leyenda daría un rango más corto que
     #   el del gráfico de abajo, llamándose los dos "el rango".
-    if esc.get("recorte_hi") or esc.get("recorte_lo"):
+    hay_nota_recorte = bool(esc.get("recorte_hi") or esc.get("recorte_lo"))
+    if hay_nota_recorte:
         fig.text(X + W, y - .068, "la rampa corta la cola — el rango real va de "
                  + E.fmt(esc["min"], u) + " a " + E.fmt(esc["max"], u),
                  color=E.TINTA, fontsize=7.5, family=E.F_TXT, va="top", ha="right")
 
     # la distribución de los nueve
-    y -= .082
-    fig.text(X, y, "C\u00d3MO SE REPARTE DENTRO DE CADA MUNICIPIO", color=E.TINTA,
+    # ⚠️ EL SALTO DEPENDE DE SI HUBO NOTA DE RECORTE. Con .082 fijo, cuando la
+    #   nota estaba el rótulo de acá abajo le quedaba a 2 px —medido: la nota
+    #   ocupa .0116 de figura y arrancaba en −.068, o sea que terminaba en
+    #   −.0796—, y los dos renglones se leían pegados. Sin nota, .082 es el aire
+    #   correcto y agrandarlo sería regalarle alto al gráfico de abajo.
+    y -= .096 if hay_nota_recorte else .082
+    fig.text(X, y, "DISTRIBUCI\u00d3N DENTRO DE CADA MUNICIPIO", color=E.TINTA,
              fontsize=8.5, family=E.F_BOLD, va="top")
     # El rengl\u00f3n "X va de A a B entre sus manzanas" se fue: los dos n\u00fameros
     # ahora van escritos en las puntas del hilo, dentro del gr\u00e1fico, que es
     # donde se leen sin tener que buscarlos.
     alto = y - .018 - (PIE + .026)
-    axd = fig.add_axes([X + .120, PIE + .026, W - .120, alto])
+    # ★ EL CANAL DE LOS NOMBRES SE MIDE (2026-08-20). Era .120 a ojo; el nombre
+    #   más largo —«Santa Cruz de la Sierra»— ocupa .0966 en negrita a 10 pt, y
+    #   lo que sobraba se lo estaba quedando el margen en vez del gráfico.
+    #   Con .108 el nombre entra con aire y el eje gana ancho, que es donde hacen
+    #   falta: en las cifras de las puntas del hilo.
+    CANAL_NOM = .108
+    axd = fig.add_axes([X + CANAL_NOM, PIE + .026, W - CANAL_NOM, alto])
     axd.set_facecolor(E.FONDO)
     for lado in ("top", "right", "left"):
         axd.spines[lado].set_visible(False)
@@ -686,7 +568,7 @@ def lamina(sl, clave, ind, mun, st, salida):
     #   Se mide cuánto ocupa cada rótulo EN UNIDADES DEL DATO para saber si los
     #   dos entran; cuando el rango es angosto se cae el mínimo y queda el
     #   máximo, que es el que casi siempre sorprende.
-    ancho_eje = (W - .105) * 16.0                      # pulgadas reales del eje
+    ancho_eje = (W - CANAL_NOM) * 16.0                 # pulgadas reales del eje
     dato_x_pulgada = ((hi + (hi-lo)*.03) - lo) / max(ancho_eje, .01)
 
     def ancho_dato(txt, fs):
@@ -708,7 +590,9 @@ def lamina(sl, clave, ind, mun, st, salida):
                          zorder=4, clip_on=False)
                 cortado = True
         # los dos números del hilo
-        fs_r = 7.0 if propio else 6.5
+        # con la fila más alta —una línea menos arriba— las cifras de las
+        # puntas suben medio punto y dejan de leerse como letra chica
+        fs_r = 7.5 if propio else 7.0
         fam_r = E.F_SEMI if propio else E.F_TXT
         t_min = ("‹ " if recorte_izq else "") + E.fmt(vmin, u)
         t_max = E.fmt(vmax, u) + (" ›" if recorte_der else "")
@@ -737,9 +621,14 @@ def lamina(sl, clave, ind, mun, st, salida):
         # 4 · la mediana
         axd.plot([dd["p50"]]*2, [yy-.29, yy+.29],
                  color=E.TINTA, lw=1.7 if propio else 1.3, zorder=4)
+        # ★ TODOS EN NEGRITA (pedido de Carlos, 2026-08-20). Antes sólo el
+        #   municipio de la lámina lo estaba y los otros ocho quedaban en un
+        #   redondo que se leía como secundario. La distinción del propio se
+        #   mantiene por COLOR —el verde institucional—, que ya es el de su caja
+        #   y su mediana: el peso deja de ser la marca y pasa a ser la norma.
         axd.text(-.025, yy, nom.get(sg, ""), ha="right", va="center",
-                 transform=axd.get_yaxis_transform(), fontsize=10, color=E.TINTA,
-                 family=E.F_BOLD if propio else E.F_TXT)
+                 transform=axd.get_yaxis_transform(), fontsize=10,
+                 color=E.VERDE_INS if propio else E.TINTA, family=E.F_BOLD)
     axd.set_xlim(lo, hi + (hi-lo)*.03); axd.set_ylim(.35, len(filas)+.75)
     axd.set_yticks([])
     axd.tick_params(axis="x", colors=E.TINTA, labelsize=8, length=0, pad=3)
@@ -779,12 +668,14 @@ def lamina(sl, clave, ind, mun, st, salida):
     y1 = PIE - .040
     E.cursiva(fig, fig.text(M, y1, cob, color=E.GRIS_PIE, fontsize=fs_c,
                             family=E.F_TXT, va="center", zorder=2), M, y1)
-    # La autor\u00eda, tal como la pidi\u00f3 Carlos: el Didam elabora, y las dos fuentes
-    # quedan nombradas. La sigla se abre una vez ac\u00e1 porque la l\u00e1mina viaja sola
-    # y afuera de la Gobernaci\u00f3n nadie tiene por qu\u00e9 saber qu\u00e9 es el Didam.
+    # La autor\u00eda, tal como la pidi\u00f3 Carlos: el DIDAM elabora, y las dos fuentes
+    # quedan nombradas. La sigla va en MAY\u00daSCULAS y con dos puntos despu\u00e9s de
+    # "Elaboraci\u00f3n" (pedido del 2026-08-20), igual que en la l\u00e1mina municipal;
+    # se abre una vez ac\u00e1 porque la l\u00e1mina viaja sola y afuera de la Gobernaci\u00f3n
+    # nadie tiene por qu\u00e9 saber qu\u00e9 es el DIDAM.
     y2 = PIE - .068
     E.cursiva(fig, fig.text(
-        M, y2, "Elaboración Didam (Dirección de la Instancia Departamental de "
+        M, y2, "Elaboración: DIDAM (Dirección de la Instancia Departamental de "
         "Asuntos Metropolitanos) en base a CPV 2024 — INE y POPULI",
         color=E.GRIS_PIE, fontsize=8.5, family=E.F_TXT, va="center", zorder=2),
         M, y2)

@@ -400,27 +400,34 @@ footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
 <script>
 const DATOS = /*__DATOS__*/;
 
-/* ── la rampa, igual que en las láminas ─────────────────────────────────
-   ⚠️ Está duplicada a propósito: la lámina la pinta en Python y esto en el
-   navegador. Si cambia una, hay que cambiar la otra — no hay forma de que
-   una se entere sola de la otra. */
-const DIV = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
-const SEC = ["#dce6d8","#bed4bc","#99bc9d","#6da280","#3d865d","#0c683b"];
+/* ── la rampa ───────────────────────────────────────────────────────────
+   ★ YA NO ESTÁ DUPLICADA (2026-08-20). Acá decía «está duplicada a propósito:
+     la lámina la pinta en Python y esto en el navegador; si cambia una hay que
+     cambiar la otra — no hay forma de que una se entere sola de la otra». Era
+     el QUINTO lugar con la rampa escrita a mano, y tenía además una rampa
+     secuencial que ya no existe. Ahora `armar_sitio.py` inyecta acá lo que dice
+     `assets/paleta.json`, que es lo mismo que leen la lámina y el tablero. */
+const PALETA = /*__PALETA__*/;
+const DIV = PALETA.divergente;
 const mezcla = (a, b, t) => {
   const h = c => [1,3,5].map(i => parseInt(c.substr(i,2),16));
   const [r1,g1,b1] = h(a), [r2,g2,b2] = h(b);
   const v = n => Math.round(n).toString(16).padStart(2,"0");
   return "#" + v(r1+(r2-r1)*t) + v(g1+(g2-g1)*t) + v(b1+(b2-b1)*t);
 };
+/* El color en una POSICIÓN de la rampa. Es la misma cuenta que `tonoDe()` en el
+   tablero y `tono_en()` en las láminas. */
+function tonoEn(p, dir){
+  const r = dir === 1 ? [...DIV].reverse() : DIV;
+  const x = Math.max(0, Math.min(1, p))*(r.length-1), i = Math.min(Math.floor(x), r.length-2);
+  return mezcla(r[i], r[i+1], x-i);
+}
 function tono(v, lo, piv, hi, dir){
-  if (v === null || v === undefined) return "#8b8f95";
+  if (v === null || v === undefined) return PALETA.sin_dato;
   let p;                                     /* pivote clavado en la mitad */
   if (v <= piv) p = piv > lo ? .5*(v-lo)/(piv-lo) : 0;
   else          p = hi > piv ? .5+.5*(v-piv)/(hi-piv) : 1;
-  p = Math.max(0, Math.min(1, p));
-  const r = dir === 0 ? SEC : (dir === 1 ? [...DIV].reverse() : DIV);
-  const x = p*(r.length-1), i = Math.min(Math.floor(x), r.length-2);
-  return mezcla(r[i], r[i+1], x-i);
+  return tonoEn(p, dir);
 }
 const fmt = (v,u) => v===null||v===undefined ? "s/d"
   : u==="%" ? v.toFixed(1).replace(".",",")+"%"
@@ -456,9 +463,11 @@ function pintar(k){
     "Región Metropolitana y área de influencia";
   document.getElementById("h-lo").textContent = fmt(lo, h.unit);
   document.getElementById("h-hi").textContent = fmt(hi, h.unit);
+  /* La tira va por POSICIÓN DE RAMPA, igual que la leyenda de la lámina y la
+     del tablero. Antes muestreaba por VALOR, así que el mismo dato daba una
+     tira distinta en cada una de las tres piezas. */
   const pasos = [];
-  for (let n = 0; n <= 24; n++)
-    pasos.push(tono(lo + (hi-lo)*n/24, lo, piv, hi, h.dir));
+  for (let n = 0; n <= 24; n++) pasos.push(tonoEn(n/24, h.dir));
   document.getElementById("h-rampa").style.background =
     "linear-gradient(90deg," + pasos.join(",") + ")";
   [...puntos.children].forEach((i, n) => i.className = n === k ? "on" : "");

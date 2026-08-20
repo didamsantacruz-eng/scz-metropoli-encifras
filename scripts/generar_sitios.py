@@ -87,6 +87,16 @@ def derivar(html, cfg):
 def main():
     if not FUENTE.exists():
         sys.exit(f"no encuentro {FUENTE}")
+    # ★ LA PALETA, ANTES QUE NADA (2026-08-20). La rampa estaba escrita a mano en
+    #   cinco archivos y se separó: el tablero y el banco llegaron a pintar el
+    #   mismo dato con tres diferencias. Ahora sale de `assets/paleta.json` y esto
+    #   la vuelve a inyectar en la plantilla ANTES de derivar los dos tableros,
+    #   así no se puede publicar una versión desincronizada ni por descuido.
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import paleta
+    _, cambios = paleta.sincronizar()
+    if cambios:
+        print("  paleta resincronizada:", ", ".join(cambios))
     base = FUENTE.read_text(encoding="utf-8")
     for slug, cfg in SITIOS.items():
         d = RAIZ / "docs" / slug

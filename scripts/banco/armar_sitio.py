@@ -140,8 +140,11 @@ def main():
 
     datos = {"laminas": laminas, "hero": hero, "siluetas": mini_geo["paths"],
              "caja": caja}
-    html = PLANTILLA.read_text(encoding="utf-8").replace(
-        "/*__DATOS__*/", json.dumps(datos, ensure_ascii=False, separators=(",", ":")))
+    # la paleta se inyecta desde el contrato único: ver `scripts/paleta.py`
+    paleta = json.loads((RAIZ / "assets" / "paleta.json").read_text(encoding="utf-8"))["pinta"]
+    html = (PLANTILLA.read_text(encoding="utf-8")
+            .replace("/*__DATOS__*/", json.dumps(datos, ensure_ascii=False, separators=(",", ":")))
+            .replace("/*__PALETA__*/", json.dumps(paleta, ensure_ascii=False, separators=(",", ":"))))
     (BANCO / "index.html").write_text(html, encoding="utf-8")
 
     peso = sum(f.stat().st_size for f in MINIS.rglob("*.webp")) / 1e6

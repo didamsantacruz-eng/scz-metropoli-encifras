@@ -1,0 +1,60 @@
+{
+  "_": "Fuente única de la paleta. Ver scripts/paleta.py. `pinta` es DERIVADO.",
+  "declarada": {
+    "_": "Rampa entregada por el Gobierno Autónomo Departamental de Santa Cruz.",
+    "divergente": [
+      "#00733b",
+      "#419a3a",
+      "#8bc53f",
+      "#eeebe1",
+      "#dea015",
+      "#d8690c",
+      "#a8381e"
+    ],
+    "sin_dato": "#8a8f96",
+    "senal": "#8bc53f",
+    "institucional": "#00733b"
+  },
+  "ajustes": {
+    "bisagra": {
+      "valor": "#f4ecc9",
+      "por_que": "La parada del medio declarada (#eeebe1) es EXACTAMENTE el fondo del tablero (--fondo en identidad-gobernacion.css), así que todo lo que cae en el pivote se pintaba del color del papel y desaparecía. Medido sobre el tablero municipal: 465 de 1.917 celdas municipio×indicador (24,3%) caen en esa parada, los nueve municipios pasan por ahí en algún indicador, y en «Jóvenes (15-29)» son 7 de 9 a la vez. Pasa a una paja pálida: clara, para que el centro siga quieto, pero inconfundible contra el crema. Es el mismo recurso del RdYlGn clásico. Sólo afectaba al tema claro: en oscuro esa parada se realza y se ve bien."
+    },
+    "suave_factor": {
+      "valor": 0.8,
+      "por_que": "Pedido de Carlos (2026-08-19): «bajale un poco a los colores, se ve medio chillón». Baja la SATURACIÓN un 20% y deja la luminosidad quieta, así que el orden de la rampa no se mueve — sólo deja de gritar. Vivía sólo en el banco; desde 2026-08-20 vale también para los tableros, que es lo que hace que la lámina y la pantalla muestren el mismo color para el mismo valor."
+    },
+    "realce_oscuro": {
+      "valor": 0.26,
+      "por_que": "En tema oscuro NO se cambia de rampa: se usan los mismos tonos, más brillantes. El realce es proporcional a lo que le falta a cada tono para llegar al blanco (l + (1-l)·k), no una suma fija: los oscuros —que sobre fondo oscuro se cierran— suben mucho y los que ya eran claros casi no se mueven. El tono no se toca, que es lo que hace que se reconozca la misma paleta."
+    },
+    "sin_secuencial": {
+      "valor": true,
+      "por_que": "Decisión de Carlos (2026-08-20). Entre el 19 y el 20 el banco pintó los indicadores neutros (dir == 0) con una rampa secuencial de un solo tono, para no afirmar un lado bueno donde el dato no lo trae. Se bajó: la divergente vale para TODO, en el tablero y en la lámina. Costó regenerar 184 de las 375 láminas. Si algún día se retoma, el argumento está acá: en `pob_total` la divergente pinta a Santa Cruz de la Sierra de rojo por ser la más poblada y a Colpa Bélgica de verde por ser la más chica."
+    }
+  },
+  "pinta": {
+    "_": "DERIVADO por scripts/paleta.py — no editar a mano.",
+    "divergente": [
+      "#0c683b",
+      "#499044",
+      "#89b84c",
+      "#f0e9cd",
+      "#ca9829",
+      "#c46b20",
+      "#9a412c"
+    ],
+    "divergente_oscuro": [
+      "#16c46f",
+      "#6dbb67",
+      "#a8cc78",
+      "#f5f0d9",
+      "#e2b657",
+      "#e69048",
+      "#d06147"
+    ],
+    "sin_dato": "#8b8f95",
+    "senal": "#8bc53f",
+    "institucional": "#00733b"
+  }
+}

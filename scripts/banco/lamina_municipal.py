@@ -372,9 +372,11 @@ def lamina(clave, ind, grupo, mun, reg, geo, salida):
         axl.spines[lado].set_visible(False)
     for t in range(280):
         f = t / 279
+        # la barra va por POSICIÓN DE RAMPA, igual que el degradé del
+        # tablero: así el pivote ES la mitad y la marca de abajo
+        # señala su propio color
         axl.add_patch(Rectangle((f, 0), 1/280 + .002, 1, edgecolor="none",
-                                facecolor=E.tono(esc["lo"] + (esc["hi"]-esc["lo"])*f,
-                                                 esc, D)))
+                                facecolor=E.tono_en(f, D)))
     axl.set_xlim(0, 1); axl.set_ylim(0, 1)
     pp = E.pos_visual(esc["piv"], esc, D)
     axl.plot([pp, pp], [-.45, 1.45], color=E.TINTA, lw=1.2, clip_on=False, zorder=4)
@@ -382,8 +384,10 @@ def lamina(clave, ind, grupo, mun, reg, geo, salida):
              family=E.F_TXT, va="top")
     fig.text(M + COL_IZQ, yr - .050, rot(esc["hi"]), color=E.TINTA,
              fontsize=8.5, family=E.F_TXT, va="top", ha="right")
-    # ★ EL RÓTULO DEL PIVOTE SE CORRE CUANDO CHOCA: en la rampa secuencial cae
-    #   donde el dato mande y se montaba encima del rótulo del extremo.
+    # ★ EL RÓTULO DEL PIVOTE SE CORRE CUANDO CHOCA con el del mínimo o el del
+    #   máximo. Desde que la barra va por posición de rampa, la MARCA cae siempre
+    #   en la mitad; lo que se sale de sitio es el TEXTO, que con cifras largas
+    #   («1.610.982») se monta sobre los extremos.
     t_piv = (esc.get("tipo", "mediana") + " " + rot(esc["piv_real"])
              + ("   ·   escala logarítmica" if LOG else ""))
     w_piv = ancho_de(fig, t_piv, 8.5, E.F_MED)

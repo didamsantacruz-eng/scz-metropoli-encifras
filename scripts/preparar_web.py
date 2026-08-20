@@ -9,6 +9,7 @@ Prepara los insumos del nivel MUNICIPIO y copia los catálogos a docs/datos.
   · municipios.json y catalogo_tablero.json copiados tal cual.
 """
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -93,8 +94,20 @@ def main():
         return "".join(d)
 
     paths = {r["sigep"]: a_path(r["geometry"]) for _, r in mini.iterrows()}
+    # ★ EL LIENZO AJUSTADO, junto al cuadrado (2026-08-20). El lienzo es 100×100
+    #   pero la región es apaisada —dos de ancho por uno de alto—, así que con el
+    #   cuadrado la silueta usa el 40% de su caja y el resto es aire: la
+    #   miniatura de cada tarjeta del tablero salía diminuta y flotando. Se emite
+    #   la caja real, con un margen del 2%, para que quien la dibuje pueda
+    #   llenar su recuadro. `armar_sitio.py` ya calculaba esto por su cuenta para
+    #   el hero del catálogo; ahora viaja en el archivo y lo usan los dos.
+    _n = [float(t) for d in paths.values() for t in re.findall(r"-?\d+(?:\.\d+)?", d)]
+    _x, _y = _n[0::2], _n[1::2]
+    _m = (max(_x) - min(_x)) * .02
+    caja = "%.2f %.2f %.2f %.2f" % (min(_x)-_m, min(_y)-_m,
+                                    max(_x)-min(_x)+2*_m, max(_y)-min(_y)+2*_m)
     (SALIDA / "mini.json").write_text(
-        json.dumps({"viewBox": "0 0 100 100", "paths": paths},
+        json.dumps({"viewBox": "0 0 100 100", "viewBoxTight": caja, "paths": paths},
                    ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"  minimapas: {len(paths)} siluetas · "
           f"{(SALIDA / 'mini.json').stat().st_size/1024:.0f} KB")

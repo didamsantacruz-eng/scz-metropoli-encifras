@@ -134,3 +134,89 @@ body.dark .marca-pie img{content:url("img/scz-oscuro.png")}
    en ningún tramo de las dos rampas, así que sirve de señal y no de dato. */
 .tm-mk{background:var(--scz-verde)}
 .cmp .cmp-n.sel{fill:var(--sel)}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LA MINIATURA DE LA TARJETA (2026-08-20)
+   ═══════════════════════════════════════════════════════════════════════════
+   ⚠️ EL FILTRO CONVERTÍA LA RAMPA EN BARRO. `estilo-atlas.css` apaga el
+      minimapa en reposo con `opacity:.6; filter:saturate(.32)`. La intención
+      —que la lista esté calma y la tarjeta elegida resalte— es correcta; el
+      método no: `saturate()` empuja todos los tonos hacia el mismo gris.
+      Medido sobre la rampa nueva y el fondo de tarjeta (#e7e3d7):
+
+          #0c683b  verde institucional  →  #809082
+          #9a412c  rojo                 →  #9c8980
+
+      Los DOS EXTREMOS de la rampa terminaban siendo el mismo gris pardo: la
+      miniatura mostraba una mancha, no un dato. Y el usuario lo vio: «los mapas
+      se ven opacos».
+
+   ⇒ Se calma con OPACIDAD SOLA, que compone hacia el fondo de la tarjeta y
+     conserva el tono. Con .72 sobre el mismo fondo, el verde queda #498a67 y el
+     rojo #b06e5c: se distinguen sin gritar. La rampa ya viene 20% menos saturada
+     desde `assets/paleta.json`, así que no hace falta apagarla dos veces.
+
+   Va acá y no en `estilo-atlas.css` porque esa hoja la comparte el Atlas del
+   Observatorio (ver `scripts/extraer_estilo.py`): si alguna vez se reactivara,
+   pisaría esto. Acá es intocable.
+   ═════════════════════════════════════════════════════════════════════════ */
+.mini{
+  width:110px; height:auto; aspect-ratio:104/53.6;   /* la caja real de la región */
+  opacity:1; filter:none;
+}
+/* ⚠️ SE APAGA EL RELLENO, NO EL GRUPO. Con `opacity` sobre el <svg> el trazo se
+   apaga junto con el color y el contorno queda en un 36% de alpha efectivo: se
+   perdía justo lo que hace que la miniatura se lea como territorio. El relleno
+   es ÉNFASIS y modula; el contorno es ESTRUCTURA y se queda quieto. */
+.mini path{
+  fill-opacity:.72;
+  stroke:#12181c; stroke-opacity:.62; stroke-width:1;
+  transition:fill-opacity .28s ease;
+}
+.ind:hover .mini path{fill-opacity:.88}
+.ind.on   .mini path{fill-opacity:1}
+
+/* ⚠️ EN OSCURO EL RELLENO TIENE QUE ESTAR MÁS ARRIBA. La misma opacidad compone
+   contra el crema (claro) o contra el carbón (oscuro), y contra el carbón se
+   pierde mucho más: la bisagra #f5f0d9 al 72% cae en #b8b7a7 —un gris— y la
+   miniatura vuelve a verse parda. Al 85% queda #d4d1be, que sigue siendo paja.
+   El contorno, al revés: el pelo negro desaparece sobre el fondo oscuro, así que
+   se hace con luz. */
+/* ⚠️ HAY QUE REPETIR EL SELECTOR CON `body.dark`. `estilo-atlas.css` trae
+      `body.dark .mini{opacity:.42; filter:saturate(.55) brightness(.9)}`, que
+      con dos clases y un tipo LE GANA a un `.mini` pelado por más abajo que
+      esté. Sin esto el tema claro quedaba arreglado y el oscuro seguía con el
+      filtro que convierte la rampa en barro — y no falla nada: sólo se ve mal. */
+body.dark .mini{opacity:1; filter:none}
+body.dark .mini path{fill-opacity:.85; stroke:#e7ece9; stroke-opacity:.4}
+body.dark .ind:hover .mini path{fill-opacity:.93}
+body.dark .ind.on   .mini path{fill-opacity:1}
+
+@media (max-width:900px){
+  .mini{width:82px}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAS TARJETAS DE LA DERECHA (2026-08-20)
+   ═══════════════════════════════════════════════════════════════════════════
+   Dos cosas, las dos visibles en cualquier captura del tablero municipal:
+
+   1 · LA CELDA HUÉRFANA. Son NUEVE municipios en una grilla de dos columnas,
+       así que abajo a la derecha quedaba un rectángulo gris vacío en todos los
+       243 indicadores. Ahora el primero —el más alto, porque la lista viene
+       ordenada— ocupa el ancho entero: 1 + 8 cierra la grilla.
+
+   2 · EL FILETE DE ARRIBA NO DECÍA NADA. Era `var(--teal)` para los nueve. Ese
+       lugar es el más barato de la tarjeta para llevar información, así que
+       ahora lleva el color que ese municipio tiene EN EL MAPA, con la misma
+       `tonoDe()` que pinta el polígono y la barra del comparativo de arriba.
+       El panel de la derecha y el mapa pasan a hablar el mismo idioma.
+   ═════════════════════════════════════════════════════════════════════════ */
+#panel-det .kpi[data-s]{border-top-color:var(--tono, var(--teal))}
+/* el líder cruza las dos columnas y se le da aire y cuerpo a la cifra: es la
+   cabecera de la lectura, no una tarjeta más */
+#panel-det .kpi-lider{grid-column:1 / -1;padding:.62rem .7rem}
+#panel-det .kpi-lider .k-v{font-size:clamp(.95rem,2.4vw,1.15rem)}
+#panel-det .kpi-lider .k-l{height:auto}
+/* el municipio elegido, marcado sin tapar el filete de color */
+#panel-det .kpi.sel{background:var(--kpi-on);box-shadow:inset 0 0 0 1px var(--sel)}

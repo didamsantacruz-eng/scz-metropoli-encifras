@@ -323,35 +323,18 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
    oscuro se cierran y dejan de distinguirse entre sí— suben mucho, y los que
    ya eran claros casi no se mueven. El tono no se toca, que es lo que hace
    que se reconozca la misma paleta. */
-const DIV_CLARA = ["#00733b","#419a3a","#8bc53f","#eeebe1","#dea015","#d8690c","#a8381e"];
-const REALCE = .26;          // cuánto se acerca cada tono al blanco en oscuro
-
-function hexHSL(h){
-  h = h.replace("#", "");
-  const r = parseInt(h.slice(0,2),16)/255, g = parseInt(h.slice(2,4),16)/255,
-        b = parseInt(h.slice(4,6),16)/255;
-  const mx = Math.max(r,g,b), mn = Math.min(r,g,b), l = (mx+mn)/2;
-  if (mx === mn) return [0, 0, l];
-  const d = mx - mn, s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
-  const hh = mx === r ? ((g-b)/d + (g < b ? 6 : 0))
-           : mx === g ? ((b-r)/d + 2) : ((r-g)/d + 4);
-  return [hh/6, s, l];
-}
-function hslHex(hh, s, l){
-  const f = n => {
-    const k = (n + hh*12) % 12, a = s*Math.min(l, 1-l);
-    const v = l - a*Math.max(-1, Math.min(k-3, 9-k, 1));
-    return Math.round(255*v).toString(16).padStart(2,"0");
-  };
-  return "#" + f(0) + f(8) + f(4);
-}
-/* Un tono más brillante, sin cambiar de tono. La saturación sube apenas para
-   que el aclarado no lo lave. */
-const brillar = c => {
-  const [h, s, l] = hexHSL(c);
-  return hslHex(h, Math.min(1, s*1.06), l + (1 - l)*REALCE);
-};
-const DIV_OSCURO = DIV_CLARA.map(brillar);   // se calcula una vez, no por pintado
+/* La rampa NO se escribe acá. Se declara una sola vez en `assets/paleta.json`
+   y `scripts/paleta.py` la deriva y la inyecta entre los marcadores de abajo,
+   que es lo mismo que lee `scripts/banco/estilo.py` para las láminas. Antes
+   estaba a mano en los dos lados y los dos lados se separaron.
+   El realce del tema oscuro ya viene calculado: por eso no hay acá ninguna
+   conversión a HSL — la hace el script, una vez, fuera del navegador. */
+/* ⇩⇩ PALETA GENERADA — no editar a mano: sale de assets/paleta.json ⇩⇩ */
+const DIV_CLARA  = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
+const DIV_OSCURO = ["#16c46f","#6dbb67","#a8cc78","#f5f0d9","#e2b657","#e69048","#d06147"];
+const SIN_DATO = {claro:"#8b8f95", oscuro:"#8b8f95"};
+const SENAL = "#8bc53f";
+/* ⇧⇧ FIN DE LA PALETA GENERADA ⇧⇧ */
 
 /* `dir === 1` significa que más es PEOR, así que la rampa se da vuelta y el
    verde queda del lado bueno en los dos casos. */
@@ -367,7 +350,7 @@ const UMBRAL_ZOOM = 11.4;     // a partir de acá el nivel manzana tiene sentido
    se parece en ninguno de los dos fondos. Acá es sobre todo el gris de las
    13.194 manzanas que el INE suprime por privacidad, que se dibujan a
    propósito: borrarlas dejaría agujeros que se leen como "no vive nadie". */
-const SIN_DATO = {claro:"#8a8f96", oscuro:"#8a8f96"};
+/* (SIN_DATO se declara en el bloque generado de la paleta, más arriba.) */
 
 /* OPACIDADES. Bajas a propósito: el coroplético va ENCIMA de un mapa real, y si
    lo tapa deja de servir de referencia justo cuando más se la necesita —al
@@ -381,7 +364,7 @@ const OPACIDAD_CLARO  = {mun: .55, mz: .62};
 const OPACIDAD_OSCURO = {mun: .42, mz: .46};
 const opacidades = () => esOscuro() ? OPACIDAD_OSCURO : OPACIDAD_CLARO;
 
-const SENAL = "#8bc53f";
+/* (SENAL se declara en el bloque generado de la paleta, más arriba.) */
 
 /* FUNDIDO POR ZOOM. En vez de que el nivel cambie de golpe con el botón, las dos
    capas conviven y se cruzan en una banda de zoom: al acercarte, los municipios
@@ -480,6 +463,24 @@ let ANIO = "2024";                      // "2024" | "2012" | "cambio"
    un conteo se centra en su mediana) y la unidad del cambio. Deducirlo de la
    unidad es el error que publicó "Personas por hogar: 1.049,2" y
    "Viviendas: país 62.550" en el Atlas nacional. */
+/* ★ LA TARJETA NO REPITE SU PROPIO TÍTULO (2026-08-20). El `desc` del catálogo
+   es una frase completa que ARRANCA con el nombre del indicador —«Acceso a
+   fuente mejorada. Porcentaje sobre las viviendas particulares ocupadas.»— y la
+   tarjeta lo imprime justo debajo del nombre. Medido sobre los catálogos: pasa
+   en 213 de 243 indicadores municipales (88%) y en 91 de 91 por manzana (100%).
+   O sea que casi toda tarjeta del tablero decía su nombre dos veces seguidas.
+   La frase entera sigue sirviendo donde va sola (el subtítulo del panel, la
+   ficha): esto recorta SÓLO cuando el nombre viene pegado adelante. */
+function sinRepetir(label, desc){
+  if (!desc) return "";
+  const norm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const l = norm(label);
+  if (!l || !norm(desc).startsWith(l)) return desc;
+  // se corta por longitud sobre el texto ORIGINAL: normalizar no cambia el largo
+  let r = desc.slice(label.length).replace(/^\s*[.:;,—–-]+\s*/, "").trim();
+  if (!r) return desc;                       // el desc era sólo el nombre
+  return r.charAt(0).toUpperCase() + r.slice(1);
+}
 const esConteo = i => i.agg === "suma";
 /* Un porcentaje cambia en PUNTOS PORCENTUALES y un conteo en PORCENTAJE. */
 const uMode = i => ANIO !== "cambio" ? i.unit
@@ -665,10 +666,26 @@ function posEnRampa(e, v){
                        : .5 + .5 * (v - e.piv) / (e.hi - e.piv);
   return Math.max(0, Math.min(1, t));
 }
+/* ★ INTERPOLA, NO SALTA (2026-08-20). Esta función devolvía
+   `e.tonos[Math.round(pos * 6)]`: el valor caía en UNA de las siete paradas.
+   Pero el polígono del mapa no se pinta con esto —lo pinta `expresionColor()`,
+   que arma un `["interpolate", ["linear"], …]` para MapLibre— así que el mapa
+   tenía degradé continuo y la miniatura de la tarjeta, el chip del tooltip y la
+   barra del comparativo tenían siete escalones. Discrepaban hasta media parada:
+   el chip decía verde lima donde el polígono era paja.
+   El comentario de `posEnRampa` ya prometía que «no pueden discrepar de color»;
+   la curva era la misma, la cuantización no. Ahora interpolan las dos, que es
+   además lo que hace `tono()` en `scripts/banco/estilo.py`: el mapa, sus
+   adornos y la lámina impresa quedan en el mismo color para el mismo valor. */
+const _rgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+const _hex = c => "#" + c.map(x => Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,"0")).join("");
 function tonoDe(e, v){
   if (!e || v === null || v === undefined || !isFinite(v))
     return SIN_DATO[esOscuro() ? "oscuro" : "claro"];
-  return e.tonos[Math.round(posEnRampa(e, v) * (e.tonos.length - 1))];
+  const x = posEnRampa(e, v) * (e.tonos.length - 1), i = Math.floor(x);
+  if (i >= e.tonos.length - 1) return e.tonos[e.tonos.length - 1];
+  const a = _rgb(e.tonos[i]), b = _rgb(e.tonos[i + 1]), f = x - i;
+  return _hex([0,1,2].map(k => a[k] + (b[k] - a[k]) * f));
 }
 /* Proporción de la muestra que queda ESTRICTAMENTE por debajo de `v`. Búsqueda
    binaria sobre el `ord` que ya trae la escala. */
@@ -1081,9 +1098,20 @@ function miniSVG(ind){
   const e = escala(vals, pes, ind, ambitoMini(ind));
   const p = MUN.map((m, k) => {
     const d = MINI.paths[m.sigep];
-    return d ? `<path d="${d}" fill="${tonoDe(e, vals[k])}"/>` : "";
+    /* ★ CADA MUNICIPIO CON SU BORDE (2026-08-20). Sin trazo, dos municipios
+       vecinos de valor parecido se funden y la región se lee como una mancha:
+       la miniatura mostraba color pero no mostraba TERRITORIO. Es lo que ya
+       hace la lámina del banco, que perfila cada municipio.
+       `non-scaling-stroke` mantiene el pelo en 1 px del dispositivo, así que no
+       engorda al escalar ni desaparece en el minimapa más chico. */
+    return d ? `<path d="${d}" fill="${tonoDe(e, vals[k])}"
+      vector-effect="non-scaling-stroke" stroke-linejoin="round"/>` : "";
   }).join("");
-  return `<svg class="mini" viewBox="${MINI.viewBox}" preserveAspectRatio="xMidYMid meet">${p}</svg>`;
+  /* ★ EL LIENZO AJUSTADO. `mini.json` trae también la caja real de la región
+     (`viewBoxTight`). Con el lienzo cuadrado la silueta usaba el 40% del
+     recuadro y el resto era aire. */
+  return `<svg class="mini" viewBox="${MINI.viewBoxTight || MINI.viewBox}"
+    preserveAspectRatio="xMidYMid meet">${p}</svg>`;
 }
 
 /* Los indicadores se separan por NIVEL dentro de cada categoría. Mezclados, el
@@ -1113,7 +1141,7 @@ function tarjeta(i, n){
     : dosNiveles ? '<span class="co-n">sólo municipio</span>' : '';
   return `<div class="ind${ok ? "" : " off"}${sinSerie ? " sin12" : ""}" data-k="${i.key}" style="--d:${Math.min(n,14)*14}ms">
     <div>${sinSerie ? '<span class="i-tag">Sólo 2024</span>' : ""}<div class="i-nm">${i.label}</div>
-    <div class="i-df">${sinSerie ? motivoSinSerie(i) : (i.desc || "")}</div>${badge}</div>
+    <div class="i-df">${sinSerie ? motivoSinSerie(i) : sinRepetir(i.label, i.desc)}</div>${badge}</div>
     ${miniSVG(i)}</div>`;
 }
 function montarIndicadores(){
@@ -1744,7 +1772,18 @@ function ficha(e, i){
         return (vb === null ? -1e9 : vb) - (va === null ? -1e9 : va);
       }).map((m, n) => {
         const v = valorMunicipal(m, i);
-        return `<div class="kpi" data-s="${m.sigep}" style="--d:${Math.min(n,14)*14}ms">
+        /* ★ SIN CELDA HUÉRFANA (2026-08-20). Son NUEVE municipios en una grilla
+           de dos columnas, así que abajo a la derecha quedaba siempre un hueco
+           gris. El primero —que es el más alto, porque la lista viene ordenada—
+           ocupa el ancho entero: 1 + 8 cierra la grilla y de paso el encabeza
+           la lectura, que es lo que el orden ya estaba diciendo.
+         ★ Y EL FILETE DE ARRIBA ES EL DATO, no un adorno: lleva el color que
+           ese municipio tiene en el mapa, calculado con la misma `tonoDe()`.
+           Antes era un teal fijo para los nueve, así que el panel de la derecha
+           y el mapa no se hablaban. */
+        const tono = (e && !mudo(i) && v !== null && isFinite(v)) ? tonoDe(e, v) : null;
+        return `<div class="kpi${n === 0 ? " kpi-lider" : ""}${m.sigep === sel ? " sel" : ""}"
+          data-s="${m.sigep}" style="--d:${Math.min(n,14)*14}ms${tono ? `;--tono:${tono}` : ""}">
           <div class="k-l">${m.nombre}</div><div class="k-v">${mudo(i) ? "s/d" : fmtM(v, i)}</div>
           <div class="k-c"><span>${m.ambito}</span><span>${nf(m.manzanas,0)} manzanas</span></div></div>`;
       }).join("");
