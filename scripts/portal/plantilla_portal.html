@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Santa Cruz Metrópoli En Cifras</title>
-<meta name="description" content="El censo 2024 sobre la Región Metropolitana de Santa Cruz y su área de influencia: nueve municipios, 38.892 manzanas, cuatro herramientas para leerlo.">
+<meta name="description" content="Los datos de la Región Metropolitana de Santa Cruz y su área de influencia: nueve municipios, 38.892 manzanas, cuatro herramientas para leerlo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
@@ -44,9 +44,8 @@ a{color:inherit}
 .barra{background:var(--verde-hondo);position:relative;z-index:5}
 .barra .envoltura{display:flex;align-items:center;gap:16px;height:70px}
 .barra img{height:36px;width:auto;display:block;flex:none}
-.marca{font-size:17.5px;white-space:nowrap}
-.marca b{color:var(--verde);font-weight:700}
-.marca span{color:#fff;font-weight:600;margin-left:.45em}
+.marca{margin:0;font-size:14.5px;font-weight:600;color:#fff;line-height:1.25;
+       letter-spacing:.004em;max-width:38ch}
 .barra nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
 .barra nav a{color:#b9d3ac;text-decoration:none;font-weight:500;white-space:nowrap;
              padding:3px 0;border-bottom:2px solid transparent}
@@ -59,22 +58,22 @@ a{color:inherit}
    izquierdo para que el titular no pelee con los puntos */
 #lienzo{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(98deg,var(--verde-hondo) 20%,
-             rgba(4,53,32,.86) 36%, rgba(4,53,32,.10) 60%, rgba(4,53,32,0) 78%)}
+  background:linear-gradient(98deg,var(--verde-hondo) 15%,
+             rgba(4,53,32,.84) 31%, rgba(4,53,32,.08) 54%, rgba(4,53,32,0) 72%)}
 .hero .envoltura{position:relative;z-index:2;padding-top:76px;padding-bottom:82px;
                  min-height:520px;display:flex;flex-direction:column;
                  justify-content:center}
-.hero-txt{max-width:600px}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;
-         font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-         color:var(--verde);margin:0 0 20px}
-.eyebrow::before{content:"";width:26px;height:2px;background:var(--verde)}
-.hero h1{font-family:var(--ft);font-weight:300;font-size:clamp(38px,5.6vw,68px);
-         line-height:1.03;letter-spacing:-.018em;margin:0 0 22px;
-         text-wrap:balance;color:#fff}
-.hero h1 em{font-style:normal;color:var(--verde)}
-.hero p{font-size:17.5px;line-height:1.6;color:#cfe0c6;margin:0 0 34px;
-        max-width:53ch}
+.hero-txt{max-width:520px}
+/* La marca, apilada. En tres renglones ocupa la mitad del ancho que en uno
+   solo, y ese ancho es justo lo que necesita el mapa para respirar. */
+.hero h1{font-family:var(--ft);font-weight:300;font-size:clamp(44px,6.2vw,86px);
+         line-height:.98;letter-spacing:-.028em;margin:0 0 26px;color:#fff;
+         display:flex;flex-direction:column}
+.hero h1 span{display:block}
+.hero h1 em{font-style:normal;color:var(--verde);font-weight:400}
+.alcance-hero{font-size:16.5px;line-height:1.5;color:#cfe0c6;margin:0 0 32px;
+              max-width:34ch;border-left:2px solid rgba(139,197,63,.45);
+              padding-left:16px}
 .escalas{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .chip{display:inline-flex;align-items:baseline;gap:8px;border:1px solid rgba(139,197,63,.34);
       padding:9px 14px;background:rgba(139,197,63,.07);transition:border-color .5s,background .5s}
@@ -108,8 +107,23 @@ a{color:inherit}
 .herr.pronto{background:#f7f5ec}
 .herr.pronto::before{background:var(--tenue)}
 .tapa{display:flex;align-items:flex-start;gap:18px;padding:26px 26px 0}
+/* ★ EL RECUADRO DEL ÍCONO, COMO UN VISOR. Trama de puntos finísima —la misma
+   idea de la retícula del hero, a otra escala— y dos escuadras en las esquinas
+   que se encienden al pasar el mouse. Es el único gesto «de instrumento» que
+   se permite la tarjeta: el resto queda quieto para que se lea el texto. */
 .motivo{flex:none;width:64px;height:64px;border:1px solid var(--linea);
-        background:var(--papel);display:grid;place-items:center}
+        background-color:var(--papel);display:grid;place-items:center;
+        position:relative;
+        background-image:radial-gradient(rgba(0,115,59,.16) 1px, transparent 1px);
+        background-size:7px 7px;background-position:1px 1px}
+.motivo::before,.motivo::after{content:"";position:absolute;width:10px;height:10px;
+  border-color:var(--verde-ins);border-style:solid;opacity:.3;
+  transition:opacity .28s ease, transform .28s cubic-bezier(.2,.7,.3,1)}
+.motivo::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.motivo::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.herr:hover .motivo::before{opacity:1;transform:translate(-3px,-3px)}
+.herr:hover .motivo::after{opacity:1;transform:translate(3px,3px)}
+.herr.pronto .motivo::before,.herr.pronto .motivo::after{border-color:var(--tenue)}
 .motivo svg{width:38px;height:38px}
 .tapa h3{font-family:var(--ft);font-weight:500;font-size:26px;line-height:1.14;
          margin:0 0 5px;letter-spacing:-.01em}
@@ -209,7 +223,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 <header class="barra">
   <div class="envoltura">
     <img src="img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
-    <div class="marca"><b>Santa Cruz Metrópoli</b><span>En Cifras</span></div>
+    <p class="marca">Dirección de la Instancia Departamental de Asuntos Metropolitanos</p>
     <nav>
       <a href="municipal/">Municipal</a>
       <a href="manzana/">A nivel manzana</a>
@@ -223,27 +237,25 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
   <canvas id="lienzo" aria-hidden="true"></canvas>
   <div class="envoltura">
     <div class="hero-txt">
-      <p class="eyebrow">Censo de Población y Vivienda 2024</p>
-      <h1>El territorio metropolitano, <em>medido</em></h1>
-      <p>La Región Metropolitana de Santa Cruz y su área de influencia, del
-         municipio entero a la manzana. Cuatro herramientas para consultarlo,
-         compararlo y llevárselo.</p>
+      <h1><span>Santa Cruz</span><span>Metrópoli</span><em>en Cifras</em></h1>
+      <p class="alcance-hero">Región metropolitana de Santa Cruz
+         más área de influencia</p>
       <div class="escalas">
         <div class="chip" id="chip-mun"><b>9</b><span>municipios</span></div>
-        <div class="chip" id="chip-mz"><b id="n-mz">—</b><span>manzanas censadas</span></div>
-        <div class="chip"><b id="n-pob">—</b><span>habitantes</span></div>
+        <div class="chip" id="chip-mz"><b id="n-mz">—</b><span>manzanas</span></div>
+        <div class="chip"><b id="n-ind">—</b><span>indicadores</span></div>
       </div>
     </div>
   </div>
   <div class="pie-hero"><div class="envoltura">
-    <p id="leyenda-hero">Cada punto es una manzana censada.</p>
+    <p id="leyenda-hero">Cada punto es una manzana. Nueve municipios, dos escalas.</p>
   </div></div>
 </section>
 
 <section class="seccion"><div class="envoltura">
   <p class="rotulo">Las herramientas</p>
   <h2>Cuatro formas de entrar al mismo dato</h2>
-  <p class="intro">Todas leen el mismo censo y el mismo recorte territorial.
+  <p class="intro">Todas leen el mismo dato y el mismo recorte territorial.
      Lo que cambia es la escala a la que miran y qué te llevás al salir.</p>
 
   <div class="mazo">
@@ -263,9 +275,9 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
       </div>
       <p>El mapa se pinta con el indicador que elijas y al lado queda la lectura:
          cuánto tiene cada municipio, dónde cae el conjunto y cómo cambió desde
-         el censo anterior.</p>
+         2012.</p>
       <ul>
-        <li>Comparación entre censos: <b>2012 y 2024</b>, con el cambio calculado
+        <li>Comparación entre <b>2012 y 2024</b>, con el cambio calculado
             en puntos o en porcentaje según corresponda.</li>
         <li>La ficha de cada indicador: qué mide y sobre qué universo, para que
             ninguna cifra se lea por lo que parece.</li>
@@ -293,7 +305,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
         </svg></div>
         <div>
           <h3>A nivel manzana</h3>
-          <p class="sub">El mismo censo, adentro de la ciudad</p>
+          <p class="sub">El mismo dato, adentro de la ciudad</p>
         </div>
       </div>
       <p>El promedio de un municipio esconde lo que pasa cuadra por cuadra. Acá
@@ -379,7 +391,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
       <div class="zocalo">
         <div class="datos">
           <div><b>9 × 9</b>matrices</div>
-          <div><b>2024</b>censo</div>
+          <div><b>2024</b>año del dato</div>
         </div>
         <span class="espera">En construcción</span>
       </div>
@@ -394,7 +406,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
     <dl class="cuenta">
       <div><dt id="a-mun">9</dt><dd>municipios</dd></div>
       <div><dt id="a-pob">—</dt><dd>habitantes</dd></div>
-      <div><dt id="a-mz">—</dt><dd>manzanas censadas</dd></div>
+      <div><dt id="a-mz">—</dt><dd>manzanas</dd></div>
     </dl>
   </div>
   <div>
@@ -403,8 +415,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
        una cifra «de la región», habla de los nueve juntos, y cuando compara,
        compara entre los nueve.</p>
     <p>El dato es siempre del municipio entero: incluye el área rural. A nivel
-       manzana, en cambio, sólo existe lo que el censo levantó como área urbana
-       amanzanada.</p>
+       manzana, en cambio, sólo existe el área urbana amanzanada.</p>
     <div class="nueve">
       <span>Santa Cruz de la Sierra</span><span>Cotoca</span><span>Porongo</span>
       <span>La Guardia</span><span>El Torno</span><span>Warnes</span>
@@ -428,7 +439,7 @@ const D = /*__DATOS__*/;
 const mil = n => n.toLocaleString("es-BO");
 const poner = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
 poner("n-mz",     mil(D.n.manzanas));
-poner("n-pob",    mil(D.n.poblacion));
+poner("n-ind",    mil(D.n.indicadores));
 poner("d-mun-ind", D.n.mun_ind);
 poner("d-mun-blo", D.n.mun_bloques);
 poner("d-mz-ind",  D.n.mz_ind);
@@ -447,8 +458,8 @@ poner("a-mz",      mil(D.n.manzanas));
    ═══════════════════════════════════════════════════════════════════════ */
 const lienzo = document.getElementById("lienzo");
 const cx = lienzo.getContext("2d");
-let capaSil = null, capaMz = null, W = 0, H = 0, dpr = 1;
-let puntos = null;
+let capaGrid = null, capaSil = null, capaMz = null, tmp = null, tcx = null;
+let W = 0, H = 0, dpr = 1, puntos = null;
 
 function capa(dibuja){
   const c = document.createElement("canvas");
@@ -463,19 +474,34 @@ function capa(dibuja){
    ahí el texto ya no está al costado sino arriba. */
 function proyectar(){
   const angosta = W / dpr < 960;
-  /* en pantalla ancha ocupa la mitad derecha y nada más: la mancha urbana
-     cae al oeste de la región, o sea del lado del titular, y si el mapa es
-     grande el texto termina leyéndose encima de los puntos */
-  const ocupa = angosta ? .94 : .56;
-  const escala = Math.min(W * ocupa / D.ancho, H * .82 / D.alto);
+  const ocupa = angosta ? .96 : .64;
+  const escala = Math.min(W * ocupa / D.ancho, H * .84 / D.alto);
   const dx = angosta ? (W - D.ancho * escala) / 2
-                     : W - D.ancho * escala - W * .035;
+                     : W - D.ancho * escala - W * .03;
   const dy = (H - D.alto * escala) / 2;
-  return (x, y) => [dx + x * escala, dy + y * escala];
+  return {p: (x, y) => [dx + x * escala, dy + y * escala], dx, dy, escala};
 }
 
+let PR = null;
+
 function repintarCapas(){
-  const p = proyectar();
+  PR = proyectar();
+  const p = PR.p;
+
+  /* ★ LA RETÍCULA. No es un adorno geométrico: son las líneas del sistema de
+     coordenadas sobre el que están puestos los datos, con el mismo paso en las
+     dos direcciones. Dice, sin decirlo, que lo que se está mirando es un mapa
+     medido y no un dibujo. */
+  capaGrid = capa(g => {
+    const paso = PR.escala * (D.ancho / 14);
+    g.strokeStyle = "rgba(139,197,63,.085)";
+    g.lineWidth = 1;
+    g.beginPath();
+    for (let x = PR.dx % paso; x < W; x += paso){ g.moveTo(x, 0); g.lineTo(x, H); }
+    for (let y = PR.dy % paso; y < H; y += paso){ g.moveTo(0, y); g.lineTo(W, y); }
+    g.stroke();
+  });
+
   capaSil = capa(g => {
     g.lineJoin = "round";
     D.siluetas.forEach(a => {
@@ -489,6 +515,7 @@ function repintarCapas(){
       g.strokeStyle = "rgba(160,214,86,.85)"; g.lineWidth = 1.4 * dpr; g.stroke();
     });
   });
+
   capaMz = puntos ? capa(g => {
     g.fillStyle = "rgba(163,217,88,.9)";
     const r = Math.max(1, 1.05 * dpr);
@@ -497,37 +524,85 @@ function repintarCapas(){
       g.fillRect(X, Y, r, r);
     }
   }) : null;
+
+  tmp = document.createElement("canvas");
+  tmp.width = W; tmp.height = H;
+  tcx = tmp.getContext("2d");
 }
 
 function medir(){
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   const r = lienzo.getBoundingClientRect();
   W = Math.round(r.width * dpr); H = Math.round(r.height * dpr);
+  if (!W || !H) return;
   lienzo.width = W; lienzo.height = H;
   repintarCapas();
 }
 
-/* el ciclo: silueta → enjambre → silueta, con una pausa en cada extremo para
-   que se pueda LEER lo que muestra, no sólo ver que se mueve */
+/* ═══════════════════════════════════════════════════════════════════════
+   EL BARRIDO
+   ───────────────────────────────────────────────────────────────────────
+   Las manzanas no aparecen de golpe: se revelan de oeste a este detrás de
+   una línea que barre el territorio, como un levantamiento que avanza. Es
+   la diferencia entre «algo se prende» y «algo se está midiendo».
+   El enmascarado se hace en un lienzo auxiliar con `destination-in`: son
+   dos operaciones por cuadro sobre capas ya dibujadas, no 38.892 puntos.
+   ═══════════════════════════════════════════════════════════════════════ */
 const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CICLO = 13000;
 let t0 = null;
-const CICLO = 11000;
-function cuadro(ts){
-  if (!capaSil) { requestAnimationFrame(cuadro); return; }
-  if (t0 === null) t0 = ts;
-  /* arranca con el enjambre ya puesto: es lo que hace levantar la vista, y
-     dejarlo para el segundo 6 es apostar a que el visitante siga ahí */
-  let f = (((ts - t0) + CICLO * .42) % CICLO) / CICLO;
-  let m = f < .5 ? f * 2 : (1 - f) * 2;            /* triángulo 0..1..0 */
-  m = Math.min(1, Math.max(0, (m - .18) / .64));   /* con meseta en las puntas */
-  m = m * m * (3 - 2 * m);                         /* suavizado */
+
+function tramos(f){
+  /* entra 0→.40 · sostiene .40→.66 · sale .66→.88 · descansa .88→1 */
+  if (f < .40) return {b: f / .40, vivo: true};
+  if (f < .66) return {b: 1, vivo: true};
+  if (f < .88) return {b: 1 - (f - .66) / .22, vivo: false};
+  return {b: 0, vivo: false};
+}
+const suave = x => x * x * (3 - 2 * x);
+
+function pintar(b){
   cx.clearRect(0, 0, W, H);
-  cx.globalAlpha = 1 - m * .55;
-  cx.drawImage(capaSil, 0, 0);
-  if (capaMz){ cx.globalAlpha = m; cx.drawImage(capaMz, 0, 0); }
+  if (capaGrid) cx.drawImage(capaGrid, 0, 0);
+  cx.globalAlpha = 1 - b * .45;
+  if (capaSil) cx.drawImage(capaSil, 0, 0);
   cx.globalAlpha = 1;
-  document.getElementById("chip-mun").classList.toggle("viva", m < .5);
-  document.getElementById("chip-mz").classList.toggle("viva", m >= .5);
+  if (!capaMz || b <= .001) return;
+
+  const x0 = PR.dx, x1 = PR.dx + D.ancho * PR.escala;
+  const frente = x0 + (x1 - x0) * b;
+  const pluma = Math.max(70 * dpr, (x1 - x0) * .10);   /* el borde no es filo */
+  tcx.clearRect(0, 0, W, H);
+  tcx.globalCompositeOperation = "source-over";
+  tcx.drawImage(capaMz, 0, 0);
+  tcx.globalCompositeOperation = "destination-in";
+  const g = tcx.createLinearGradient(frente - pluma, 0, frente, 0);
+  g.addColorStop(0, "rgba(0,0,0,1)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  tcx.fillStyle = g;
+  tcx.fillRect(0, 0, W, H);
+  tcx.globalCompositeOperation = "source-over";
+  cx.drawImage(tmp, 0, 0);
+
+  /* la línea de escaneo: sólo mientras el frente está en camino */
+  if (b > .012 && b < .988){
+    const lg = cx.createLinearGradient(frente - 2 * dpr, 0, frente + 2 * dpr, 0);
+    lg.addColorStop(0, "rgba(139,197,63,0)");
+    lg.addColorStop(.5, "rgba(190,240,120,.85)");
+    lg.addColorStop(1, "rgba(139,197,63,0)");
+    cx.fillStyle = lg;
+    cx.fillRect(frente - 2 * dpr, PR.dy, 4 * dpr, D.alto * PR.escala);
+  }
+}
+
+function cuadro(ts){
+  if (!capaSil){ requestAnimationFrame(cuadro); return; }
+  if (t0 === null) t0 = ts;
+  const f = (((ts - t0) + CICLO * .06) % CICLO) / CICLO;
+  const {b, vivo} = tramos(f);
+  pintar(suave(Math.max(0, Math.min(1, b))));
+  document.getElementById("chip-mz").classList.toggle("viva", vivo);
+  document.getElementById("chip-mun").classList.toggle("viva", !vivo);
   requestAnimationFrame(cuadro);
 }
 
@@ -535,21 +610,16 @@ medir();
 addEventListener("resize", medir);
 fetch("datos/portal_enjambre.json")
   .then(r => r.json())
-  .then(j => { puntos = j.p; repintarCapas(); })
+  .then(j => { puntos = j.p; repintarCapas(); if (quieto) pintar(1); })
   .catch(() => {
     document.getElementById("leyenda-hero").textContent =
-      "Silueta de los nueve municipios de la RMSC + 3.";
+      "Los nueve municipios de la RMSC + 3.";
   });
+
 if (quieto){
-  const pintaFija = () => {
-    if (!capaSil) return requestAnimationFrame(pintaFija);
-    cx.clearRect(0, 0, W, H);
-    cx.globalAlpha = .55; cx.drawImage(capaSil, 0, 0);
-    if (capaMz){ cx.globalAlpha = 1; cx.drawImage(capaMz, 0, 0); }
-    cx.globalAlpha = 1;
-    document.getElementById("chip-mz").classList.add("viva");
-  };
-  pintaFija();
+  const fija = () => capaSil ? pintar(1) : requestAnimationFrame(fija);
+  fija();
+  document.getElementById("chip-mz").classList.add("viva");
 } else {
   requestAnimationFrame(cuadro);
 }

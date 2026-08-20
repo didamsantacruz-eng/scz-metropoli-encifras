@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Santa Cruz Metrópoli En Cifras</title>
-<meta name="description" content="El censo 2024 sobre la Región Metropolitana de Santa Cruz y su área de influencia: nueve municipios, 38.892 manzanas, cuatro herramientas para leerlo.">
+<meta name="description" content="Los datos de la Región Metropolitana de Santa Cruz y su área de influencia: nueve municipios, 38.892 manzanas, cuatro herramientas para leerlo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
@@ -44,9 +44,8 @@ a{color:inherit}
 .barra{background:var(--verde-hondo);position:relative;z-index:5}
 .barra .envoltura{display:flex;align-items:center;gap:16px;height:70px}
 .barra img{height:36px;width:auto;display:block;flex:none}
-.marca{font-size:17.5px;white-space:nowrap}
-.marca b{color:var(--verde);font-weight:700}
-.marca span{color:#fff;font-weight:600;margin-left:.45em}
+.marca{margin:0;font-size:14.5px;font-weight:600;color:#fff;line-height:1.25;
+       letter-spacing:.004em;max-width:38ch}
 .barra nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
 .barra nav a{color:#b9d3ac;text-decoration:none;font-weight:500;white-space:nowrap;
              padding:3px 0;border-bottom:2px solid transparent}
@@ -59,22 +58,22 @@ a{color:inherit}
    izquierdo para que el titular no pelee con los puntos */
 #lienzo{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(98deg,var(--verde-hondo) 20%,
-             rgba(4,53,32,.86) 36%, rgba(4,53,32,.10) 60%, rgba(4,53,32,0) 78%)}
+  background:linear-gradient(98deg,var(--verde-hondo) 15%,
+             rgba(4,53,32,.84) 31%, rgba(4,53,32,.08) 54%, rgba(4,53,32,0) 72%)}
 .hero .envoltura{position:relative;z-index:2;padding-top:76px;padding-bottom:82px;
                  min-height:520px;display:flex;flex-direction:column;
                  justify-content:center}
-.hero-txt{max-width:600px}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;
-         font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-         color:var(--verde);margin:0 0 20px}
-.eyebrow::before{content:"";width:26px;height:2px;background:var(--verde)}
-.hero h1{font-family:var(--ft);font-weight:300;font-size:clamp(38px,5.6vw,68px);
-         line-height:1.03;letter-spacing:-.018em;margin:0 0 22px;
-         text-wrap:balance;color:#fff}
-.hero h1 em{font-style:normal;color:var(--verde)}
-.hero p{font-size:17.5px;line-height:1.6;color:#cfe0c6;margin:0 0 34px;
-        max-width:53ch}
+.hero-txt{max-width:520px}
+/* La marca, apilada. En tres renglones ocupa la mitad del ancho que en uno
+   solo, y ese ancho es justo lo que necesita el mapa para respirar. */
+.hero h1{font-family:var(--ft);font-weight:300;font-size:clamp(44px,6.2vw,86px);
+         line-height:.98;letter-spacing:-.028em;margin:0 0 26px;color:#fff;
+         display:flex;flex-direction:column}
+.hero h1 span{display:block}
+.hero h1 em{font-style:normal;color:var(--verde);font-weight:400}
+.alcance-hero{font-size:16.5px;line-height:1.5;color:#cfe0c6;margin:0 0 32px;
+              max-width:34ch;border-left:2px solid rgba(139,197,63,.45);
+              padding-left:16px}
 .escalas{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .chip{display:inline-flex;align-items:baseline;gap:8px;border:1px solid rgba(139,197,63,.34);
       padding:9px 14px;background:rgba(139,197,63,.07);transition:border-color .5s,background .5s}
@@ -108,8 +107,23 @@ a{color:inherit}
 .herr.pronto{background:#f7f5ec}
 .herr.pronto::before{background:var(--tenue)}
 .tapa{display:flex;align-items:flex-start;gap:18px;padding:26px 26px 0}
+/* ★ EL RECUADRO DEL ÍCONO, COMO UN VISOR. Trama de puntos finísima —la misma
+   idea de la retícula del hero, a otra escala— y dos escuadras en las esquinas
+   que se encienden al pasar el mouse. Es el único gesto «de instrumento» que
+   se permite la tarjeta: el resto queda quieto para que se lea el texto. */
 .motivo{flex:none;width:64px;height:64px;border:1px solid var(--linea);
-        background:var(--papel);display:grid;place-items:center}
+        background-color:var(--papel);display:grid;place-items:center;
+        position:relative;
+        background-image:radial-gradient(rgba(0,115,59,.16) 1px, transparent 1px);
+        background-size:7px 7px;background-position:1px 1px}
+.motivo::before,.motivo::after{content:"";position:absolute;width:10px;height:10px;
+  border-color:var(--verde-ins);border-style:solid;opacity:.3;
+  transition:opacity .28s ease, transform .28s cubic-bezier(.2,.7,.3,1)}
+.motivo::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.motivo::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.herr:hover .motivo::before{opacity:1;transform:translate(-3px,-3px)}
+.herr:hover .motivo::after{opacity:1;transform:translate(3px,3px)}
+.herr.pronto .motivo::before,.herr.pronto .motivo::after{border-color:var(--tenue)}
 .motivo svg{width:38px;height:38px}
 .tapa h3{font-family:var(--ft);font-weight:500;font-size:26px;line-height:1.14;
          margin:0 0 5px;letter-spacing:-.01em}
@@ -209,7 +223,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 <header class="barra">
   <div class="envoltura">
     <img src="img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
-    <div class="marca"><b>Santa Cruz Metrópoli</b><span>En Cifras</span></div>
+    <p class="marca">Dirección de la Instancia Departamental de Asuntos Metropolitanos</p>
     <nav>
       <a href="municipal/">Municipal</a>
       <a href="manzana/">A nivel manzana</a>
@@ -223,27 +237,25 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
   <canvas id="lienzo" aria-hidden="true"></canvas>
   <div class="envoltura">
     <div class="hero-txt">
-      <p class="eyebrow">Censo de Población y Vivienda 2024</p>
-      <h1>El territorio metropolitano, <em>medido</em></h1>
-      <p>La Región Metropolitana de Santa Cruz y su área de influencia, del
-         municipio entero a la manzana. Cuatro herramientas para consultarlo,
-         compararlo y llevárselo.</p>
+      <h1><span>Santa Cruz</span><span>Metrópoli</span><em>en Cifras</em></h1>
+      <p class="alcance-hero">Región metropolitana de Santa Cruz
+         más área de influencia</p>
       <div class="escalas">
         <div class="chip" id="chip-mun"><b>9</b><span>municipios</span></div>
-        <div class="chip" id="chip-mz"><b id="n-mz">—</b><span>manzanas censadas</span></div>
-        <div class="chip"><b id="n-pob">—</b><span>habitantes</span></div>
+        <div class="chip" id="chip-mz"><b id="n-mz">—</b><span>manzanas</span></div>
+        <div class="chip"><b id="n-ind">—</b><span>indicadores</span></div>
       </div>
     </div>
   </div>
   <div class="pie-hero"><div class="envoltura">
-    <p id="leyenda-hero">Cada punto es una manzana censada.</p>
+    <p id="leyenda-hero">Cada punto es una manzana. Nueve municipios, dos escalas.</p>
   </div></div>
 </section>
 
 <section class="seccion"><div class="envoltura">
   <p class="rotulo">Las herramientas</p>
   <h2>Cuatro formas de entrar al mismo dato</h2>
-  <p class="intro">Todas leen el mismo censo y el mismo recorte territorial.
+  <p class="intro">Todas leen el mismo dato y el mismo recorte territorial.
      Lo que cambia es la escala a la que miran y qué te llevás al salir.</p>
 
   <div class="mazo">
@@ -263,9 +275,9 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
       </div>
       <p>El mapa se pinta con el indicador que elijas y al lado queda la lectura:
          cuánto tiene cada municipio, dónde cae el conjunto y cómo cambió desde
-         el censo anterior.</p>
+         2012.</p>
       <ul>
-        <li>Comparación entre censos: <b>2012 y 2024</b>, con el cambio calculado
+        <li>Comparación entre <b>2012 y 2024</b>, con el cambio calculado
             en puntos o en porcentaje según corresponda.</li>
         <li>La ficha de cada indicador: qué mide y sobre qué universo, para que
             ninguna cifra se lea por lo que parece.</li>
@@ -293,7 +305,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
         </svg></div>
         <div>
           <h3>A nivel manzana</h3>
-          <p class="sub">El mismo censo, adentro de la ciudad</p>
+          <p class="sub">El mismo dato, adentro de la ciudad</p>
         </div>
       </div>
       <p>El promedio de un municipio esconde lo que pasa cuadra por cuadra. Acá
@@ -379,7 +391,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
       <div class="zocalo">
         <div class="datos">
           <div><b>9 × 9</b>matrices</div>
-          <div><b>2024</b>censo</div>
+          <div><b>2024</b>año del dato</div>
         </div>
         <span class="espera">En construcción</span>
       </div>
@@ -394,7 +406,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
     <dl class="cuenta">
       <div><dt id="a-mun">9</dt><dd>municipios</dd></div>
       <div><dt id="a-pob">—</dt><dd>habitantes</dd></div>
-      <div><dt id="a-mz">—</dt><dd>manzanas censadas</dd></div>
+      <div><dt id="a-mz">—</dt><dd>manzanas</dd></div>
     </dl>
   </div>
   <div>
@@ -403,8 +415,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
        una cifra «de la región», habla de los nueve juntos, y cuando compara,
        compara entre los nueve.</p>
     <p>El dato es siempre del municipio entero: incluye el área rural. A nivel
-       manzana, en cambio, sólo existe lo que el censo levantó como área urbana
-       amanzanada.</p>
+       manzana, en cambio, sólo existe el área urbana amanzanada.</p>
     <div class="nueve">
       <span>Santa Cruz de la Sierra</span><span>Cotoca</span><span>Porongo</span>
       <span>La Guardia</span><span>El Torno</span><span>Warnes</span>
@@ -422,13 +433,13 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 </div></footer>
 
 <script>
-const D = {"siluetas":[[418,199,420,202,403,213,402,223,409,225,407,233,411,240,408,244,403,244,398,260,375,259,370,265,369,279,371,281,368,284,347,276,334,277,329,285,324,283,323,284,327,292,338,304,336,307,314,318,304,309,287,308,278,301,269,286,257,281,254,276,251,252,258,238,258,218,265,208,266,190,268,186,265,180,323,179,332,207,345,202,349,208,358,206,379,206,418,199],[363,454,362,469,349,472,323,462,315,465,308,476,284,486,265,469,261,472,253,469,253,475,257,479,256,486,234,479,236,462,230,453,227,439,218,434,211,436,209,431,196,432,194,427,183,431,175,427,225,391,258,355,316,330,326,339,344,369,346,380,351,389,350,411,353,428,363,454],[536,14,493,56,509,80,533,93,540,92,544,96,542,122,545,124,548,134,551,134,553,143,556,144,542,167,551,185,566,182,573,182,578,186,584,216,583,220,587,232,587,250,578,256,574,268,559,284,558,290,560,303,566,310,563,319,566,324,574,323,575,325,572,329,573,338,565,352,565,443,560,448,558,457,548,458,522,479,484,484,481,495,471,501,455,503,455,507,447,516,407,516,396,521,396,497,392,497,387,486,373,480,371,469,367,466,366,456,358,443,351,415,351,389,343,365,326,339,316,330,314,318,336,307,338,304,323,284,329,285,334,277,347,276,368,284,371,281,369,279,370,265,375,259,398,260,403,244,408,244,411,240,407,233,409,225,402,223,403,213,420,202,418,199,425,185,437,169,455,153,453,139,464,123,466,89,474,62,461,35,496,0,501,8,507,3,510,3,511,9,518,15,536,14],[702,502,706,533,720,560,724,590,722,621,706,648,685,651,679,649,670,659,664,653,657,659,639,664,619,663,613,666,591,662,585,666,573,657,570,658,572,668,560,671,556,655,550,652,550,657,543,661,547,681,534,676,527,678,527,669,515,669,512,660,486,656,481,642,474,642,478,637,478,631,485,633,486,628,480,627,481,614,475,613,486,607,485,601,483,603,476,603,476,598,470,596,471,583,464,569,470,557,467,554,462,558,455,548,471,541,468,535,474,527,466,519,473,510,479,517,504,501,509,510,522,500,523,503,535,499,557,502,569,511,579,506,587,515,593,510,606,509,636,509,640,516,663,510,668,512,671,508,682,506,682,510,692,512,702,502],[1945,299,1939,302,1945,308,1943,315,1951,322,1954,322,1957,316,1963,320,1974,317,1978,321,1978,324,1967,329,1969,333,1966,337,1976,343,1983,344,1984,352,1994,363,1994,370,1989,371,1999,378,2004,378,2010,387,2008,391,2022,393,2022,403,2026,406,2033,405,2031,418,2034,422,2029,423,2027,428,2014,435,2012,443,2015,448,2033,453,2037,463,2047,473,2046,478,2041,479,2039,488,2043,489,2040,494,2043,495,2046,509,2036,510,2032,515,2026,534,2010,537,2006,541,2003,540,2003,543,1997,546,1994,553,1982,555,1980,558,1975,556,1970,561,1973,571,1972,578,1977,584,1982,588,1995,590,1995,592,2000,591,1999,595,2009,607,2008,612,2003,616,1995,609,1986,613,1982,625,1984,630,1981,638,1986,651,1985,656,1979,658,1965,769,1957,870,1938,986,1624,938,1015,839,679,800,677,773,681,768,696,765,704,759,703,750,695,740,693,729,689,723,679,717,678,713,687,689,702,682,706,648,722,621,724,590,720,560,706,533,699,487,704,467,715,448,717,437,714,424,695,411,694,408,697,388,709,378,756,370,777,372,808,399,825,395,833,350,899,346,1300,281,1518,249,1690,180,1708,189,1716,201,1724,201,1730,206,1732,203,1745,207,1748,216,1740,217,1738,237,1745,237,1749,232,1752,233,1751,246,1754,253,1761,253,1762,248,1770,249,1768,243,1771,240,1784,241,1790,236,1796,245,1789,259,1795,264,1808,259,1808,250,1819,248,1827,249,1827,255,1829,255,1831,250,1840,249,1853,253,1861,260,1864,259,1868,274,1875,270,1881,276,1886,272,1900,273,1903,280,1923,294,1929,295,1933,291,1938,297,1944,294,1945,299],[229,733,237,743,232,750,238,759,239,777,244,783,243,790,246,799,248,801,260,795,266,802,276,806,280,798,293,800,297,801,295,807,304,811,300,819,288,824,285,841,280,847,284,869,252,873,234,887,241,905,251,913,251,918,246,925,235,929,233,935,225,935,221,940,213,941,212,948,200,958,200,963,191,965,180,961,174,962,106,1013,93,987,88,959,88,949,100,932,78,913,73,898,67,897,61,886,62,877,58,866,57,848,49,816,23,800,24,785,22,772,19,768,18,752,8,742,3,744,0,736,6,735,21,721,30,719,35,715,34,709,38,704,52,700,64,689,63,687,71,684,75,686,76,680,81,678,79,673,90,650,87,642,104,628,119,646,130,650,132,683,143,714,141,724,144,730,153,736,177,736,184,742,204,738,207,734,219,734,223,730,229,733],[175,427,183,431,194,427,196,432,209,431,211,436,218,434,227,439,230,453,236,462,234,479,256,486,257,479,253,475,253,469,261,472,265,469,284,486,308,476,315,465,323,462,349,472,362,469,365,501,364,510,356,517,355,523,364,546,353,575,352,592,342,602,333,622,318,633,304,638,297,648,290,682,281,685,267,682,253,686,242,701,239,720,229,733,223,730,219,734,207,734,204,738,184,742,180,737,153,736,143,728,143,714,132,683,130,650,119,646,109,632,97,623,96,617,110,577,125,557,129,535,134,533,140,522,143,521,144,516,147,514,146,488,151,484,147,478,157,472,163,472,160,462,170,457,172,447,170,428,175,427],[702,502,692,512,682,510,682,506,671,508,668,512,663,510,640,516,636,509,606,509,593,510,587,515,579,506,569,511,557,502,535,499,523,503,522,500,509,510,504,501,479,517,473,510,467,515,466,519,474,527,468,535,471,541,455,548,462,558,467,554,470,557,464,569,471,583,470,596,476,598,476,603,483,603,485,601,486,607,475,613,481,614,480,627,486,628,485,633,478,631,478,637,474,642,481,642,486,656,512,660,515,669,527,669,527,678,534,676,547,681,543,661,550,657,550,652,556,655,560,671,572,668,570,658,573,657,585,666,591,662,613,666,619,663,639,664,657,659,664,653,670,659,679,649,685,651,706,648,702,682,687,689,678,713,679,717,689,723,693,729,695,740,703,750,704,759,696,765,681,768,677,773,679,800,668,806,614,807,613,803,546,805,540,796,534,774,529,769,520,766,517,769,510,768,510,764,497,763,491,756,486,756,471,742,458,743,439,732,415,725,405,718,395,718,374,703,360,689,341,681,339,661,321,649,318,639,314,634,333,622,342,602,352,592,353,575,364,546,355,523,356,517,365,506,360,473,363,454,367,461,367,466,371,469,373,480,387,486,392,497,396,497,396,521,407,516,447,516,455,507,455,503,471,501,481,495,484,484,522,479,548,458,593,445,603,446,647,410,695,404,695,411,714,424,717,437,715,448,704,467,699,487,702,502],[314,634,318,639,321,649,339,661,341,681,360,689,374,703,395,718,405,718,415,725,439,732,458,743,471,742,486,756,491,756,497,763,510,764,510,768,517,769,520,766,529,769,534,774,540,796,546,805,454,807,453,798,446,807,387,809,387,812,377,812,376,821,384,822,383,844,403,844,404,874,416,874,418,925,388,926,389,940,369,940,368,926,349,927,349,950,310,956,311,960,299,961,301,972,279,974,280,988,261,991,255,979,233,993,228,992,225,987,202,998,151,1014,151,1005,125,1001,132,992,140,988,140,985,154,979,174,962,180,961,191,965,200,963,200,958,212,948,213,941,221,940,225,935,233,935,235,929,246,925,251,913,241,905,234,887,252,873,284,869,280,847,285,841,288,824,300,819,304,811,295,807,297,801,293,800,280,798,276,806,266,802,260,795,248,801,246,799,243,790,244,783,239,777,238,759,232,750,237,743,229,733,239,720,242,701,253,686,267,682,281,685,290,682,297,648,304,638,314,634]],"ancho":2047,"alto":1014,"n":{"manzanas":38892,"conficha":25698,"poblacion":2282770.0,"mun_ind":243,"mun_bloques":25,"mz_ind":91,"mz_bloques":13,"laminas":375}};
+const D = {"siluetas":[[418,199,420,202,403,213,402,223,409,225,407,233,411,240,408,244,403,244,398,260,375,259,370,265,369,279,371,281,368,284,347,276,334,277,329,285,324,283,323,284,327,292,338,304,336,307,314,318,304,309,287,308,278,301,269,286,257,281,254,276,251,252,258,238,258,218,265,208,266,190,268,186,265,180,323,179,332,207,345,202,349,208,358,206,379,206,418,199],[363,454,362,469,349,472,323,462,315,465,308,476,284,486,265,469,261,472,253,469,253,475,257,479,256,486,234,479,236,462,230,453,227,439,218,434,211,436,209,431,196,432,194,427,183,431,175,427,225,391,258,355,316,330,326,339,344,369,346,380,351,389,350,411,353,428,363,454],[536,14,493,56,509,80,533,93,540,92,544,96,542,122,545,124,548,134,551,134,553,143,556,144,542,167,551,185,566,182,573,182,578,186,584,216,583,220,587,232,587,250,578,256,574,268,559,284,558,290,560,303,566,310,563,319,566,324,574,323,575,325,572,329,573,338,565,352,565,443,560,448,558,457,548,458,522,479,484,484,481,495,471,501,455,503,455,507,447,516,407,516,396,521,396,497,392,497,387,486,373,480,371,469,367,466,366,456,358,443,351,415,351,389,343,365,326,339,316,330,314,318,336,307,338,304,323,284,329,285,334,277,347,276,368,284,371,281,369,279,370,265,375,259,398,260,403,244,408,244,411,240,407,233,409,225,402,223,403,213,420,202,418,199,425,185,437,169,455,153,453,139,464,123,466,89,474,62,461,35,496,0,501,8,507,3,510,3,511,9,518,15,536,14],[702,502,706,533,720,560,724,590,722,621,706,648,685,651,679,649,670,659,664,653,657,659,639,664,619,663,613,666,591,662,585,666,573,657,570,658,572,668,560,671,556,655,550,652,550,657,543,661,547,681,534,676,527,678,527,669,515,669,512,660,486,656,481,642,474,642,478,637,478,631,485,633,486,628,480,627,481,614,475,613,486,607,485,601,483,603,476,603,476,598,470,596,471,583,464,569,470,557,467,554,462,558,455,548,471,541,468,535,474,527,466,519,473,510,479,517,504,501,509,510,522,500,523,503,535,499,557,502,569,511,579,506,587,515,593,510,606,509,636,509,640,516,663,510,668,512,671,508,682,506,682,510,692,512,702,502],[1945,299,1939,302,1945,308,1943,315,1951,322,1954,322,1957,316,1963,320,1974,317,1978,321,1978,324,1967,329,1969,333,1966,337,1976,343,1983,344,1984,352,1994,363,1994,370,1989,371,1999,378,2004,378,2010,387,2008,391,2022,393,2022,403,2026,406,2033,405,2031,418,2034,422,2029,423,2027,428,2014,435,2012,443,2015,448,2033,453,2037,463,2047,473,2046,478,2041,479,2039,488,2043,489,2040,494,2043,495,2046,509,2036,510,2032,515,2026,534,2010,537,2006,541,2003,540,2003,543,1997,546,1994,553,1982,555,1980,558,1975,556,1970,561,1973,571,1972,578,1977,584,1982,588,1995,590,1995,592,2000,591,1999,595,2009,607,2008,612,2003,616,1995,609,1986,613,1982,625,1984,630,1981,638,1986,651,1985,656,1979,658,1965,769,1957,870,1938,986,1624,938,1015,839,679,800,677,773,681,768,696,765,704,759,703,750,695,740,693,729,689,723,679,717,678,713,687,689,702,682,706,648,722,621,724,590,720,560,706,533,699,487,704,467,715,448,717,437,714,424,695,411,694,408,697,388,709,378,756,370,777,372,808,399,825,395,833,350,899,346,1300,281,1518,249,1690,180,1708,189,1716,201,1724,201,1730,206,1732,203,1745,207,1748,216,1740,217,1738,237,1745,237,1749,232,1752,233,1751,246,1754,253,1761,253,1762,248,1770,249,1768,243,1771,240,1784,241,1790,236,1796,245,1789,259,1795,264,1808,259,1808,250,1819,248,1827,249,1827,255,1829,255,1831,250,1840,249,1853,253,1861,260,1864,259,1868,274,1875,270,1881,276,1886,272,1900,273,1903,280,1923,294,1929,295,1933,291,1938,297,1944,294,1945,299],[229,733,237,743,232,750,238,759,239,777,244,783,243,790,246,799,248,801,260,795,266,802,276,806,280,798,293,800,297,801,295,807,304,811,300,819,288,824,285,841,280,847,284,869,252,873,234,887,241,905,251,913,251,918,246,925,235,929,233,935,225,935,221,940,213,941,212,948,200,958,200,963,191,965,180,961,174,962,106,1013,93,987,88,959,88,949,100,932,78,913,73,898,67,897,61,886,62,877,58,866,57,848,49,816,23,800,24,785,22,772,19,768,18,752,8,742,3,744,0,736,6,735,21,721,30,719,35,715,34,709,38,704,52,700,64,689,63,687,71,684,75,686,76,680,81,678,79,673,90,650,87,642,104,628,119,646,130,650,132,683,143,714,141,724,144,730,153,736,177,736,184,742,204,738,207,734,219,734,223,730,229,733],[175,427,183,431,194,427,196,432,209,431,211,436,218,434,227,439,230,453,236,462,234,479,256,486,257,479,253,475,253,469,261,472,265,469,284,486,308,476,315,465,323,462,349,472,362,469,365,501,364,510,356,517,355,523,364,546,353,575,352,592,342,602,333,622,318,633,304,638,297,648,290,682,281,685,267,682,253,686,242,701,239,720,229,733,223,730,219,734,207,734,204,738,184,742,180,737,153,736,143,728,143,714,132,683,130,650,119,646,109,632,97,623,96,617,110,577,125,557,129,535,134,533,140,522,143,521,144,516,147,514,146,488,151,484,147,478,157,472,163,472,160,462,170,457,172,447,170,428,175,427],[702,502,692,512,682,510,682,506,671,508,668,512,663,510,640,516,636,509,606,509,593,510,587,515,579,506,569,511,557,502,535,499,523,503,522,500,509,510,504,501,479,517,473,510,467,515,466,519,474,527,468,535,471,541,455,548,462,558,467,554,470,557,464,569,471,583,470,596,476,598,476,603,483,603,485,601,486,607,475,613,481,614,480,627,486,628,485,633,478,631,478,637,474,642,481,642,486,656,512,660,515,669,527,669,527,678,534,676,547,681,543,661,550,657,550,652,556,655,560,671,572,668,570,658,573,657,585,666,591,662,613,666,619,663,639,664,657,659,664,653,670,659,679,649,685,651,706,648,702,682,687,689,678,713,679,717,689,723,693,729,695,740,703,750,704,759,696,765,681,768,677,773,679,800,668,806,614,807,613,803,546,805,540,796,534,774,529,769,520,766,517,769,510,768,510,764,497,763,491,756,486,756,471,742,458,743,439,732,415,725,405,718,395,718,374,703,360,689,341,681,339,661,321,649,318,639,314,634,333,622,342,602,352,592,353,575,364,546,355,523,356,517,365,506,360,473,363,454,367,461,367,466,371,469,373,480,387,486,392,497,396,497,396,521,407,516,447,516,455,507,455,503,471,501,481,495,484,484,522,479,548,458,593,445,603,446,647,410,695,404,695,411,714,424,717,437,715,448,704,467,699,487,702,502],[314,634,318,639,321,649,339,661,341,681,360,689,374,703,395,718,405,718,415,725,439,732,458,743,471,742,486,756,491,756,497,763,510,764,510,768,517,769,520,766,529,769,534,774,540,796,546,805,454,807,453,798,446,807,387,809,387,812,377,812,376,821,384,822,383,844,403,844,404,874,416,874,418,925,388,926,389,940,369,940,368,926,349,927,349,950,310,956,311,960,299,961,301,972,279,974,280,988,261,991,255,979,233,993,228,992,225,987,202,998,151,1014,151,1005,125,1001,132,992,140,988,140,985,154,979,174,962,180,961,191,965,200,963,200,958,212,948,213,941,221,940,225,935,233,935,235,929,246,925,251,913,241,905,234,887,252,873,284,869,280,847,285,841,288,824,300,819,304,811,295,807,297,801,293,800,280,798,276,806,266,802,260,795,248,801,246,799,243,790,244,783,239,777,238,759,232,750,237,743,229,733,239,720,242,701,253,686,267,682,281,685,290,682,297,648,304,638,314,634]],"ancho":2047,"alto":1014,"n":{"manzanas":38892,"conficha":25698,"poblacion":2282770.0,"mun_ind":243,"mun_bloques":25,"mz_ind":91,"mz_bloques":13,"laminas":375,"indicadores":259}};
 
 /* ── las cifras salen del dato, no del HTML ─────────────────────────── */
 const mil = n => n.toLocaleString("es-BO");
 const poner = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
 poner("n-mz",     mil(D.n.manzanas));
-poner("n-pob",    mil(D.n.poblacion));
+poner("n-ind",    mil(D.n.indicadores));
 poner("d-mun-ind", D.n.mun_ind);
 poner("d-mun-blo", D.n.mun_bloques);
 poner("d-mz-ind",  D.n.mz_ind);
@@ -447,8 +458,8 @@ poner("a-mz",      mil(D.n.manzanas));
    ═══════════════════════════════════════════════════════════════════════ */
 const lienzo = document.getElementById("lienzo");
 const cx = lienzo.getContext("2d");
-let capaSil = null, capaMz = null, W = 0, H = 0, dpr = 1;
-let puntos = null;
+let capaGrid = null, capaSil = null, capaMz = null, tmp = null, tcx = null;
+let W = 0, H = 0, dpr = 1, puntos = null;
 
 function capa(dibuja){
   const c = document.createElement("canvas");
@@ -463,19 +474,34 @@ function capa(dibuja){
    ahí el texto ya no está al costado sino arriba. */
 function proyectar(){
   const angosta = W / dpr < 960;
-  /* en pantalla ancha ocupa la mitad derecha y nada más: la mancha urbana
-     cae al oeste de la región, o sea del lado del titular, y si el mapa es
-     grande el texto termina leyéndose encima de los puntos */
-  const ocupa = angosta ? .94 : .56;
-  const escala = Math.min(W * ocupa / D.ancho, H * .82 / D.alto);
+  const ocupa = angosta ? .96 : .64;
+  const escala = Math.min(W * ocupa / D.ancho, H * .84 / D.alto);
   const dx = angosta ? (W - D.ancho * escala) / 2
-                     : W - D.ancho * escala - W * .035;
+                     : W - D.ancho * escala - W * .03;
   const dy = (H - D.alto * escala) / 2;
-  return (x, y) => [dx + x * escala, dy + y * escala];
+  return {p: (x, y) => [dx + x * escala, dy + y * escala], dx, dy, escala};
 }
 
+let PR = null;
+
 function repintarCapas(){
-  const p = proyectar();
+  PR = proyectar();
+  const p = PR.p;
+
+  /* ★ LA RETÍCULA. No es un adorno geométrico: son las líneas del sistema de
+     coordenadas sobre el que están puestos los datos, con el mismo paso en las
+     dos direcciones. Dice, sin decirlo, que lo que se está mirando es un mapa
+     medido y no un dibujo. */
+  capaGrid = capa(g => {
+    const paso = PR.escala * (D.ancho / 14);
+    g.strokeStyle = "rgba(139,197,63,.085)";
+    g.lineWidth = 1;
+    g.beginPath();
+    for (let x = PR.dx % paso; x < W; x += paso){ g.moveTo(x, 0); g.lineTo(x, H); }
+    for (let y = PR.dy % paso; y < H; y += paso){ g.moveTo(0, y); g.lineTo(W, y); }
+    g.stroke();
+  });
+
   capaSil = capa(g => {
     g.lineJoin = "round";
     D.siluetas.forEach(a => {
@@ -489,6 +515,7 @@ function repintarCapas(){
       g.strokeStyle = "rgba(160,214,86,.85)"; g.lineWidth = 1.4 * dpr; g.stroke();
     });
   });
+
   capaMz = puntos ? capa(g => {
     g.fillStyle = "rgba(163,217,88,.9)";
     const r = Math.max(1, 1.05 * dpr);
@@ -497,37 +524,85 @@ function repintarCapas(){
       g.fillRect(X, Y, r, r);
     }
   }) : null;
+
+  tmp = document.createElement("canvas");
+  tmp.width = W; tmp.height = H;
+  tcx = tmp.getContext("2d");
 }
 
 function medir(){
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   const r = lienzo.getBoundingClientRect();
   W = Math.round(r.width * dpr); H = Math.round(r.height * dpr);
+  if (!W || !H) return;
   lienzo.width = W; lienzo.height = H;
   repintarCapas();
 }
 
-/* el ciclo: silueta → enjambre → silueta, con una pausa en cada extremo para
-   que se pueda LEER lo que muestra, no sólo ver que se mueve */
+/* ═══════════════════════════════════════════════════════════════════════
+   EL BARRIDO
+   ───────────────────────────────────────────────────────────────────────
+   Las manzanas no aparecen de golpe: se revelan de oeste a este detrás de
+   una línea que barre el territorio, como un levantamiento que avanza. Es
+   la diferencia entre «algo se prende» y «algo se está midiendo».
+   El enmascarado se hace en un lienzo auxiliar con `destination-in`: son
+   dos operaciones por cuadro sobre capas ya dibujadas, no 38.892 puntos.
+   ═══════════════════════════════════════════════════════════════════════ */
 const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CICLO = 13000;
 let t0 = null;
-const CICLO = 11000;
-function cuadro(ts){
-  if (!capaSil) { requestAnimationFrame(cuadro); return; }
-  if (t0 === null) t0 = ts;
-  /* arranca con el enjambre ya puesto: es lo que hace levantar la vista, y
-     dejarlo para el segundo 6 es apostar a que el visitante siga ahí */
-  let f = (((ts - t0) + CICLO * .42) % CICLO) / CICLO;
-  let m = f < .5 ? f * 2 : (1 - f) * 2;            /* triángulo 0..1..0 */
-  m = Math.min(1, Math.max(0, (m - .18) / .64));   /* con meseta en las puntas */
-  m = m * m * (3 - 2 * m);                         /* suavizado */
+
+function tramos(f){
+  /* entra 0→.40 · sostiene .40→.66 · sale .66→.88 · descansa .88→1 */
+  if (f < .40) return {b: f / .40, vivo: true};
+  if (f < .66) return {b: 1, vivo: true};
+  if (f < .88) return {b: 1 - (f - .66) / .22, vivo: false};
+  return {b: 0, vivo: false};
+}
+const suave = x => x * x * (3 - 2 * x);
+
+function pintar(b){
   cx.clearRect(0, 0, W, H);
-  cx.globalAlpha = 1 - m * .55;
-  cx.drawImage(capaSil, 0, 0);
-  if (capaMz){ cx.globalAlpha = m; cx.drawImage(capaMz, 0, 0); }
+  if (capaGrid) cx.drawImage(capaGrid, 0, 0);
+  cx.globalAlpha = 1 - b * .45;
+  if (capaSil) cx.drawImage(capaSil, 0, 0);
   cx.globalAlpha = 1;
-  document.getElementById("chip-mun").classList.toggle("viva", m < .5);
-  document.getElementById("chip-mz").classList.toggle("viva", m >= .5);
+  if (!capaMz || b <= .001) return;
+
+  const x0 = PR.dx, x1 = PR.dx + D.ancho * PR.escala;
+  const frente = x0 + (x1 - x0) * b;
+  const pluma = Math.max(70 * dpr, (x1 - x0) * .10);   /* el borde no es filo */
+  tcx.clearRect(0, 0, W, H);
+  tcx.globalCompositeOperation = "source-over";
+  tcx.drawImage(capaMz, 0, 0);
+  tcx.globalCompositeOperation = "destination-in";
+  const g = tcx.createLinearGradient(frente - pluma, 0, frente, 0);
+  g.addColorStop(0, "rgba(0,0,0,1)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  tcx.fillStyle = g;
+  tcx.fillRect(0, 0, W, H);
+  tcx.globalCompositeOperation = "source-over";
+  cx.drawImage(tmp, 0, 0);
+
+  /* la línea de escaneo: sólo mientras el frente está en camino */
+  if (b > .012 && b < .988){
+    const lg = cx.createLinearGradient(frente - 2 * dpr, 0, frente + 2 * dpr, 0);
+    lg.addColorStop(0, "rgba(139,197,63,0)");
+    lg.addColorStop(.5, "rgba(190,240,120,.85)");
+    lg.addColorStop(1, "rgba(139,197,63,0)");
+    cx.fillStyle = lg;
+    cx.fillRect(frente - 2 * dpr, PR.dy, 4 * dpr, D.alto * PR.escala);
+  }
+}
+
+function cuadro(ts){
+  if (!capaSil){ requestAnimationFrame(cuadro); return; }
+  if (t0 === null) t0 = ts;
+  const f = (((ts - t0) + CICLO * .06) % CICLO) / CICLO;
+  const {b, vivo} = tramos(f);
+  pintar(suave(Math.max(0, Math.min(1, b))));
+  document.getElementById("chip-mz").classList.toggle("viva", vivo);
+  document.getElementById("chip-mun").classList.toggle("viva", !vivo);
   requestAnimationFrame(cuadro);
 }
 
@@ -535,21 +610,16 @@ medir();
 addEventListener("resize", medir);
 fetch("datos/portal_enjambre.json")
   .then(r => r.json())
-  .then(j => { puntos = j.p; repintarCapas(); })
+  .then(j => { puntos = j.p; repintarCapas(); if (quieto) pintar(1); })
   .catch(() => {
     document.getElementById("leyenda-hero").textContent =
-      "Silueta de los nueve municipios de la RMSC + 3.";
+      "Los nueve municipios de la RMSC + 3.";
   });
+
 if (quieto){
-  const pintaFija = () => {
-    if (!capaSil) return requestAnimationFrame(pintaFija);
-    cx.clearRect(0, 0, W, H);
-    cx.globalAlpha = .55; cx.drawImage(capaSil, 0, 0);
-    if (capaMz){ cx.globalAlpha = 1; cx.drawImage(capaMz, 0, 0); }
-    cx.globalAlpha = 1;
-    document.getElementById("chip-mz").classList.add("viva");
-  };
-  pintaFija();
+  const fija = () => capaSil ? pintar(1) : requestAnimationFrame(fija);
+  fija();
+  document.getElementById("chip-mz").classList.add("viva");
 } else {
   requestAnimationFrame(cuadro);
 }

@@ -135,6 +135,12 @@ def main():
             "mz_ind": n_mz_ind,
             "mz_bloques": len(cat_z["grupos"]),
             "laminas": n_laminas,
+            # ★ LA UNIÓN, NO LA SUMA. 243 municipales + 91 por manzana serían
+            #   334, pero 75 de los de manzana son los MISMOS indicadores
+            #   medidos a otra escala: sumarlos contaría dos veces el mismo
+            #   dato. Los distintos son 259.
+            "indicadores": len({i["key"] for g in cat_m["grupos"] for i in g["indicadores"]}
+                              | {i["key"] for g in cat_z["grupos"] for i in g["indicadores"]}),
         },
     }
     html = PLANTILLA.read_text(encoding="utf-8").replace(
