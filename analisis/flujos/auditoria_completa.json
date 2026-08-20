@@ -1,0 +1,302 @@
+{
+ "lugres5": {
+  "Aquí, en este municipio": 1841657,
+  "En otro municipio del país": 210775,
+  "Aún no había nacido": 173255,
+  "Sin Especificar": 32411,
+  "En otro país": 24672
+ },
+ "origen_5a": {
+  "aqui": 1841657,
+  "otro_dep": 90827,
+  "scz": 77730,
+  "region": 42218,
+  "sd": 32411,
+  "exterior": 24672
+ },
+ "perfil_por_origen": {
+  "aqui": {
+   "n": 1841657,
+   "pct_mujer": 49.6,
+   "edad_mediana": 29.0,
+   "anios_estudio": 11.44,
+   "pct_superior": 32.6,
+   "pct_indigena": 0.2,
+   "pct_sin_seguro": 32.6,
+   "ocu_top": {
+    "5": 28.0,
+    "7": 17.8,
+    "2": 13.0,
+    "8": 9.1
+   }
+  },
+  "region": {
+   "n": 42218,
+   "pct_mujer": 51.3,
+   "edad_mediana": 28.0,
+   "anios_estudio": 11.36,
+   "pct_superior": 30.9,
+   "pct_indigena": 0.3,
+   "pct_sin_seguro": 29.0,
+   "ocu_top": {
+    "5": 25.9,
+    "7": 19.0,
+    "2": 11.7,
+    "9": 9.5
+   }
+  },
+  "scz": {
+   "n": 77730,
+   "pct_mujer": 51.5,
+   "edad_mediana": 27.0,
+   "anios_estudio": 10.85,
+   "pct_superior": 25.7,
+   "pct_indigena": 0.3,
+   "pct_sin_seguro": 31.4,
+   "ocu_top": {
+    "5": 27.1,
+    "7": 20.3,
+    "9": 10.1,
+    "6": 9.3
+   }
+  },
+  "otro_dep": {
+   "n": 90827,
+   "pct_mujer": 51.3,
+   "edad_mediana": 27.0,
+   "anios_estudio": 11.9,
+   "pct_superior": 37.0,
+   "pct_indigena": 0.4,
+   "pct_sin_seguro": 33.0,
+   "ocu_top": {
+    "5": 27.6,
+    "7": 18.6,
+    "2": 14.7,
+    "9": 8.3
+   }
+  },
+  "exterior": {
+   "n": 24672,
+   "pct_mujer": 52.6,
+   "edad_mediana": 30.0,
+   "anios_estudio": 12.65,
+   "pct_superior": 38.4,
+   "pct_indigena": 0.2,
+   "pct_sin_seguro": 51.7,
+   "ocu_top": {
+    "5": 29.4,
+    "7": 18.1,
+    "2": 15.1,
+    "3": 8.5
+   }
+  }
+ },
+ "paises_origen_5a": {
+  "Argentina": 5607,
+  "Brasil": 4599,
+  "Chile": 2824,
+  "España": 2125,
+  "Perú": 1958,
+  "Colombia": 1435,
+  "Estados Unidos de América": 931,
+  "Venezuela (República Bolivariana de)": 669,
+  "Cuba": 652,
+  "Sin Especificar": 472,
+  "Paraguay": 451,
+  "Alemania": 420,
+  "Canadá": 291,
+  "Ecuador": 277,
+  "México": 218,
+  "Francia": 184,
+  "China": 173,
+  "Reino Unido de Gran Bretaña e Irlanda del Norte": 155,
+  "Italia": 151,
+  "Japón": 105
+ },
+ "anio_llegada_declaran": 2205752,
+ "residentes_9": 2282770,
+ "fuera_de_la_region": {
+  "nacimiento": {
+   "pares": 3349,
+   "origenes": 456,
+   "personas_de_fuera": 776594,
+   "pares_9x9": 81
+  },
+  "residencia5": {
+   "pares": 2233,
+   "origenes": 430,
+   "personas_de_fuera": 156991,
+   "pares_9x9": 81
+  },
+  "trabajo": {
+   "pares": 934,
+   "origenes": 311,
+   "personas_de_fuera": 16692,
+   "pares_9x9": 78
+  },
+  "top_origenes_res5": {
+   "070199": 23726,
+   "079999": 22803,
+   "030101": 6681,
+   "020101": 5903,
+   "039999": 5184,
+   "010101": 4690,
+   "029999": 4464,
+   "019999": 4117,
+   "020199": 3573,
+   "089999": 3334,
+   "080101": 3051,
+   "070706": 2593
+  }
+ },
+ "emigracion": {
+  "total_pais": 500914,
+  "total_9": 83699,
+  "por_anio": {
+   "2010": 1583,
+   "2011": 661,
+   "2012": 1347,
+   "2013": 1006,
+   "2014": 2504,
+   "2015": 1561,
+   "2016": 1602,
+   "2017": 1767,
+   "2018": 2764,
+   "2019": 3761,
+   "2020": 3435,
+   "2021": 5314,
+   "2022": 7992,
+   "2023": 15605,
+   "2024": 11680
+  },
+  "sin_anio": 7019,
+  "destinos": {
+   "Chile": 32431,
+   "España": 18708,
+   "Argentina": 10289,
+   "Brasil": 6912,
+   "Estados Unidos": 5762,
+   "Sin especificar": 1955,
+   "Italia": 901,
+   "Reino Unido": 710
+  },
+  "por_municipio": {
+   "Colpa Bélgica": 218,
+   "Cotoca": 3307,
+   "El Torno": 3649,
+   "La Guardia": 5169,
+   "Montero": 6043,
+   "Pailón": 642,
+   "Porongo": 918,
+   "Santa Cruz de la Sierra": 58335,
+   "Warnes": 5418
+  }
+ },
+ "bugs": {
+  "exterior_en_cero": {
+   "070603": 0,
+   "070102": 0,
+   "070105": 0,
+   "070104": 0,
+   "071001": 0,
+   "070502": 0,
+   "070103": 0,
+   "070101": 0,
+   "070201": 0
+  },
+  "descomposicion_sd": {
+   "sd_total": 68246,
+   "sin_especificar": 32411,
+   "vivian_en_otro_pais": 24672,
+   "declaracion_parcial": 11163,
+   "cierra": true
+  },
+  "llegados_publicado": 157394,
+  "llegados_censo": 193229,
+  "pct_ocupado_imposible": {
+   "llegados": 69.8,
+   "estaban": 69.4,
+   "conmutan": 100.8,
+   "no_conmutan": 102.1
+  },
+  "doble_definicion_llegados": {
+   "region": 157394,
+   "suma_municipios": 199612
+  }
+ },
+ "socioeconomico": {
+  "tenencia_categorias": {
+   "1": "Propia y totalmente pagada",
+   "2": "Propia y la están pagando",
+   "3": "Prestada por parientes o amigos",
+   "4": "Alquilada",
+   "5": "En contrato anticrético",
+   "6": "En contrato mixto (anticrético y alquiler)",
+   "7": "Cedida por servicios",
+   "8": "Otra"
+  },
+  "por_origen": {
+   "aqui": {
+    "n": 1814301,
+    "pct_propia": 51.9,
+    "pct_alquilada": 12.9,
+    "pct_agua_red": 92.3,
+    "pct_alcantarillado": 56.2,
+    "pct_internet_movil": 74.4,
+    "pct_auto": 38.2,
+    "pers_por_habitacion": 1.67
+   },
+   "region": {
+    "n": 40224,
+    "pct_propia": 36.8,
+    "pct_alquilada": 22.7,
+    "pct_agua_red": 87.8,
+    "pct_alcantarillado": 23.5,
+    "pct_internet_movil": 77.2,
+    "pct_auto": 33.0,
+    "pers_por_habitacion": 2.0
+   },
+   "scz": {
+    "n": 73477,
+    "pct_propia": 37.5,
+    "pct_alquilada": 15.6,
+    "pct_agua_red": 87.1,
+    "pct_alcantarillado": 38.5,
+    "pct_internet_movil": 72.8,
+    "pct_auto": 27.8,
+    "pers_por_habitacion": 2.0
+   },
+   "otro_dep": {
+    "n": 85459,
+    "pct_propia": 31.6,
+    "pct_alquilada": 11.6,
+    "pct_agua_red": 90.7,
+    "pct_alcantarillado": 56.7,
+    "pct_internet_movil": 76.4,
+    "pct_auto": 33.2,
+    "pers_por_habitacion": 1.67
+   },
+   "exterior": {
+    "n": 23430,
+    "pct_propia": 34.8,
+    "pct_alquilada": 7.9,
+    "pct_agua_red": 93.2,
+    "pct_alcantarillado": 67.6,
+    "pct_internet_movil": 78.1,
+    "pct_auto": 32.5,
+    "pers_por_habitacion": 1.5
+   }
+  }
+ },
+ "municipios": {
+  "070101": "Santa Cruz de la Sierra",
+  "070102": "Cotoca",
+  "070103": "Porongo",
+  "070104": "La Guardia",
+  "070105": "El Torno",
+  "070201": "Warnes",
+  "071001": "Montero",
+  "070502": "Pailón",
+  "070603": "Colpa Bélgica"
+ }
+}

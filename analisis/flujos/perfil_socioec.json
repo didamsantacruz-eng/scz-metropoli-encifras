@@ -1,0 +1,64 @@
+{
+ "tenencia_categorias": {
+  "1": "Propia y totalmente pagada",
+  "2": "Propia y la están pagando",
+  "3": "Prestada por parientes o amigos",
+  "4": "Alquilada",
+  "5": "En contrato anticrético",
+  "6": "En contrato mixto (anticrético y alquiler)",
+  "7": "Cedida por servicios",
+  "8": "Otra"
+ },
+ "por_origen": {
+  "aqui": {
+   "n": 1814301,
+   "pct_propia": 51.9,
+   "pct_alquilada": 12.9,
+   "pct_agua_red": 92.3,
+   "pct_alcantarillado": 56.2,
+   "pct_internet_movil": 74.4,
+   "pct_auto": 38.2,
+   "pers_por_habitacion": 1.67
+  },
+  "region": {
+   "n": 40224,
+   "pct_propia": 36.8,
+   "pct_alquilada": 22.7,
+   "pct_agua_red": 87.8,
+   "pct_alcantarillado": 23.5,
+   "pct_internet_movil": 77.2,
+   "pct_auto": 33.0,
+   "pers_por_habitacion": 2.0
+  },
+  "scz": {
+   "n": 73477,
+   "pct_propia": 37.5,
+   "pct_alquilada": 15.6,
+   "pct_agua_red": 87.1,
+   "pct_alcantarillado": 38.5,
+   "pct_internet_movil": 72.8,
+   "pct_auto": 27.8,
+   "pers_por_habitacion": 2.0
+  },
+  "otro_dep": {
+   "n": 85459,
+   "pct_propia": 31.6,
+   "pct_alquilada": 11.6,
+   "pct_agua_red": 90.7,
+   "pct_alcantarillado": 56.7,
+   "pct_internet_movil": 76.4,
+   "pct_auto": 33.2,
+   "pers_por_habitacion": 1.67
+  },
+  "exterior": {
+   "n": 23430,
+   "pct_propia": 34.8,
+   "pct_alquilada": 7.9,
+   "pct_agua_red": 93.2,
+   "pct_alcantarillado": 67.6,
+   "pct_internet_movil": 78.1,
+   "pct_auto": 32.5,
+   "pers_por_habitacion": 1.5
+  }
+ }
+}

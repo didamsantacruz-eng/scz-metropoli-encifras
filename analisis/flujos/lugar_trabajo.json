@@ -1,0 +1,118 @@
+{
+ "etiquetas_mov": {
+  "1": "Dentro o junto a esta vivienda",
+  "2": "Fuera de la vivienda, pero en el mismo municipio",
+  "3": "En otro municipio",
+  "4": "En otro país",
+  "9": "Sin especificar"
+ },
+ "region": {
+  "reparto": {
+   "Fuera de la vivienda, pero en el mismo municipio": 768605,
+   "Dentro o junto a esta vivienda": 164285,
+   "En otro municipio": 105722,
+   "Sin especificar": 50120,
+   "En otro país": 2
+  },
+  "en_casa": {
+   "n": 164285,
+   "pct_mujer": 46.0,
+   "edad_mediana": 38.0,
+   "anios_estudio": 11.0,
+   "pct_superior": 31.7,
+   "rama": {
+    "Comercio al por mayor y al por menor": 32.3,
+    "Industrias manufactureras": 20.7,
+    "Actividades de alojamiento y de servicio de comidas": 13.4,
+    "Agricultura": 9.3,
+    "Actividades profesionales": 4.8,
+    "Descripciones incompletas": 3.8,
+    "Actividades de atención de la salud humana y de asistencia social": 3.2,
+    "Otras actividades de servicios": 3.0
+   },
+   "catocu": {
+    "Trabajadora(or) por cuenta propia": 66.1,
+    "Empleada(o) u obrera(o)": 16.3,
+    "Sin especificar": 7.6,
+    "Trabajadora(or) familiar sin renumeración": 7.5,
+    "Empleadora(or) o socia(o)": 1.9,
+    "Trabajadora(or) del hogar": 0.6,
+    "Cooperativista de producción": 0.0
+   }
+  }
+ },
+ "por_municipio": {
+  "070603": {
+   "nombre": "Colpa Bélgica",
+   "ocupados": 2548,
+   "en_la_vivienda": 416,
+   "mismo_municipio_fuera": 1323,
+   "otro_municipio": 476,
+   "pct_en_la_vivienda": 16.3
+  },
+  "070102": {
+   "nombre": "Cotoca",
+   "ocupados": 49808,
+   "en_la_vivienda": 7642,
+   "mismo_municipio_fuera": 24091,
+   "otro_municipio": 12603,
+   "pct_en_la_vivienda": 15.3
+  },
+  "070105": {
+   "nombre": "El Torno",
+   "ocupados": 29040,
+   "en_la_vivienda": 4792,
+   "mismo_municipio_fuera": 15128,
+   "otro_municipio": 5717,
+   "pct_en_la_vivienda": 16.5
+  },
+  "070104": {
+   "nombre": "La Guardia",
+   "ocupados": 73859,
+   "en_la_vivienda": 9104,
+   "mismo_municipio_fuera": 31878,
+   "otro_municipio": 26605,
+   "pct_en_la_vivienda": 12.3
+  },
+  "071001": {
+   "nombre": "Montero",
+   "ocupados": 59446,
+   "en_la_vivienda": 8023,
+   "mismo_municipio_fuera": 39361,
+   "otro_municipio": 6025,
+   "pct_en_la_vivienda": 13.5
+  },
+  "070502": {
+   "nombre": "Pailón",
+   "ocupados": 25923,
+   "en_la_vivienda": 9453,
+   "mismo_municipio_fuera": 11357,
+   "otro_municipio": 1192,
+   "pct_en_la_vivienda": 36.5
+  },
+  "070103": {
+   "nombre": "Porongo",
+   "ocupados": 11840,
+   "en_la_vivienda": 2437,
+   "mismo_municipio_fuera": 4268,
+   "otro_municipio": 3863,
+   "pct_en_la_vivienda": 20.6
+  },
+  "070101": {
+   "nombre": "Santa Cruz de la Sierra",
+   "ocupados": 817359,
+   "en_la_vivienda": 113817,
+   "mismo_municipio_fuera": 605309,
+   "otro_municipio": 31041,
+   "pct_en_la_vivienda": 13.9
+  },
+  "070201": {
+   "nombre": "Warnes",
+   "ocupados": 70435,
+   "en_la_vivienda": 8601,
+   "mismo_municipio_fuera": 35890,
+   "otro_municipio": 18200,
+   "pct_en_la_vivienda": 12.2
+  }
+ }
+}
