@@ -130,6 +130,16 @@ body.dark .aviso b{color:var(--orange)}
   .zc{right:16px}
 }
 
+/* ★ EL UNIVERSO, SUBORDINADO A LA DEFINICIÓN (2026-08-26). Antes iba pegado
+   dentro de la misma frase —«Acceso a fuente mejorada. Porcentaje sobre las
+   viviendas particulares ocupadas»— y se comía el renglón entero sin decir qué
+   se estaba midiendo. Ahora la definición manda y esto queda como la letra
+   chica que hace falta para leer la cifra: un 40% no significa lo mismo sobre
+   viviendas que sobre personas. */
+.i-uni{font-size:.6rem;color:var(--faint);line-height:1.3;margin-top:.18rem;
+  font-weight:500;font-style:italic}
+.p-uni{color:var(--faint);font-style:italic}
+
 /* Grupos por nivel dentro de una categoría */
 .nivsep{font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.11em;
   color:var(--faint);margin:14px 0 6px;display:flex;align-items:center;gap:7px}
@@ -580,6 +590,12 @@ let ANIO = "2024";                      // "2024" | "2012" | "cambio"
    O sea que casi toda tarjeta del tablero decía su nombre dos veces seguidas.
    La frase entera sigue sirviendo donde va sola (el subtítulo del panel, la
    ficha): esto recorta SÓLO cuando el nombre viene pegado adelante. */
+/* ⚠️ QUEDÓ COMO RED DE SEGURIDAD (2026-08-26). Existía porque la descripción
+   se componía pegando el título adelante: «Acceso a fuente mejorada. Porcentaje
+   sobre...». Desde que las definiciones se declaran una por una en
+   `catalogo/definiciones.json` ninguna empieza por su propio título, así que
+   esto no debería recortar nada. Si algún día vuelve a recortar, es que alguien
+   volvió a componer descripciones en vez de escribirlas. */
 function sinRepetir(label, desc){
   if (!desc) return "";
   const norm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -1327,7 +1343,8 @@ function tarjeta(i, n){
     : dosNiveles ? '<span class="co-n">sólo municipio</span>' : '';
   return `<div class="ind${ok ? "" : " off"}${sinSerie ? " sin12" : ""}" data-k="${i.key}" style="--d:${Math.min(n,14)*14}ms">
     <div>${sinSerie ? '<span class="i-tag">Sólo 2024</span>' : ""}<div class="i-nm">${i.label}</div>
-    <div class="i-df">${sinSerie ? motivoSinSerie(i) : sinRepetir(i.label, i.desc)}</div>${badge}</div>
+    <div class="i-df">${sinSerie ? motivoSinSerie(i) : (i.desc || "")}</div>${
+      !sinSerie && i.universo ? `<div class="i-uni">${i.universo}</div>` : ""}${badge}</div>
     ${miniSVG(i)}</div>`;
 }
 function montarIndicadores(){
@@ -1446,7 +1463,11 @@ function actualizarSubtitulo(){
   const el = document.getElementById("p-sub");
   const i = ind_actual;
   if (ANIO === "2024"){
-    el.textContent = i ? (i.desc || i.label) : "elegí un indicador para verlo en el mapa";
+    /* El universo va en el subtítulo también, pero detrás de la definición y
+       en tono menor: hace falta para leer el número, no para entenderlo. */
+    el.innerHTML = i
+      ? (i.desc || i.label) + (i.universo ? ` <span class="p-uni">${i.universo}</span>` : "")
+      : "elegí un indicador para verlo en el mapa";
     return;
   }
   if (i && mudo(i)){ el.textContent = motivoSinSerie(i); return; }

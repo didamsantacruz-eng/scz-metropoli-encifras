@@ -37,6 +37,9 @@ import pandas as pd, numpy as np
 from alias import renombrar, ALIAS
 from generar_atlas import SIN_2012
 
+import sys as _sys
+_sys.stdout.reconfigure(encoding="utf-8")  # la consola de Windows es cp1252 y revienta con los avisos
+
 AQUI = pathlib.Path(__file__).parent
 RAIZ = AQUI.parent
 SALIDA = RAIZ / "docs" / "datos"
@@ -210,19 +213,37 @@ def anotar_serie(grupos, fichas, con12):
                                       abs(cuantil(ds, .98))) or 1, 4)
 
 
+# ★ LAS DEFINICIONES SE DECLARAN, NO SE COMPONEN (2026-08-26).
+#   Antes esto armaba la descripción pegando el título, el denominador y —si el
+#   nombre coincidía exacto— la entrada del glosario del INE. El resultado era
+#   «Acceso a fuente mejorada. Porcentaje sobre las viviendas particulares
+#   ocupadas»: el título repetido más contabilidad. Decía sobre qué se divide,
+#   nunca qué se está mirando.
+#   Pedido de Carlos: «que se entienda solo leyendo qué nos muestra el gráfico».
+#   Ahora hay una definición ESCRITA para cada uno de los 237 indicadores, en
+#   `catalogo/definiciones.json`, redactada contra la expresión real (`e24`) y
+#   no contra el título —varios títulos prometen más de lo que el dato mide—.
+DEFINICIONES = json.loads((AQUI / "definiciones.json").read_text(encoding="utf-8"))
+
+
 def describir(i, glosario):
-    """Qué muestra el mapa, en una frase, sin jerga del pipeline."""
+    """La definición declarada. Si falta, se avisa fuerte en vez de inventar."""
+    d = DEFINICIONES.get(i["k"])
+    if not d:
+        print(f"  ⚠ sin definición declarada: {i['k']} ({i['l']})")
+        return i["l"] + "."
+    return d
+
+
+def universo_de(i):
+    """Sobre qué se calcula. Va SEPARADO de la definición: es lo que hace falta
+    para leer el número —un 40% no significa lo mismo sobre viviendas que sobre
+    personas— pero no es lo que el indicador mide, así que no puede ocupar el
+    lugar de la definición ni mezclarse con ella."""
     uni = UNIVERSO.get(i.get("uni"))
-    partes = [i["l"] + "."]
-    if uni and i["u"] == "%":
-        partes.append(f"Porcentaje sobre {uni}.")
-    elif uni:
-        partes.append(f"Medido sobre {uni}.")
-    # si el INE define el término en su propio glosario, vale más que lo nuestro
-    d = glosario.get(i["l"])
-    if d and len(d) > 25:
-        partes.append(d.strip().rstrip(".") + ".")
-    return " ".join(partes)
+    if not uni:
+        return ""
+    return f"sobre {uni}" if i["u"] == "%" else f"medido sobre {uni}"
 
 
 def cargar(fuentes, sufijo):
@@ -289,7 +310,8 @@ def catalogo(claves, decl, nivel, glosario, avisos=None, err=None):
     for k in claves:
         i = decl[k]
         it = {"key": k, "label": i["l"], "unit": i["u"], "dir": i.get("d", 0),
-              "desc": describir(i, glosario), "fuente": "censo",
+              "desc": describir(i, glosario), "universo": universo_de(i),
+              "fuente": "censo",
               "nivel": nivel, "k_mun": k,
               "k_mz": k if nivel in ("ambos", "solo_mz") else None,
               "continuo": nivel == "ambos"}
