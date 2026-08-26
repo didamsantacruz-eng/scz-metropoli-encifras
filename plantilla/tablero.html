@@ -102,6 +102,21 @@ body.dark .aviso b{color:var(--orange)}
 #pop .pr>span:last-child{text-align:right;min-width:0}
 #pop .pr .up{color:var(--teal-dk);font-weight:700;margin-left:.15rem}
 #pop .pr .dn{color:var(--orange);font-weight:700;margin-left:.15rem}
+/* La mancuerna del tooltip: una tira de 9 unidades de alto sobre el ancho
+   completo del globo. Va sin `preserveAspectRatio` para que se estire a lo
+   ancho sin engordar de alto. */
+#pop .pmc{margin:.36rem 0 .1rem;display:flex;flex-direction:column;gap:.2rem}
+#pop .pmc svg{width:100%;height:11px;display:block;overflow:visible}
+#pop .pmc-eje{stroke:var(--linea);stroke-width:.35}
+#pop .pmc-cu{fill:var(--suave);opacity:.7}
+#pop .pmc-a{fill:var(--card-solid);stroke:var(--tx);stroke-width:.5}
+#pop .pmc-b{fill:var(--tx);stroke:var(--tx);stroke-width:.5}
+#pop .pmc-t{font-size:.54rem;color:var(--suave);font-variant-numeric:tabular-nums;
+  display:flex;align-items:baseline;gap:.28rem}
+#pop .pmc-t i{font-style:normal;color:var(--faint)}
+#pop .pmc-t b{font-weight:700;margin-left:auto}
+#pop .pmc-t b.sub{color:var(--sel)}
+#pop .pmc-t b.baj{color:var(--red)}
 #pop .pnota{font-size:.54rem;color:var(--faint);line-height:1.5;margin-top:.34rem;
   padding-top:.34rem;border-top:1px solid var(--linea-2)}
 #pop .pnota b{color:var(--suave);font-weight:600;font-variant-numeric:tabular-nums}
@@ -2587,6 +2602,9 @@ function tooltipHTML(p, esMz){
   const hay = v !== null && isFinite(v);
 
   let nom, sub, filas = "", nota = "";
+  /* ⚠️ `m` se declara con `const` DENTRO de cada rama, así que no existe en el
+     `return`. La mancuerna se arma acá y viaja en una variable de la función. */
+  let mcHTML = "";
 
   if (esMz){
     /* Los datos ya no salen de un arreglo paralelo en memoria: vienen DENTRO
@@ -2616,6 +2634,7 @@ function tooltipHTML(p, esMz){
     if (!m) return "";
     nom = m.nombre;
     const pob = poblacionDe(m);
+    mcHTML = mancuernaPop(m, i);
     sub = (m.ambito === "núcleo" ? "Núcleo metropolitano" : "Área de influencia")
         + (isFinite(pob) ? ` · ${nf(Math.round(pob), 0)} hab.` : "");
 
@@ -2655,11 +2674,53 @@ function tooltipHTML(p, esMz){
     <div class="pind">${kicker}</div>
     <div class="pv"><span class="pchip" style="background:${tonoDe(e, v)}"></span>
       <b>${hay ? fmtM(v, i) : "s/d"}</b></div>
-    ${rampa}${filas}${nota ? `<div class="pnota">${nota}</div>` : ""}`;
+    ${rampa}${mcHTML}${filas}${nota ? `<div class="pnota">${nota}</div>` : ""}`;
 }
 /* Sigue al cursor y se planta del otro lado cuando no entra: contra el borde
    derecho o el inferior, un tooltip anclado siempre abajo-a-la-derecha se sale
    de la pantalla justo en los municipios del borde, que son la mitad. */
+/* ── LA MANCUERNA DEL TOOLTIP ────────────────────────────────────────────────
+   ★ El tooltip ya daba los dos censos como cifras, pero leer «58,3%» y «73,1%»
+     y restar mentalmente no es lo mismo que VER el salto. Acá va la misma
+     mancuerna del panel, en miniatura y sobre la escala de los nueve, así el
+     municipio bajo el cursor se lee contra el resto sin salir del mapa.
+   Se dibuja en cualquiera de los tres años y no sólo en Cambio: la trayectoria
+   es la misma, y en 2024 contesta «¿de dónde venía este número?», que es
+   justamente lo que un mapa de un solo año no puede decir. */
+function mancuernaPop(m, i){
+  if (!m || !i.s12 || !i.k_mun || i.fuente === "fiscal") return "";
+  const lim = v => (v === undefined || v === null || !isFinite(v)) ? null : v;
+  const a = lim(m.municipal_2012 ? m.municipal_2012[i.k_mun] : null);
+  const b = lim(m.municipal ? m.municipal[i.k_mun] : null);
+  if (a === null || b === null) return "";
+  /* La escala es la de los NUEVE, no la del municipio: si cada tooltip usara su
+     propio rango, el mismo salto se vería enorme en uno y mínimo en otro. */
+  const todos = [];
+  MUN.forEach(x => {
+    const p = lim(x.municipal_2012 ? x.municipal_2012[i.k_mun] : null);
+    const q = lim(x.municipal ? x.municipal[i.k_mun] : null);
+    if (p !== null) todos.push(p);
+    if (q !== null) todos.push(q);
+  });
+  if (todos.length < 2) return "";
+  let lo = Math.min(...todos), hi = Math.max(...todos);
+  if (lo === hi) return "";
+  const pad = (hi - lo) * .08; lo -= pad; hi += pad;
+  const X = v => ((v - lo) / (hi - lo)) * 100;
+  const xa = X(a), xb = X(b), sube = b >= a;
+  const uDif = i.unit === "%" ? "pp" : i.unit;
+  return `<div class="pmc">
+    <svg viewBox="0 0 100 9" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="4.5" x2="100" y2="4.5" class="pmc-eje"/>
+      <path d="M${xa} 4.15 L${xb} 2.8 L${xb} 6.2 L${xa} 4.85 Z" class="pmc-cu"/>
+      <circle cx="${xa}" cy="4.5" r="2" class="pmc-a"/>
+      <circle cx="${xb}" cy="4.5" r="2" class="pmc-b"/>
+    </svg>
+    <span class="pmc-t">${fmt(a, i.unit)} <i>&rarr;</i> ${fmt(b, i.unit)}
+      <b class="${sube ? "sub" : "baj"}">${sube ? "&#9650;" : "&#9660;"} ${
+        fmt(Math.abs(b - a), uDif)}</b></span></div>`;
+}
+
 function mostrarPop(html, x, y){
   if (!popEl) return;
   popEl.innerHTML = html;
