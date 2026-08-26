@@ -31,14 +31,14 @@ FUENTE = RAIZ / "plantilla" / "tablero.html"
 
 SITIOS = {
  "municipal": {
-   "titulo": "Santa Cruz Metrópoli en Datos — Municipal",
-   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos",
+   "titulo": "Santa Cruz Metrópoli en Cifras — Municipal",
+   "cabecera": "<b>Santa Cruz</b> Metrópoli en Cifras",
    "catalogo": "catalogo_municipal.json",
    "municipios": "municipios_municipal.json",
  },
  "manzana": {
-   "titulo": "Santa Cruz Metrópoli en Datos — A Nivel Manzana",
-   "cabecera": "<b>Santa Cruz</b> Metrópoli en Datos <span class=\"t-sub\">· A Nivel Manzana</span>",
+   "titulo": "Santa Cruz Metrópoli en Cifras — A Nivel Manzana",
+   "cabecera": "<b>Santa Cruz</b> Metrópoli en Cifras <span class=\"t-sub\">· A Nivel Manzana</span>",
    "catalogo": "catalogo_manzana.json",
    "municipios": "municipios_manzana.json",
  },

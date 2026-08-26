@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-IDENTIDAD DEL BANCO — Santa Cruz Metrópoli en Datos.
+IDENTIDAD DEL BANCO — Santa Cruz Metrópoli en Cifras.
 =====================================================
 
 La lámina y el tablero tienen que decir lo MISMO del mismo dato. Si el banco
