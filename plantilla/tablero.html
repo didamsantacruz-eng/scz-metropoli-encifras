@@ -181,13 +181,20 @@ body.dark .aviso b{color:var(--orange)}
       libre. Arriba sí, y de paso queda en el mismo sitio que en el teléfono. */
 #lamina{position:fixed;z-index:9;left:calc(var(--panel-w) + 26px);top:74px}
 #lamina:empty{display:none}
-.lam-link{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;
-  background:var(--glass);border:1px solid var(--linea);box-shadow:var(--sh);
-  text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  transition:border-color .2s ease,background-color .2s ease}
-.lam-link:hover{border-color:var(--sel);background:var(--card-solid)}
-.lam-i{font-size:.82rem;line-height:1;color:var(--sel)}
-.lam-link b{font-size:.66rem;font-weight:600;color:var(--tx);line-height:1;white-space:nowrap}
+/* Ficha flotante en vez de pastilla: con dos renglones el lector entiende QUÉ
+   se lleva —una lámina imprimible, no una captura de pantalla— sin tener que
+   posar el cursor a leer un `title`. El filete de color a la izquierda la
+   emparenta con las tarjetas del panel, que usan el mismo recurso. */
+.lam-link{display:inline-flex;align-items:center;gap:9px;padding:9px 13px 9px 11px;
+  background:var(--glass);border:1px solid var(--linea);border-left:3px solid var(--sel);
+  box-shadow:var(--sh);text-decoration:none;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  transition:border-color .2s ease,background-color .2s ease,box-shadow .2s ease}
+.lam-link:hover{background:var(--card-solid);box-shadow:var(--sh-lift, 0 6px 18px rgba(16,26,20,.18))}
+.lam-i{font-size:1rem;line-height:1;color:var(--sel);flex:none}
+.lam-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lam-link b{font-size:.7rem;font-weight:700;color:var(--tx);line-height:1.15;white-space:nowrap}
+.lam-link em{font-style:normal;font-size:.57rem;color:var(--suave);line-height:1.2;white-space:nowrap}
 /* ⚠️ ESTA ANULACIÓN VA DESPUÉS DE LA REGLA BASE, no en el bloque de móvil de
    más arriba: tienen la misma especificidad, así que gana la última que se lee.
    Puesta antes, la pastilla conservaba su  de escritorio y en el teléfono
@@ -195,7 +202,11 @@ body.dark .aviso b{color:var(--orange)}
 @media (max-width:820px){
   /* abajo está ocupado por la hoja y por el termómetro: la pastilla sube al
      borde superior del mapa, que en móvil arranca en 202 px */
-  #lamina{left:8px;right:auto;top:210px}
+  #lamina{left:8px;right:auto;top:210px;max-width:calc(100vw - 70px)}
+  /* en el teléfono la segunda línea se come el ancho del mapa: queda el título,
+     que ya dice que se descarga */
+  .lam-link em{display:none}
+  .lam-link{padding:8px 11px 8px 9px}
 }
 
 /* ── Comparar dos indicadores ───────────────────────────────────────────────
@@ -2927,9 +2938,18 @@ function ficha(e, i){
   const _lam = document.getElementById("lamina");
   if (_lam)
     _lam.innerHTML = (i.fuente !== "fiscal")
-      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png" target="_blank"
-             rel="noopener" title="Lámina de «${i.label}» · 3200×1800 · los nueve municipios, con el cambio 2012→2024">
-           <span class="lam-i" aria-hidden="true">▤</span><b>Ver la lámina</b></a>`
+      /* ★ ES UNA DESCARGA, Y LO DICE (pedido de Carlos, 2026-08-26). Antes
+         decía «Ver la lámina» y abría el PNG en otra pestaña: el lector no
+         tenía forma de saber que ahí había una imagen lista para imprimir y
+         para pegar en un informe, que es el valor real del banco.
+         `download` la baja con el nombre del indicador en vez de dejar un
+         `pct_alcantarillado.png` suelto en la carpeta de descargas. */
+      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png"
+             download="${slugDe(i.label)}-metropoli-scz.png"
+             title="Lámina de «${i.label}» · los nueve municipios, con el cambio 2012→2024">
+           <span class="lam-i" aria-hidden="true">▤</span>
+           <span class="lam-tx"><b>Descargar este mapa</b>
+             <em>Lámina PNG 3200×1800, lista para imprimir</em></span></a>`
       : "";
   g.querySelectorAll(".kpi[data-s]").forEach(el => el.onclick = () => seleccionar(el.dataset.s));
   document.querySelectorAll("#dist .ds-hit").forEach(el =>
