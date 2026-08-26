@@ -145,6 +145,18 @@ body.dark .aviso b{color:var(--orange)}
   .zc{right:16px}
 }
 
+/* ── El puente al banco de láminas ──────────────────────────────────────────
+   Va al PIE del panel: es una salida, no una lectura. Con el aspecto de una
+   acción y no de un dato, para que no compita con las cifras de arriba. */
+.lam-link{display:flex;align-items:flex-start;gap:8px;margin-top:14px;padding:9px 11px;
+  background:var(--card-solid);border:1px solid var(--linea);text-decoration:none;
+  transition:border-color .2s ease,background-color .2s ease}
+.lam-link:hover{border-color:var(--sel);background:var(--linea-2)}
+.lam-i{font-size:.9rem;line-height:1;color:var(--sel);margin-top:1px}
+.lam-link b{display:block;font-size:.67rem;font-weight:600;color:var(--tx);line-height:1.3}
+.lam-link em{display:block;font-style:normal;font-size:.58rem;color:var(--faint);
+  line-height:1.35;margin-top:2px}
+
 /* ── Comparar dos indicadores ───────────────────────────────────────────────
    El selector vive en la cabecera del panel derecho y no en el izquierdo: no
    cambia lo que el mapa muestra, cambia cómo se LEE. */
@@ -439,6 +451,12 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
     <div id="dist"></div>
     <div id="serie"></div>
     <div class="kgrid" id="kgrid"></div>
+    <!-- ★ EL BANCO Y EL TABLERO SE HABLAN (2026-08-26). Cada lámina del
+         catálogo ES un indicador de este tablero y eran dos mundos separados.
+         El enlace se arma de la CLAVE: verificado que los 213 indicadores
+         censales tienen su PNG y que no sobra ninguno, así que la
+         correspondencia es 1 a 1 y no hace falta un índice aparte. -->
+    <div id="lamina"></div>
   </div>
 </div>
 
@@ -2700,6 +2718,15 @@ function ficha(e, i){
       }).join("");
     }
   }
+  /* La lámina existe para los 213 censales; los 30 fiscales no tienen. */
+  const _lam = document.getElementById("lamina");
+  if (_lam)
+    _lam.innerHTML = (i.fuente !== "fiscal")
+      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png" target="_blank" rel="noopener">
+           <span class="lam-i" aria-hidden="true">▤</span>
+           <span><b>Ver la lámina de este indicador</b>
+           <em>3200×1800 · los nueve municipios, con el cambio 2012→2024</em></span></a>`
+      : "";
   g.querySelectorAll(".kpi[data-s]").forEach(el => el.onclick = () => seleccionar(el.dataset.s));
   document.querySelectorAll("#dist .ds-hit").forEach(el =>
     el.onclick = () => seleccionar(el.dataset.s));
