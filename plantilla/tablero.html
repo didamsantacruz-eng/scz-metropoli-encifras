@@ -130,6 +130,28 @@ body.dark .aviso b{color:var(--orange)}
   .zc{right:16px}
 }
 
+/* ── Buscador ───────────────────────────────────────────────────────────────
+   Vive dentro de la barra de categoría, debajo del selector: es el otro camino
+   al mismo sitio, no una función aparte. */
+.busca-caja{position:relative;margin-top:9px}
+#busca{width:100%;font-family:var(--f);font-size:.68rem;font-weight:500;
+  padding:6px 9px;color:var(--tx);background:var(--card-solid);
+  border:1px solid var(--linea);border-radius:0;outline:none}
+#busca::placeholder{color:var(--faint)}
+#busca:focus{border-color:var(--sel)}
+.busca-res{position:absolute;left:0;right:0;top:calc(100% + 3px);z-index:12;
+  max-height:min(46vh,340px);overflow-y:auto;background:var(--card-solid);
+  border:1px solid var(--linea);box-shadow:var(--sh)}
+.busca-res[hidden]{display:none}
+.bs-op{display:flex;flex-direction:column;gap:1px;width:100%;text-align:left;
+  padding:6px 9px;background:none;border:0;border-bottom:1px solid var(--linea-2);
+  cursor:pointer;font-family:var(--f)}
+.bs-op:last-child{border-bottom:0}
+.bs-op:hover{background:var(--linea-2)}
+.bs-l{font-size:.7rem;font-weight:600;color:var(--tx);line-height:1.25}
+.bs-g{font-size:.58rem;color:var(--faint);font-weight:500}
+.bs-nada{padding:8px 9px;font-size:.65rem;color:var(--faint)}
+
 /* ★ EL UNIVERSO, SUBORDINADO A LA DEFINICIÓN (2026-08-26). Antes iba pegado
    dentro de la misma frase —«Acceso a fuente mejorada. Porcentaje sobre las
    viviendas particulares ocupadas»— y se comía el renglón entero sin decir qué
@@ -347,6 +369,15 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
     <div class="p-kick"><span>Categoría</span><span class="kick-n" id="kick-n"></span></div>
     <button class="cat-btn" id="cat-btn"><span class="cn">Demografía</span><span class="ar">▾</span></button>
     <div class="cat-drop" id="cat-drop"></div>
+    <!-- ★ BUSCADOR (2026-08-26). 243 indicadores en 25 categorías y sólo se
+         llegaba por menú: había que saber en qué categoría vive cada uno.
+         Busca en el título Y en la definición, así que «beber» encuentra el
+         indicador de agua segura. Atajo: la tecla «/». -->
+    <div class="busca-caja">
+      <input id="busca" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Buscar entre 243 indicadores…" aria-label="Buscar indicador">
+      <div class="busca-res" id="busca-res" hidden></div>
+    </div>
   </div>
   <div class="p-body">
     <div class="p-sub" id="p-sub">elegí un indicador para verlo en el mapa</div>
@@ -1136,10 +1167,18 @@ Promise.all([
      2024— y ofrecer un botón que no puede hacer nada es peor que no tenerlo. */
   if (haySerie())
     anioSeg.querySelectorAll("button").forEach(b =>
-      b.onclick = e => { e.stopPropagation(); setAnio(b.dataset.a); });
+      b.onclick = e => { e.stopPropagation(); setAnio(b.dataset.a); escribirURL(true); });
   else
     anioSeg.style.display = "none";
-  elegirCategoria(CAT.grupos[0].key);
+  /* ★ SE ARRANCA DESDE LA URL SI LA TRAE (2026-08-26). Antes siempre abría en
+     la primera categoría, así que un enlace compartido llevaba al tablero pero
+     no a la vista. El encuadre se aplica DESPUÉS, cuando el mapa existe (ver
+     más abajo): acá todavía puede no haber contexto WebGL. */
+  const _est = leerURL();
+  if (_est && _est.i) aplicarEstado(_est, false);
+  else elegirCategoria(CAT.grupos[0].key);
+  montarBuscador();
+  montarTeclado();
   actualizarCobertura();
   document.body.setAttribute("data-listo", JSON.stringify({
     grupos: CAT.grupos.length,
@@ -1173,6 +1212,7 @@ Promise.all([
     // dato que le falta al lector para ubicarse.
     nuevaCapa({id: "mun-fill", type: "fill", source: "mun",
       paint: {"fill-color": SIN_DATO.claro,
+              "fill-color-transition": {duration: 220, delay: 0},
               "fill-opacity": hayManzana() ? fundidoMun(opacidades().mun) : opacidades().mun}});
     /* ★ EL BORDE MUNICIPAL SOBREVIVE AL RELLENO. Cuando el coroplético
        municipal se apaga, el contorno se queda a media tinta hasta bastante
@@ -1213,6 +1253,7 @@ Promise.all([
       nuevaCapa({id: "mz-fill", type: "fill", source: "mz", "source-layer": "manzanas",
         minzoom: Z0,
         paint: {"fill-color": SIN_DATO.claro,
+                "fill-color-transition": {duration: 220, delay: 0},
                 "fill-opacity": fundidoMz(opacidades().mz)}});
       nuevaCapa({id: "mz-line", type: "line", source: "mz", "source-layer": "manzanas",
         minzoom: Z0,
@@ -1226,7 +1267,24 @@ Promise.all([
        justo al bajar, que es cuando se pidió que sobreviviera. `moveLayer` sin
        segundo argumento la manda al final del orden de pintado. */
     ["mun-line", "mun-sel"].forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
-    encuadrar();
+    /* ★ EL ENCUADRE DE LA URL SE APLICA ACÁ (2026-08-26) y no en el arranque:
+       allá todavía puede no haber contexto WebGL, y `map.jumpTo` sobre un mapa
+       inexistente tira. Si la dirección no trae encuadre, se encuadra la
+       región como siempre. */
+    const _e = leerURL();
+    if (_e && _e.z && _e.c){
+      const [_lng, _lat] = _e.c.split(",").map(Number);
+      if (isFinite(_lng) && isFinite(_lat)) map.jumpTo({center: [_lng, _lat], zoom: +_e.z});
+      else encuadrar();
+    } else encuadrar();
+    /* El movimiento del mapa se guarda con `replaceState` y con retardo: cada
+       arrastre dispara decenas de `moveend`, y con `pushState` el botón atrás
+       quedaría inservible en tres segundos de paneo. */
+    let _tm = null;
+    map.on("moveend", () => {
+      clearTimeout(_tm);
+      _tm = setTimeout(() => escribirURL(false), 400);
+    });
     interacciones();
     vigilarZoom();            // el nivel es función del zoom: hay que escucharlo
     pintar();                 // el panel ya eligió indicador; acá recién hay capas
@@ -1388,6 +1446,7 @@ function elegirIndicador(key){
   if (i.fuente === "fiscal") montarAnios();
   avisar(i);
   pintar();
+  escribirURL(true);
 }
 function montarAnios(){
   const a = document.getElementById("anios");
@@ -1600,6 +1659,209 @@ function pesoMunicipal(m){
 }
 
 /* ── PINTAR ──────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   1 · EL ESTADO VIVE EN LA URL
+   ═══════════════════════════════════════════════════════════════════════════
+   ★ Sin esto el tablero no se puede CITAR. Elegías categoría, indicador, año,
+     municipio y encuadre, y nada quedaba en la dirección: no se podía mandar
+     «mirá este mapa», el botón atrás del navegador se salía del tablero, y
+     recargar borraba todo. Para un entregable institucional es casi un
+     requisito: un informe que no puede enlazar la vista, no la cita.
+
+   ⚠️ DOS FORMAS DE ESCRIBIR, y la diferencia importa:
+      · `pushState` para lo que el lector DECIDIÓ —indicador, año, municipio—:
+        crea historial, así que el botón atrás deshace su última decisión.
+      · `replaceState` para el encuadre del mapa, que cambia con cada arrastre:
+        con `pushState` un paneo de tres segundos dejaría cincuenta entradas en
+        el historial y el botón atrás quedaría inservible.                    */
+let _urlQuieta = false;          // true mientras se aplica un estado leído
+
+function estadoActual(){
+  const e = {};
+  if (ind_actual) e.i = ind_actual.key;
+  if (ANIO !== "2024") e.a = ANIO;
+  /* ⚠️ En la URL va el CÓDIGO INE, no el `sigep` interno. Adentro el municipio
+     se identifica por `sigep` («1704») porque así viene la geometría, pero una
+     dirección que se comparte y se pega en un informe tiene que llevar el
+     código oficial («070104»), que es el que cualquiera puede reconocer y
+     cruzar contra otra fuente. La traducción va en los dos sentidos y en un
+     solo lugar, acá y en `aplicarEstado`. */
+  if (sel){
+    const _m = MUN.find(x => x.sigep === sel);
+    e.m = _m ? _m.cod_ine : sel;
+  }
+  if (map && map.getZoom){
+    const c = map.getCenter();
+    e.z = map.getZoom().toFixed(2);
+    e.c = c.lng.toFixed(4) + "," + c.lat.toFixed(4);
+  }
+  return e;
+}
+
+function escribirURL(empujar){
+  if (_urlQuieta) return;
+  const e = estadoActual();
+  const q = Object.keys(e).map(k => k + "=" + encodeURIComponent(e[k])).join("&");
+  const url = location.pathname + (q ? "#" + q : "");
+  if (url === location.pathname + location.hash) return;
+  try { history[empujar ? "pushState" : "replaceState"](e, "", url); } catch (_) {}
+}
+
+function leerURL(){
+  const h = location.hash.replace(/^#/, "");
+  if (!h) return null;
+  const e = {};
+  h.split("&").forEach(par => {
+    const [k, v] = par.split("=");
+    if (k && v !== undefined) e[k] = decodeURIComponent(v);
+  });
+  return Object.keys(e).length ? e : null;
+}
+
+/* Aplica un estado leído SIN volver a escribirlo: si no, cada restauración
+   generaría su propia entrada de historial y el botón atrás entraría en bucle. */
+function aplicarEstado(e, encuadrar_){
+  _urlQuieta = true;
+  try {
+    /* ⚠️ EL ORDEN IMPORTA Y COSTÓ UNA RONDA. `setAnio()` re-monta la lista de
+       indicadores, y en el arranque `cat_actual` TODAVÍA NO EXISTE: reventaba
+       ahí dentro y la excepción se llevaba puesta la restauración entera, así
+       que un enlace compartido abría el tablero en su vista por defecto y
+       parecía que la URL no guardaba nada.
+       Por eso el año se fija por ASIGNACIÓN DIRECTA —no con `setAnio()`— antes
+       de montar nada, y el conmutador se sincroniza a mano después. */
+    if (e.a && haySerie() && ["2012", "2024", "cambio"].includes(e.a)) ANIO = e.a;
+    const g = e.i && CAT.grupos.find(x => x.indicadores.some(y => y.key === e.i));
+    if (g) elegirCategoria(g.key);
+    else if (!cat_actual) elegirCategoria(CAT.grupos[0].key);
+    anioSeg.querySelectorAll("button").forEach(b =>
+      b.classList.toggle("on", b.dataset.a === ANIO));
+    if (e.i) elegirIndicador(e.i);
+    actualizarPistas();
+    /* Se acepta el código INE y, por si acaso, también el `sigep`: un enlace
+       viejo guardado antes de este cambio no debería romperse. */
+    const _mm = e.m && MUN.find(m => m.cod_ine === e.m || m.sigep === e.m);
+    if (_mm){
+      if (sel !== _mm.sigep) seleccionar(_mm.sigep);
+    } else if (sel) seleccionar(sel);           // deseleccionar
+    if (encuadrar_ && e.z && e.c && map && map.jumpTo){
+      const [lng, lat] = e.c.split(",").map(Number);
+      if (isFinite(lng) && isFinite(lat)) map.jumpTo({center: [lng, lat], zoom: +e.z});
+    }
+  } finally { _urlQuieta = false; }
+}
+
+addEventListener("popstate", () => {
+  const e = leerURL();
+  if (e) aplicarEstado(e, true);
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2 · BUSCADOR DE INDICADORES
+   ═══════════════════════════════════════════════════════════════════════════
+   Son 243 en 25 categorías y sólo se llegaba por menú desplegable: para
+   encontrar «hacinamiento» había que acordarse de que vive en «Vivienda y
+   materiales». El buscador mira TODAS las categorías a la vez, y busca en el
+   título Y en la definición — que desde 2026-08-26 dice qué se mide, así que
+   ahora buscar «beber» encuentra el indicador de agua segura.               */
+const _norm = t => (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+function buscarIndicadores(q){
+  const n = _norm(q).trim();
+  if (n.length < 2) return [];
+  const term = n.split(/\s+/);
+  const res = [];
+  CAT.grupos.forEach(g => g.indicadores.forEach(i => {
+    const heno = _norm(i.label + " " + (i.desc || "") + " " + g.label);
+    if (!term.every(t => heno.includes(t))) return;
+    /* El que calza en el TÍTULO va antes que el que calza sólo en la
+       definición: si escribiste «agua» querés los indicadores de agua, no todos
+       los que la mencionan de paso. */
+    res.push({i, g, peso: _norm(i.label).includes(n) ? 0 : 1});
+  }));
+  return res.sort((a, b) => a.peso - b.peso).slice(0, 40);
+}
+
+function montarBuscador(){
+  const inp = document.getElementById("busca");
+  const caja = document.getElementById("busca-res");
+  if (!inp) return;
+  const cerrar = () => { caja.innerHTML = ""; caja.hidden = true; };
+  inp.addEventListener("input", () => {
+    const r = buscarIndicadores(inp.value);
+    if (!r.length){
+      if (_norm(inp.value).trim().length >= 2){
+        caja.innerHTML = `<div class="bs-nada">Nada con «${inp.value}»</div>`;
+        caja.hidden = false;
+      } else cerrar();
+      return;
+    }
+    caja.innerHTML = r.map(({i, g}) => `<button class="bs-op" data-k="${i.key}" data-g="${g.key}">
+      <span class="bs-l">${i.label}</span><span class="bs-g">${g.label}</span></button>`).join("");
+    caja.hidden = false;
+    caja.querySelectorAll(".bs-op").forEach(b => b.onclick = () => {
+      if (cat_actual.key !== b.dataset.g) elegirCategoria(b.dataset.g);
+      elegirIndicador(b.dataset.k);
+      escribirURL(true);
+      inp.value = ""; cerrar(); inp.blur();
+    });
+  });
+  inp.addEventListener("keydown", ev => {
+    if (ev.key === "Escape"){ inp.value = ""; cerrar(); inp.blur(); }
+    if (ev.key === "Enter"){
+      const p = caja.querySelector(".bs-op");
+      if (p) p.click();
+    }
+  });
+  document.addEventListener("click", ev => {
+    if (!ev.target.closest(".busca-caja")) cerrar();
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4 · TECLADO
+   ═══════════════════════════════════════════════════════════════════════════
+   Lo que separa una herramienta de una página: poder recorrer 243 indicadores
+   sin soltar el teclado. Se ignora mientras se escribe en un campo, que si no
+   la flecha abajo del buscador movería el mapa detrás.                      */
+function montarTeclado(){
+  addEventListener("keydown", ev => {
+    const t = ev.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    const vis = cat_actual ? cat_actual.indicadores.filter(disponible) : [];
+    const pos = ind_actual ? vis.findIndex(x => x.key === ind_actual.key) : -1;
+    const ir = d => {
+      if (!vis.length) return;
+      const n = vis[(pos + d + vis.length) % vis.length];
+      if (n){ elegirIndicador(n.key); escribirURL(true);
+              const el = document.querySelector(`.ind[data-k="${n.key}"]`);
+              if (el) el.scrollIntoView({block: "nearest"}); }
+    };
+    const anios = ["2012", "2024", "cambio"];
+    switch (ev.key){
+      case "ArrowDown": ev.preventDefault(); ir(1); break;
+      case "ArrowUp":   ev.preventDefault(); ir(-1); break;
+      case "[": case "ArrowLeft":
+        if (haySerie()){ ev.preventDefault();
+          setAnio(anios[Math.max(0, anios.indexOf(ANIO) - 1)]); escribirURL(true); }
+        break;
+      case "]": case "ArrowRight":
+        if (haySerie()){ ev.preventDefault();
+          setAnio(anios[Math.min(2, anios.indexOf(ANIO) + 1)]); escribirURL(true); }
+        break;
+      case "Escape":
+        if (sel){ ev.preventDefault(); seleccionar(sel); escribirURL(true); }
+        break;
+      case "/":
+        ev.preventDefault();
+        const b = document.getElementById("busca");
+        if (b) b.focus();
+        break;
+    }
+  });
+}
+
 function pintar(){
   if (!ind_actual) return;
   const i = ind_actual;
@@ -2274,6 +2536,7 @@ function seleccionar(s){
     }
   } else encuadrar();
   pintar();
+  escribirURL(true);
 }
 
 /* ── TOOLTIP ─────────────────────────────────────────────────────────────────
