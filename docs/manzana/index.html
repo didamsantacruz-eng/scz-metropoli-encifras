@@ -148,10 +148,10 @@ body.dark .aviso b{color:var(--orange)}
 .cmp-t span{font-family:var(--f);text-transform:none;letter-spacing:0;
   font-size:.62rem;font-weight:600;color:var(--suave)}
 .cmp{width:100%;height:auto;display:block;overflow:hidden}
-.cmp .cmp-n{font:500 4px var(--f);fill:var(--suave)}
+.cmp .cmp-n{font:500 2.7px var(--f);fill:var(--suave)}
 .cmp .cmp-n.sel{fill:var(--sel);font-weight:700}
-.cmp .cmp-v{font:700 3.9px var(--f);fill:var(--tx);font-variant-numeric:tabular-nums}
-.cmp .cmp-piv{stroke:var(--tx);stroke-width:.5;stroke-dasharray:1.6 1.4;opacity:.55}
+.cmp .cmp-v{font:700 2.6px var(--f);fill:var(--tx);font-variant-numeric:tabular-nums}
+.cmp .cmp-piv{stroke:var(--tx);stroke-width:.35;stroke-dasharray:1.2 1.1;opacity:.5}
 /* ── Mancuerna 2012 → 2024 ───────────────────────────────────────────────────
    Todo más fino que el comparativo de barras: la mancuerna es una lectura de
    precisión —dos puntos y la distancia entre ellos— y a cuerpo grande se
@@ -162,13 +162,20 @@ body.dark .aviso b{color:var(--orange)}
    Tres estados y una sola transición: dormido (apagado, filete tenue), al pasar
    por encima (medio) y elegido (color pleno, filete de tinta). La saturación la
    trae `estilo-atlas.css`; acá va el FILETE, que allá no existía. */
-.mini path{stroke:var(--linea);stroke-width:.55;
-  transition:stroke .28s ease,stroke-width .28s ease}
-.ind:hover .mini path{stroke:var(--suave);stroke-width:.7}
-.ind.on .mini path{stroke:#11110f;stroke-width:1.4}
-body.dark .mini path{stroke:#2a3138}
-body.dark .ind:hover .mini path{stroke:#55606a}
-body.dark .ind.on .mini path{stroke:#e6e3d8;stroke-width:1.1}
+/* Las divisiones ENTRE municipios se quedan sutiles SIEMPRE: son la textura
+   del territorio, no el mensaje. */
+.mini > path{stroke:var(--linea);stroke-width:.5;transition:stroke .28s ease}
+.ind:hover .mini > path{stroke:var(--suave)}
+body.dark .mini > path{stroke:#2a3138}
+body.dark .ind:hover .mini > path{stroke:#49535c}
+/* El PERÍMETRO del conjunto es lo único que engorda al elegir el indicador. */
+.mini .mh path{fill:var(--linea);stroke:var(--linea);stroke-width:1.3;
+  transition:fill .28s ease,stroke .28s ease,stroke-width .28s ease}
+.ind:hover .mini .mh path{fill:var(--suave);stroke:var(--suave);stroke-width:1.8}
+.ind.on .mini .mh path{fill:#11110f;stroke:#11110f;stroke-width:3.2}
+body.dark .mini .mh path{fill:#2a3138;stroke:#2a3138}
+body.dark .ind:hover .mini .mh path{fill:#49535c;stroke:#49535c}
+body.dark .ind.on .mini .mh path{fill:#e6e3d8;stroke:#e6e3d8;stroke-width:3.2}
 /* el elegido pasa de «casi gris» a color pleno; los demás bajan un poco más
    para que la diferencia se note sin que la lista se apague entera */
 .mini{opacity:.5!important;filter:saturate(.26)!important}
@@ -193,8 +200,8 @@ body.dark .ind.on .mini{opacity:1!important;filter:saturate(1.05)!important}
 .mc-lg span:has(i.on){color:var(--tx)}
 .mc-lg .mc-dir{color:var(--faint);font-weight:500;font-style:italic}
 /* letra propia, más chica que la de las barras */
-.cmp.mc .cmp-n{font-size:2.4px;font-weight:500}
-.cmp.mc .cmp-v{font-size:2.45px}
+.cmp.mc .cmp-n{font-size:2.7px;font-weight:500}
+.cmp.mc .cmp-v{font-size:2.6px}
 .cmp.mc .cmp-v2{font:500 2.05px var(--f);fill:var(--faint);font-variant-numeric:tabular-nums}
 /* la fila de la región va en tinta plena: es la referencia, no un municipio más */
 .cmp .cmp-n.mc-reg{fill:var(--tx);font-weight:700}
@@ -1256,6 +1263,16 @@ function miniSVG(ind){
   const vals = MUN.map(m => valorParaMini(m, ind));
   const pes = MUN.map(pesoMunicipal);
   const e = escala(vals, pes, ind, ambitoMini(ind));
+  /* ★ EL CONTORNO DEL CONJUNTO (pedido de Carlos, 2026-08-26).
+     `mini.json` trae una silueta POR MUNICIPIO y ninguna de la unión, así que
+     el perímetro de la región no existe como geometría. Se consigue dibujando
+     las nueve siluetas ENGORDADAS detrás de los rellenos: lo que asoma
+     alrededor es el borde de la unión, y las juntas internas quedan tapadas
+     por los rellenos que van encima. Sin calcular geometría nueva, y si algún
+     día cambian los límites sigue saliendo bien solo. */
+  const halo = MUN.map(m => MINI.paths[m.sigep]).filter(Boolean)
+    .map(d => `<path d="${d}" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`)
+    .join("");
   const p = MUN.map((m, k) => {
     const d = MINI.paths[m.sigep];
     /* ★ CADA MUNICIPIO CON SU BORDE (2026-08-20). Sin trazo, dos municipios
@@ -1271,7 +1288,7 @@ function miniSVG(ind){
      (`viewBoxTight`). Con el lienzo cuadrado la silueta usaba el 40% del
      recuadro y el resto era aire. */
   return `<svg class="mini" viewBox="${MINI.viewBoxTight || MINI.viewBox}"
-    preserveAspectRatio="xMidYMid meet">${p}</svg>`;
+    preserveAspectRatio="xMidYMid meet"><g class="mh">${halo}</g>${p}</svg>`;
 }
 
 /* Los indicadores se separan por NIVEL dentro de cada categoría. Mezclados, el
@@ -1676,11 +1693,10 @@ function termometro(e, i){
    Sólo aplica a los 178 indicadores con `s12`. Los otros 65 —los 30 fiscales y
    35 censales sin comparación declarada— siguen con las barras de un solo año. */
 const ANIOS_INTERCENSAL = 12.0;   // lo declara catalogo/armar_metro.py
-const nombreCorto = nom => {
-  if (nom.length <= 19) return nom;
-  const dos = nom.split(" ").slice(0, 2).join(" ");
-  return dos.length <= 19 ? dos : dos.slice(0, 18) + "…";
-};
+/* Los nueve entran enteros: el más largo es «Santa Cruz de la Sierra», 23
+   caracteres, y la columna está dimensionada para él. El recorte queda sólo
+   como red de seguridad por si algún día entra un nombre del INE más largo. */
+const nombreCorto = nom => nom.length <= 24 ? nom : nom.slice(0, 23) + "…";
 /* El ritmo por año. Un conteo se compone; una tasa se reparte en puntos. */
 function ritmoAnual(a, b, ind){
   if (a === null || b === null || !isFinite(a) || !isFinite(b)) return null;
@@ -1721,8 +1737,8 @@ function mancuerna(e, ind){
   /* Geometría fina. En Cambio la pista se acorta para dejar DOS columnas de
      cifras —el total y el ritmo por año— sin que ninguna quede apretada. */
   const H = 6.6, W = 100, R = 1.45;
-  const LX = 27, VX = esCambio ? 56 : 70;
-  const TX = esCambio ? 79 : 100, TX2 = 100;
+  const LX = 33, VX = esCambio ? 60 : 72;
+  const TX = esCambio ? 82 : 100, TX2 = 100;
   const alto = filas.length * H + 12;
   const x = v => LX + ((v - lo) / (hi - lo)) * (VX - LX);
 
@@ -1743,17 +1759,18 @@ function mancuerna(e, ind){
     const xa = f.a !== null ? x(f.a) : null, xb = f.b !== null ? x(f.b) : null;
     if (xa !== null && xb !== null){
       const col = esCambio && f.act !== null ? tonoDe(e, f.act) : "var(--linea)";
-      s += `<line x1="${xa}" y1="${cy}" x2="${xb}" y2="${cy}" stroke="${col}"
-              stroke-width="${esCambio ? 1 : .5}" stroke-linecap="round"/>`;
-      /* La punta de flecha va a MEDIA ASTA y apunta al 2024. Es la segunda
-         marca del sentido —la primera es el relleno— y con las dos juntas la
-         fila no se puede leer al revés cuando el municipio BAJÓ y su 2024
-         quedó a la izquierda. A media asta no le compite a ninguna bolita. */
-      if (esCambio && Math.abs(xb - xa) > 4){
-        const d = xb > xa ? 1 : -1, mx = (xa + xb) / 2;
-        s += `<path d="M${mx - d * .55} ${cy - .8} L${mx + d * .85} ${cy} L${mx - d * .55} ${cy + .8} Z"
+      /* ★ LA CUÑA, EN VEZ DE UNA FLECHA (Carlos: «no se nota la flecha»).
+         A media asta y sobre una línea de .7 la punta desaparecía; agrandarla
+         la convertía en un tercer objeto encima del trazo. La salida es no
+         agregar nada: que el TRAZO MISMO nazca fino en 2012 y termine ancho en
+         2024. Dice la dirección con MENOS tinta que línea + flecha, y funciona
+         hasta en los trazos cortos, donde una punta ni siquiera entraba. */
+      if (esCambio)
+        s += `<path d="M${xa} ${cy - .22} L${xb} ${cy - 1.2} L${xb} ${cy + 1.2} L${xa} ${cy + .22} Z"
                 fill="${col}" stroke="none"/>`;
-      }
+      else
+        s += `<line x1="${xa}" y1="${cy}" x2="${xb}" y2="${cy}" stroke="${col}"
+                stroke-width=".5" stroke-linecap="round"/>`;
     }
     const tono = v => (!esCambio && v !== null) ? tonoDe(e, v) : "var(--tx)";
     /* En Cambio el punto de 2024 queda PINTADO igual: sin eso las dos bolitas
@@ -1793,8 +1810,11 @@ function mancuerna(e, ind){
   const xra = ra !== null && ra >= lo && ra <= hi ? x(ra) : null;
   const xrb = rb !== null && rb >= lo && rb <= hi ? x(rb) : null;
   if (xra !== null && xrb !== null)
-    s += `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}" stroke="var(--tx)"
-            stroke-width="${esCambio ? 1 : .5}" stroke-linecap="round" opacity=".5"/>`;
+    s += esCambio
+      ? `<path d="M${xra} ${cyR - .22} L${xrb} ${cyR - 1.2} L${xrb} ${cyR + 1.2} L${xra} ${cyR + .22} Z"
+           fill="var(--tx)" opacity=".55"/>`
+      : `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}" stroke="var(--tx)"
+           stroke-width=".5" stroke-linecap="round" opacity=".5"/>`;
   if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)", "var(--suave)");
   if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)", "var(--suave)");
   s += `<text x="${TX}" y="${cyR + 1.2}" class="cmp-v mc-reg" text-anchor="end">${
@@ -1810,9 +1830,9 @@ function mancuerna(e, ind){
     <div class="mc-lg"><span><i class="${es12 && !esCambio ? "on" : ""}"></i>2012</span>
       <span><i class="${!es12 ? "on" : ""}"></i>2024</span>
       <span><i class="mc-t${esCambio ? " on" : ""}"></i>cambio</span>${
-        esCambio ? '<span class="mc-dir">la flecha va de 2012 a 2024</span>' : ""}</div>
+        esCambio ? '<span class="mc-dir">el trazo engorda hacia 2024</span>' : ""}</div>
     <svg class="cmp mc" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>
-    ${lecturaMancuerna(filas, ind, ra, rb)}`;
+    ${lecturaPanel(filas, ind, ract, ra, rb)}`;
 }
 
 /* ── LA LECTURA ──────────────────────────────────────────────────────────────
@@ -1822,17 +1842,21 @@ function mancuerna(e, ind){
      hay entre las dos puntas, cuántos están por encima de la región y —en modo
      Cambio— cuántos suben y a qué ritmo. Todo sale del MISMO dato que acaba de
      dibujarse, así que no puede desincronizarse del gráfico de arriba. */
-function lecturaMancuerna(filas, ind, ra, rb){
+function lecturaPanel(filas, ind, refv, ra, rb){
   const u = uMode(ind);
   const con = filas.filter(f => f.act !== null && isFinite(f.act));
   if (con.length < 2) return "";
-  const esCambio = ANIO === "cambio";
+  const esCambio = ANIO === "cambio" && ra !== undefined;
   const alto_ = con[0], bajo_ = con[con.length - 1];
+  /* ⚠️ La DIFERENCIA entre dos porcentajes se mide en PUNTOS. Decir «3,2%
+     entre las dos puntas» sugiere una razón —que uno es 3,2% del otro— cuando
+     lo que hay es una distancia de 3,2 puntos. En modo Cambio `uMode` ya
+     devuelve la unidad correcta; acá hay que resolverlo para el año suelto. */
+  const ug = (!esCambio && ind.unit === "%" && !esConteo(ind)) ? "pp" : u;
   const li = [];
   li.push(`<b>${alto_.m.nombre}</b> encabeza con ${fmtM(alto_.act, ind)} y <b>${bajo_.m.nombre}</b>
-           cierra con ${fmtM(bajo_.act, ind)}: ${nf(Math.abs(alto_.act - bajo_.act), 1)}${u === "%" ? "%" : " " + u} entre las dos puntas.`);
-  const refv = esCambio ? difIntercensal(ra, rb, ind) : (ANIO === "2012" ? ra : rb);
-  if (refv !== null && isFinite(refv)){
+           cierra con ${fmtM(bajo_.act, ind)}: ${nf(Math.abs(alto_.act - bajo_.act), 1)}${ug === "%" ? "%" : " " + ug} entre las dos puntas.`);
+  if (refv !== null && refv !== undefined && isFinite(refv)){
     const arriba = con.filter(f => f.act > refv).length;
     li.push(`<b>${arriba}</b> de ${con.length} ${arriba === 1 ? "queda" : "quedan"} por encima
              de la RMSC + 3 (${fmtM(refv, ind)}).`);
@@ -1849,7 +1873,7 @@ function lecturaMancuerna(filas, ind, ra, rb){
                años entre censos. <span class="mc-adv">Es un promedio: el censo da dos puntos y no
                dice nada de lo que pasó en el medio.</span>`);
   }
-  const sin12 = filas.filter(f => f.a === null && f.b !== null);
+  const sin12 = filas.filter(f => f.a === null && f.b !== undefined && f.b !== null);
   if (sin12.length)
     li.push(`<span class="mc-adv">${sin12.length === 1
       ? `<b>${sin12[0].m.nombre}</b> no tiene cifra de 2012`
@@ -1871,33 +1895,37 @@ function comparativo(e, ind){
      no alcanza: la CIFRA se dibuja después de la barra y su ancho depende de
      cuántos dígitos tenga. Con "1.610.982" se salía del lienzo. Se estima el
      ancho del texto y se ancla la etiqueta para que nunca pase de W. */
-  const H = 11.5, W = 100, LX = 35, VX = 78;  // en unidades de viewBox
-  const anchoTexto = s => s.length * 2.1;     // ~0,53 em a 3,9px de tipografía
-  const alto = filas.length * H + 8;
+  const H = 7.4, W = 100, LX = 33, VX = 72;   // en unidades de viewBox
+  const alto = filas.length * H + 5;
   const x = v => LX + ((v - vmin) / rango) * (VX - LX);
 
   let s = "";
   filas.forEach((f, k) => {
-    const y = k * H + 3, sel_ = f.m.sigep === sel;
-    const corto = f.m.nombre.length > 16 ? f.m.nombre.slice(0, 15) + "…" : f.m.nombre;
-    s += `<text x="0" y="${y + 5.4}" class="cmp-n${sel_ ? " sel" : ""}">${corto}</text>`;
+    const y = k * H + 2, cy = y + 3.6, sel_ = f.m.sigep === sel;
+    s += `<text x="0" y="${cy + 1.3}" class="cmp-n${sel_ ? " sel" : ""}">${nombreCorto(f.m.nombre)}</text>`;
     if (f.v !== null && isFinite(f.v)){
-      const x1 = x(f.v), txt = fmtM(f.v, ind);
-      const tx = Math.min(x1 + 1.4, W - anchoTexto(txt));
-      s += `<rect x="${LX}" y="${y + 1}" width="${Math.max(.6, x1 - LX)}" height="6"
-              fill="${tonoDe(e, f.v)}" ${sel_ ? `stroke="${SENAL}" stroke-width="0.8"` : ""}/>`;
-      s += `<text x="${tx}" y="${y + 5.4}" class="cmp-v">${txt}</text>`;
-    } else {
-      s += `<text x="${LX}" y="${y + 5.4}" class="cmp-v">s/d</text>`;
+      s += `<rect x="${LX}" y="${cy - 2.1}" width="${Math.max(.5, x(f.v) - LX)}" height="4.2"
+              fill="${tonoDe(e, f.v)}" ${sel_ ? `stroke="${SENAL}" stroke-width=".35"` : ""}/>`;
     }
+    s += `<text x="${W}" y="${cy + 1.3}" class="cmp-v" text-anchor="end">${
+            f.v !== null && isFinite(f.v) ? fmtM(f.v, ind) : "s/d"}</text>`;
+    s += `<rect x="0" y="${y - .3}" width="${W}" height="${H - .8}" fill="transparent"
+            class="mc-hit" data-s="${f.m.sigep}"><title>${f.m.nombre}</title></rect>`;
   });
   if (e){
     const xp = x(e.piv);
     if (xp > LX && xp < VX)
-      s += `<line x1="${xp}" y1="1.5" x2="${xp}" y2="${filas.length * H + 1.5}" class="cmp-piv"/>`;
+      s += `<line x1="${xp}" y1="1" x2="${xp}" y2="${filas.length * H + 1}" class="cmp-piv"/>`;
   }
+  /* ★ LAS NUEVE TARJETAS TAMPOCO VAN ACÁ (2026-08-26). Estas barras ya
+     recorren los nueve con su nombre, su valor y su fila clicable: las tarjetas
+     de abajo repetían municipio, valor y orden, igual que pasaba con la
+     mancuerna. En su lugar va la MISMA lectura escrita, para que el panel se
+     comporte igual con cualquiera de los dos gráficos. */
+  const rg = refRegion(ind);
   return `<div class="cmp-t">Comparación entre municipios<span>${e ? e.tipo + " " + fmtM(e.pivReal != null ? e.pivReal : e.piv, ind) : ""}</span></div>
-    <svg class="cmp" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
+    <svg class="cmp" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>
+    ${lecturaPanel(filas.map(f => ({m: f.m, act: f.v})), ind, rg ? rg.v : null)}`;
 }
 
 /* ── SERIE FISCAL: LAS 10 GESTIONES ──────────────────────────────────────────
@@ -2153,8 +2181,13 @@ function ficha(e, i){
          Con un indicador sin serie 2012, en modo Cambio las nueve tarjetas
          salían todas con «s/d»: nueve veces el mismo vacío, debajo de un motivo
          que ya está escrito arriba una vez y bien. */
-    if ((MZS && i.k_mz && MZS[i.k_mz]) || (i.s12 && i.fuente !== "fiscal" && i.k_mun)
-        || mudo(i)){
+    /* ★ YA NO HAY CASO EN QUE LAS NUEVE TARJETAS APORTEN ALGO (2026-08-26).
+         Los dos gráficos del panel —la mancuerna y las barras— recorren los
+         nueve con nombre, valor y fila clicable, y debajo va la lectura escrita.
+         Las tarjetas repetían municipio, valor y orden, y agregaban el ámbito y
+         el conteo de manzanas, que ya están en la ficha del municipio elegido.
+         Se conserva la rama por si vuelve a hacer falta un recorrido tabular. */
+    if (true){
       g.innerHTML = "";
     } else {
       g.innerHTML = MUN.slice().sort((a,b) => {
