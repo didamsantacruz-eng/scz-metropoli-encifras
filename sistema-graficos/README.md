@@ -149,7 +149,36 @@ que todavía no existe.
 
 ---
 
-## 6. Trampas conocidas
+## 6. ⚠️ Estado conocido: el índice tiene la rampa oscura vieja
+
+**Correr `armar_sitio.py` sobre el repo tal como está produce un diff en
+`docs/banco/index.html`, y ese diff es correcto.** No es ruido ni un bug: es una
+diferencia real que todavía no se propagó.
+
+El 2026-08-26 se cambió la rampa del **modo oscuro** por pedido de Carlos —«que
+sea el color tal cual, pero más intenso, no tan transparente»—, y quedó idéntica
+a la clara (`realce_oscuro = 0`). El tablero se regeneró; **el banco no**, porque
+en esa misma sesión Carlos pidió expresamente no tocarlo. Así que hoy:
+
+| | `divergente_oscuro` |
+|---|---|
+| `assets/paleta.json` (el contrato) | `#0c683b #499044 #89b84c #f0e9cd #ca9829 #c46b20 #9a412c` |
+| `docs/banco/index.html` (publicado) | `#16c46f #6dbb67 #a8cc78 #f5f0d9 #e2b657 #e69048 #d06147` |
+
+**En modo oscuro el índice del banco pinta con una rampa que el tablero ya no
+usa.** Se arregla con `python sistema-graficos/motor/armar_sitio.py` y nada más
+—las 375 láminas no se tocan, sólo el índice—, pero **es una decisión de Carlos**,
+porque cambia cómo se ve el banco. Preguntarle antes.
+
+⚠️ **`paleta.py --verificar` no lo detecta**, y decir «OK: paleta sincronizada»
+mientras esto pasa es exactamente el punto ciego que hay que conocer: verifica
+las FUENTES (`plantilla/tablero.html`, `motor/estilo.py`, las dos plantillas), no
+los HTML ya generados en `docs/`. Un producto generado antes de un cambio de
+paleta queda desactualizado y el verificador dice que todo está bien.
+
+---
+
+## 7. Trampas conocidas
 
 **`weight="bold"` no hace negrita.** matplotlib no instancia ejes variables, así
 que sobre la Inter variable el negrita sale idéntico al redondo: no falla, sólo

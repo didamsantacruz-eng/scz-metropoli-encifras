@@ -7,14 +7,23 @@ el trabajo a domicilio hoy es invisible — y son los que NO generan viaje.
 
 No está en el parquet: hay que ir al CSV.
 """
+import os
 import json
 import pathlib
 import sys
 
 import pandas as pd
 
-RAW = pathlib.Path(r"C:\Users\HP\cpv2024")
-REPO = pathlib.Path(r"C:\Users\HP\OneDrive\Desktop\Proyectos\scz-metropolitana-gobernacion")
+# ⚠️ RUTAS PORTABLES (2026-08-26). Acá vivían clavadas la ruta del repo en
+#    OneDrive y la del microdato en el disco de Carlos. El repo pasó a manos de
+#    más gente: con la ruta clavada, este script sólo corría en la máquina donde
+#    se escribió.
+#    · REPO se deduce del propio archivo; no hace falta configurarlo.
+#    · RAW es microdato del INE y VIVE FUERA DEL REPO por definición, así que no
+#      se puede deducir: sale de la variable de entorno CPV2024 y, si no está,
+#      cae en la ruta de siempre para no romper esta máquina.
+RAW = pathlib.Path(os.environ.get("CPV2024", r"C:\Users\HP\cpv2024"))
+REPO = pathlib.Path(__file__).resolve().parent.parent
 SAL = pathlib.Path(__file__).resolve().parent / "lugar_trabajo.json"
 
 N9 = {m["cod_ine"]: m["nombre"] for m in

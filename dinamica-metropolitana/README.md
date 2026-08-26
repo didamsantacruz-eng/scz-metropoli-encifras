@@ -33,8 +33,18 @@ acá al lado.
 | 4 | `04_paquete_web.py` | recorta por relevancia y arma el paquete | `salida/` | `web/flujos_metro.json` |
 | 5 | `05_armar_pagina.py` | inyecta datos y secciones en la plantilla | paquete + plantilla | `web/quien_se_mueve.html` |
 
-Los dos parquet viven en `C:\Users\HP\cpv2024\`, **fuera del repo**: son
-microdato. Los pasos 1 y 2 sólo corren en una máquina que lo tenga.
+Los dos parquet y el microdato del INE viven **fuera del repo**. Los pasos 1 a 3
+sólo corren en una máquina que los tenga, y esa ruta se declara con una variable
+de entorno:
+
+```bash
+export CPV2024=/ruta/a/cpv2024            # Linux o macOS
+$env:CPV2024 = "D:\datos\cpv2024"        # PowerShell
+```
+
+Sin la variable cae en `C:\Users\HP\cpv2024`, que es la máquina donde se
+calcularon. **La ruta del repo no hay que configurarla**: los scripts la deducen
+de su propia ubicación.
 
 **Los pasos 4 y 5 corren con lo que ya está en el repo.** Ése es el bucle de
 trabajo para el explorador:
