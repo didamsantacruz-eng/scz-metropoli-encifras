@@ -111,6 +111,24 @@ body.dark .aviso b{color:var(--orange)}
    comparación de los nueve, que es la lectura por defecto de una región. */
 #panel-det{display:flex!important;flex-direction:column}
 #panel-det .p-body{overflow-y:auto;padding:12px 14px}
+/* ★ EL PANEL DERECHO ES MÁS ANCHO QUE EL IZQUIERDO (pedido de Carlos,
+   2026-08-26). El de la izquierda es una lista de indicadores y se lee en
+   vertical; el de la derecha ahora lleva la mancuerna, que necesita ancho para
+   que el trazo entre 2012 y 2024 tenga recorrido y las cifras no se peguen al
+   nombre del municipio. Va como variable propia y NO tocando `--panel-w`, que
+   `estilo-atlas.css` comparte con el panel izquierdo y con la barra de zoom. */
+:root{--det-w:clamp(17.5rem,28vw,25rem)}
+#panel-det{width:var(--det-w)}
+/* la botonera de zoom y el termómetro se apoyan en el borde del panel derecho:
+   si no acompañan, el nuevo ancho los deja debajo del panel */
+.zc{right:calc(var(--det-w) + 26px)}
+.termo{width:min(34rem,calc(100vw - var(--panel-w) - var(--det-w) - 6rem))}
+@media (max-width:900px){
+  /* en móvil el panel derecho es una hoja que sube desde abajo y el ancho lo
+     manda el viewport: la variable no debe pisarlo */
+  #panel-det{width:auto}
+  .zc{right:16px}
+}
 
 /* Grupos por nivel dentro de una categoría */
 .nivsep{font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.11em;
@@ -134,6 +152,30 @@ body.dark .aviso b{color:var(--orange)}
 .cmp .cmp-n.sel{fill:var(--sel);font-weight:700}
 .cmp .cmp-v{font:700 3.9px var(--f);fill:var(--tx);font-variant-numeric:tabular-nums}
 .cmp .cmp-piv{stroke:var(--tx);stroke-width:.5;stroke-dasharray:1.6 1.4;opacity:.55}
+/* ── Mancuerna 2012 → 2024 ───────────────────────────────────────────────────
+   La leyenda va ARRIBA del gráfico y no debajo: abajo llega después de que el
+   lector ya intentó descifrar los aros. Es la misma corrección que se le hizo
+   a la lámina del banco cuando Carlos la vio por primera vez. */
+.cmp-t .mc-ti{flex:none}
+.cmp-t .mc-ti i{font-style:normal;font-size:.85em;color:var(--faint);
+  margin:0 2px;letter-spacing:0}
+/* la fila de la región va en tinta plena: es la referencia, no un municipio más */
+.cmp .cmp-n.mc-reg{fill:var(--tx);font-weight:700}
+.cmp .cmp-v.mc-reg{fill:var(--tx)}
+.mc-lg{display:flex;flex-wrap:wrap;gap:2px 12px;margin:-2px 0 7px;
+  font-size:.58rem;font-weight:600;color:var(--faint)}
+.mc-lg span{display:inline-flex;align-items:center;gap:5px}
+.mc-lg i{width:9px;height:9px;border-radius:50%;display:block;flex:none;
+  border:1.4px solid var(--suave);background:var(--card-solid);opacity:.6}
+.mc-lg i.mc-b{background:var(--suave);border-color:var(--suave)}
+.mc-lg i.mc-t{width:14px;height:3px;border-radius:2px;border:0;background:var(--suave)}
+/* el juego activo se enciende: es el que el conmutador de año está pintando */
+.mc-lg i.on{opacity:1;border-color:var(--tx)}
+.mc-lg i.mc-b.on{background:var(--tx)}
+.mc-lg i.mc-t.on{background:var(--tx);height:4px}
+.mc-lg span:has(i.on){color:var(--tx)}
+.cmp.mc .mc-hit{cursor:pointer}
+.cmp.mc .mc-hit:hover{fill:var(--tx);fill-opacity:.05}
 /* ── Distribución dentro del municipio ───────────────────────────────────────
    Mismas unidades de viewBox que el comparativo (1 unidad = 2,2-3,0 px reales),
    así las dos lecturas se apilan sin cambiar de tamaño de letra. El bigote es
@@ -344,6 +386,19 @@ const SIN_DATO = {claro:"#8b8f95", oscuro:"#8b8f95"};
 const SENAL = "#8bc53f";
 /* ⇧⇧ FIN DE LA PALETA GENERADA ⇧⇧ */
 
+/* ⚠️ ESTA CONSTANTE VA FUERA DEL BLOQUE DE ARRIBA, Y NO ES UN DETALLE.
+   `scripts/paleta.py` REESCRIBE todo lo que hay entre los dos marcadores cada
+   vez que corre `generar_sitios.py`. Declararla ahí adentro —junto a `SENAL`,
+   que es la última línea del bloque— la borra en silencio en la siguiente
+   generación: el tablero queda con dos referencias a una constante que ya no
+   existe, el armado de capas ABORTA en la primera de ellas, y se pierden
+   `mun-line`, `mun-sel` y las dos capas de manzana sin ningún error visible.
+
+   El filete que divide los municipios: negro de verdad sobre el papel claro
+   —un gris a este grosor se lee como suciedad— y su equivalente apagado sobre
+   el fondo oscuro, donde un negro no existiría. */
+const BORDE_MUN = {claro: "#11110f", oscuro: "#e6e3d8"};
+
 /* `dir === 1` significa que más es PEOR, así que la rampa se da vuelta y el
    verde queda del lado bueno en los dos casos. */
 const rampa = dir => {
@@ -533,7 +588,12 @@ function aplicarTema(oscuro, guardar){
     map.setPaintProperty("velo", "background-color", fondo);
     map.setPaintProperty("velo", "background-opacity", oscuro ? VELO.oscuro : VELO.claro);
     const borde = oscuro ? "#12181c" : "#ffffff";
-    if (map.getLayer("mun-line")) map.setPaintProperty("mun-line", "line-color", borde);
+    /* El borde MUNICIPAL tiene su propio par de colores: es el filete negro que
+       divide, y no sigue al de las manzanas —que es del color del fondo, para
+       separar sin dibujar. */
+    if (map.getLayer("mun-line"))
+      map.setPaintProperty("mun-line", "line-color",
+                           BORDE_MUN[oscuro ? "oscuro" : "claro"]);
     if (map.getLayer("mz-line")) map.setPaintProperty("mz-line", "line-color", borde);
     /* Las opacidades cambian con el tema (ver OPACIDAD_*), así que hay que
        volver a declararlas acá: se fijan al montar la capa y no se enteran
@@ -1054,11 +1114,23 @@ Promise.all([
        referencia de en qué municipio estás. Misma solución que usa el tablero
        de desarrollo infantil, donde el relleno se va en una banda angosta y el
        borde aguanta dos niveles más. */
+    /* ★ NEGRO, DELGADO Y PERMANENTE (pedido de Carlos, 2026-08-26). Antes era
+       blanco y se DESVANECÍA a cero en z15,5: al entrar a las manzanas se
+       perdía el límite municipal justo donde más falta hace, porque a ese zoom
+       ya no se ve la silueta entera y no hay otra pista de en qué municipio
+       estás. Ahora no se apaga nunca, y en vez de engordar se AFINA al bajar:
+       un pelo oscuro sostiene la división sin taparle el borde a las manzanas.
+
+       ⚠️ En tema oscuro el negro sería invisible sobre un fondo #12181c, así
+          que ahí el equivalente es un blanco apagado. Lo que se mantiene entre
+          los dos temas es el PAPEL de la línea —el filete fino que divide—, no
+          su color literal. */
     nuevaCapa({id: "mun-line", type: "line", source: "mun",
-      paint: {"line-color": esOscuro() ? "#12181c" : "#ffffff",
-              "line-width": ["interpolate", ["linear"], ["zoom"], Z0, 1.1, Z1, 1.6],
-              "line-opacity": hayManzana()
-                ? ["interpolate", ["linear"], ["zoom"], Z0, .55, Z1, .4, 15.5, 0] : .55}});
+      paint: {"line-color": BORDE_MUN[esOscuro() ? "oscuro" : "claro"],
+              "line-width": ["interpolate", ["linear"], ["zoom"],
+                             Z0, 1.15, Z1, .95, 15.5, .8],
+              "line-opacity": ["interpolate", ["linear"], ["zoom"],
+                               Z0, .82, Z1, .78, 15.5, .72]}});
     nuevaCapa({id: "mun-sel", type: "line", source: "mun",
       paint: {"line-color": SENAL, "line-width": 2.4},
       filter: ["==", ["get", "sigep"], ""]});
@@ -1082,6 +1154,12 @@ Promise.all([
                 "line-width": ["interpolate", ["linear"], ["zoom"], 12, .15, 15, .7],
                 "line-opacity": ["interpolate", ["linear"], ["zoom"], Z0, 0, Z1, .3]}});
     }
+    /* ★ EL BORDE MUNICIPAL VA ARRIBA DE TODO (2026-08-26). Se monta antes que
+       las capas de manzana —tiene que existir aunque no haya manzanas—, así que
+       sin esto las 38.892 manzanas se dibujan ENCIMA y se comen la división
+       justo al bajar, que es cuando se pidió que sobreviviera. `moveLayer` sin
+       segundo argumento la manda al final del orden de pintado. */
+    ["mun-line", "mun-sel"].forEach(id => { if (map.getLayer(id)) map.moveLayer(id); });
     encuadrar();
     interacciones();
     vigilarZoom();            // el nivel es función del zoom: hay que escucharlo
@@ -1530,6 +1608,175 @@ function termometro(e, i){
    región, que es contra lo que se compara cada municipio.
    Se dibuja a mano en SVG y no con una librería de gráficos: son 9 barras, y
    sumar una dependencia para esto sería pagar 200 KB por nada. */
+/* ── MANCUERNA 2012 → 2024 ───────────────────────────────────────────────────
+   ★ PEDIDO DE CARLOS (2026-08-26). El panel de la derecha decía DOS VECES lo
+     mismo: las barras del comparativo y, debajo, nueve tarjetas con el mismo
+     municipio, el mismo valor y el mismo orden. Y ninguna de las dos usaba el
+     dato de 2012, que ya viajaba en `municipal_2012` y sólo se veía cambiando
+     el mapa entero de año.
+
+   Acá cada municipio es UNA fila con sus dos censos: **aro = 2012, punto lleno
+   = 2024**, y el trazo que los une ES la magnitud del cambio. Es la misma
+   lectura que la lámina del banco, que ya estaba resuelta ahí.
+
+   ★ EL CONMUTADOR DE AÑO PINTA LA BOLITA, no cambia de gráfico. Con 2024
+     manda el punto lleno; con 2012, el aro; en Cambio el protagonista es el
+     TRAZO, coloreado por signo. Un solo objeto que cambia de énfasis en vez de
+     tres gráficos distintos: la fila no se mueve de sitio y el ojo puede
+     seguirla mientras se conmuta.
+
+   ★ SE ESCRIBE UNA SOLA CIFRA, la del año en pantalla. Con las dos, a este
+     ancho, las etiquetas se pisaban entre sí y con el nombre del municipio.
+     Las dos juntas siguen estando: en el `<title>` de cada fila, que el
+     navegador muestra al posarse encima.
+
+   ★ EL ORDEN LO DA EL AÑO EN PANTALLA (`valorMunicipal` ya resuelve cuál es),
+     así que en Cambio la lista queda ordenada por cuánto cambió cada uno, que
+     es lo que ese modo quiere leer.
+
+   Sólo aplica a los 178 indicadores con `s12`. Los otros 65 —los 30 fiscales y
+   35 censales sin comparación declarada— siguen con las barras de un solo año,
+   porque ahí no hay mancuerna que dibujar. */
+const nombreCorto = nom => {
+  if (nom.length <= 19) return nom;
+  const dos = nom.split(" ").slice(0, 2).join(" ");
+  return dos.length <= 19 ? dos : dos.slice(0, 18) + "…";
+};
+function mancuerna(e, ind){
+  const v12de = m => { const c = m.municipal_2012; const v = c ? c[ind.k_mun] : null;
+                       return (v === undefined || !isFinite(v)) ? null : v; };
+  const v24de = m => { const c = m.municipal; const v = c ? c[ind.k_mun] : null;
+                       return (v === undefined || !isFinite(v)) ? null : v; };
+  const filas = MUN.map(m => ({m, a: v12de(m), b: v24de(m), act: valorMunicipal(m, ind)}))
+    .sort((p, q) => (q.act === null ? -Infinity : q.act) - (p.act === null ? -Infinity : p.act));
+  const con = filas.filter(f => f.a !== null || f.b !== null);
+  if (!con.length) return `<div class="sin">Sin datos para este indicador.</div>`;
+
+  /* El eje cubre los DOS censos: si se escalara sólo con el año en pantalla, al
+     conmutar se moverían todas las bolitas y el trazo dejaría de significar lo
+     mismo de un modo a otro. */
+  const vals = con.flatMap(f => [f.a, f.b]).filter(v => v !== null);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (lo === hi){ lo -= 1; hi += 1; }
+  const pad = (hi - lo) * .06; lo -= pad; hi += pad;
+
+  /* VX corta bien antes del borde: la cifra va SIEMPRE a la derecha del eje, y
+     con VX=82 el punto del valor mas alto quedaba montado sobre su propio
+     numero («+11,5 pp» encima de la bolita de Santa Cruz). */
+  const H = 12.5, W = 100, LX = 33, VX = 75, TX = 79;   // unidades de viewBox
+  const REG_H = 15;                       // la franja de la region, al pie
+  const anchoTexto = s => s.length * 2.1;
+  const alto = filas.length * H + 9 + REG_H;
+  const x = v => LX + ((v - lo) / (hi - lo)) * (VX - LX);
+  const esCambio = ANIO === "cambio", es12 = ANIO === "2012";
+
+  let s = "";
+  filas.forEach((f, k) => {
+    const y = k * H + 3, cy = y + 4.6, sel_ = f.m.sigep === sel;
+    /* «Santa Cruz de la S…» no dice nada que «Santa Cruz» no diga, y el
+       recorte con puntos suspensivos ensucia una columna que se lee en
+       vertical. Cuando el nombre no entra se queda con sus dos primeras
+       palabras, que en los nueve alcanza siempre para distinguirlos. */
+    const corto = nombreCorto(f.m.nombre);
+    s += `<text x="0" y="${cy + 1.5}" class="cmp-n${sel_ ? " sel" : ""}">${corto}</text>`;
+    if (f.a === null && f.b === null){
+      s += `<text x="${LX}" y="${cy + 1.5}" class="cmp-v">s/d</text>`;
+      return;
+    }
+    const xa = f.a !== null ? x(f.a) : null, xb = f.b !== null ? x(f.b) : null;
+    /* El trazo: en Cambio es el dato y va grueso y coloreado por su signo; en
+       los otros dos modos es sólo el vínculo entre los dos censos. */
+    if (xa !== null && xb !== null){
+      const col = esCambio && f.act !== null ? tonoDe(e, f.act) : "var(--linea)";
+      s += `<line x1="${xa}" y1="${cy}" x2="${xb}" y2="${cy}" stroke="${col}"
+              stroke-width="${esCambio ? 3.4 : 1.1}" stroke-linecap="round"
+              opacity="${esCambio ? .95 : .8}"/>`;
+    }
+    /* El aro de 2012 y el punto de 2024. El activo lleva el color del mapa y su
+       tamaño; el otro queda como referencia tenue. */
+    if (xa !== null){
+      const act = es12;
+      s += `<circle cx="${xa}" cy="${cy}" r="${act ? 2.5 : 1.7}"
+              fill="${act && !esCambio ? tonoDe(e, f.a) : "var(--card-solid)"}"
+              stroke="${act ? "var(--tx)" : "var(--suave)"}"
+              stroke-width="${act ? 1 : .7}" opacity="${act || esCambio ? 1 : .75}"/>`;
+    }
+    if (xb !== null){
+      const act = !es12;
+      s += `<circle cx="${xb}" cy="${cy}" r="${act ? 2.6 : 1.7}"
+              fill="${act && !esCambio ? tonoDe(e, f.b) : (act ? "var(--tx)" : "var(--card-solid)")}"
+              stroke="${act ? "var(--tx)" : "var(--suave)"}"
+              stroke-width="${act ? 1 : .7}" opacity="${act || esCambio ? 1 : .75}"/>`;
+    }
+    if (sel_ && (xa !== null || xb !== null))
+      s += `<rect x="${LX - 2}" y="${y}" width="${VX - LX + 4}" height="${H - 2}"
+              fill="none" stroke="${SENAL}" stroke-width=".6" rx="1"/>`;
+    /* Una sola cifra, la del año en pantalla, siempre a la derecha del eje para
+       que la columna de números quede alineada y se pueda leer en vertical. */
+    const txt = f.act === null ? "s/d" : fmtM(f.act, ind);
+    s += `<text x="${Math.min(TX, W - anchoTexto(txt))}" y="${cy + 1.5}" class="cmp-v">${txt}</text>`;
+    const par = `2012: ${f.a === null ? "s/d" : fmt(f.a, ind.unit)}  ·  2024: ${
+                  f.b === null ? "s/d" : fmt(f.b, ind.unit)}`;
+    s += `<rect x="0" y="${y}" width="${W}" height="${H - 2}" fill="transparent"
+            class="mc-hit" data-s="${f.m.sigep}"><title>${f.m.nombre}
+${par}</title></rect>`;
+  });
+
+  /* ── LA REGIÓN, AL PIE Y EN EL MISMO LENGUAJE ─────────────────────────────
+     ★ «que en el cambio se resalte un gráfico del cambio total» (Carlos).
+       En vez de otro gráfico aparte, la región entra como una fila más —misma
+       escala, mismo aro, mismo punto— separada por un filete. Así el total no
+       es un número suelto en un encabezado: se LEE contra los nueve, y en modo
+       Cambio su trazo se compara de un vistazo con el de cada municipio.
+     El agregado viene DECLARADO en `CAT.region`, no recalculado: cada indicador
+     se pondera por SU PROPIO universo y rehacerlo por población da otra cifra
+     (ver la nota de `armar_tableros.py`). */
+  const cajaR = CAT.region || {};
+  const rA = cajaR.municipal_2012 ? cajaR.municipal_2012[ind.k_mun] : null;
+  const rB = cajaR.municipal ? cajaR.municipal[ind.k_mun] : null;
+  const rV = (v => v === undefined || !isFinite(v) ? null : v);
+  const ra = rV(rA), rb = rV(rB);
+  const ract = esCambio ? difIntercensal(ra, rb, ind) : (es12 ? ra : rb);
+  const yR = filas.length * H + 7.5, cyR = yR + 4.6;
+  s += `<line x1="0" y1="${yR - 2.5}" x2="${W}" y2="${yR - 2.5}"
+          stroke="var(--linea)" stroke-width=".45"/>`;
+  s += `<text x="0" y="${cyR + 1.5}" class="cmp-n mc-reg">Región metropolitana</text>`;
+  if (ra !== null || rb !== null){
+    const xra = ra !== null && ra >= lo && ra <= hi ? x(ra) : null;
+    const xrb = rb !== null && rb >= lo && rb <= hi ? x(rb) : null;
+    if (xra !== null && xrb !== null)
+      s += `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}"
+              stroke="var(--tx)" stroke-width="${esCambio ? 3.4 : 1.1}"
+              stroke-linecap="round" opacity=".55"/>`;
+    if (xra !== null)
+      s += `<circle cx="${xra}" cy="${cyR}" r="${es12 ? 2.5 : 1.7}" fill="var(--card-solid)"
+              stroke="var(--tx)" stroke-width="${es12 ? 1 : .7}" opacity="${es12 ? 1 : .6}"/>`;
+    if (xrb !== null)
+      s += `<circle cx="${xrb}" cy="${cyR}" r="${!es12 ? 2.6 : 1.7}"
+              fill="${!es12 && !esCambio ? "var(--tx)" : "var(--card-solid)"}"
+              stroke="var(--tx)" stroke-width="${!es12 ? 1 : .7}" opacity="${!es12 ? 1 : .6}"/>`;
+  }
+  const txtR = ract === null ? "s/d" : fmtM(ract, ind);
+  s += `<text x="${Math.min(TX, W - anchoTexto(txtR))}" y="${cyR + 1.5}" class="cmp-v mc-reg">${txtR}</text>`;
+
+  /* El encabezado lleva la lectura de la REGIÓN: en Cambio, cuánto cambió el
+     total; en los otros dos, el agregado del año que se está mirando. */
+  const rg = refRegion(ind);
+  /* Ya NO repite la cifra de la región: ésa quedó al pie, dentro del gráfico y
+     en su misma escala. Acá va lo que el gráfico no puede decir: en qué unidad
+     se está leyendo el cambio, que no es la misma para una tasa que para un
+     conteo (puntos contra porcentaje). */
+  const cab = esCambio
+    ? (esConteo(ind) ? "variación en %" : "diferencia en puntos")
+    : (rg && rg.tipo ? rg.tipo + " de los nueve" : "");
+  void rg;
+  return `<div class="cmp-t"><span class="mc-ti">2012 <i>→</i> 2024</span><span>${cab}</span></div>
+    <div class="mc-lg"><span><i class="mc-a${es12 ? " on" : ""}"></i>2012</span>
+      <span><i class="mc-b${!es12 && !esCambio ? " on" : ""}"></i>2024</span>
+      <span><i class="mc-t${esCambio ? " on" : ""}"></i>cambio</span></div>
+    <svg class="cmp mc" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
+}
+
 function comparativo(e, ind){
   const filas = MUN.map(m => ({m, v: valorParaMini(m, ind)}))
     .sort((a, b) => (b.v === null ? -Infinity : b.v) - (a.v === null ? -Infinity : a.v));
@@ -1759,7 +2006,13 @@ function serieSVG(m, ind){
 /* ── FICHA ───────────────────────────────────────────────────────────────── */
 function ficha(e, i){
   const g = document.getElementById("kgrid");
-  document.getElementById("cmp").innerHTML = comparativo(e, i);
+  /* ★ LA MANCUERNA MANDA CUANDO HAY DOS CENSOS (2026-08-26). Con `s12` el
+     municipio tiene 2012 y 2024, así que la lectura por defecto es el CAMBIO
+     entre los dos y no una foto de un año. Sin `s12` —los 30 fiscales y 35
+     censales que declaran por qué no comparan— no hay mancuerna posible y
+     quedan las barras de siempre. */
+  document.getElementById("cmp").innerHTML =
+    (i.s12 && i.fuente !== "fiscal" && i.k_mun) ? mancuerna(e, i) : comparativo(e, i);
   /* La distribución va SIEMPRE que el indicador baje a manzana: es la lectura
      que el panel no tenía. Con un municipio elegido queda resaltado, así que
      sirve igual en los dos estados. */
@@ -1811,8 +2064,11 @@ function ficha(e, i){
        Con la distribución arriba ya no hacen falta: si el indicador baja a
        manzana, este lugar lo ocupa una lectura nueva. Si NO baja (los 30
        fiscales, y todo el tablero municipal), las tarjetas siguen siendo la
-       forma de recorrer los nueve, así que se conservan para ese caso. */
-    if (MZS && i.k_mz && MZS[i.k_mz]){
+       forma de recorrer los nueve, así que se conservan para ese caso.
+       ★ Y DESDE 2026-08-26 TAMPOCO VAN CUANDO HAY MANCUERNA: ésa ya recorre los
+         nueve, con el nombre, el valor y además los dos censos. Repetirlas
+         debajo era decir tres veces lo mismo. */
+    if ((MZS && i.k_mz && MZS[i.k_mz]) || (i.s12 && i.fuente !== "fiscal" && i.k_mun)){
       g.innerHTML = "";
     } else {
       g.innerHTML = MUN.slice().sort((a,b) => {
@@ -1839,6 +2095,10 @@ function ficha(e, i){
   }
   g.querySelectorAll(".kpi[data-s]").forEach(el => el.onclick = () => seleccionar(el.dataset.s));
   document.querySelectorAll("#dist .ds-hit").forEach(el =>
+    el.onclick = () => seleccionar(el.dataset.s));
+  /* Cada fila de la mancuerna elige su municipio, igual que hacían las tarjetas
+     que reemplazó: si no, sacarlas le quitaba al panel una forma de navegar. */
+  document.querySelectorAll("#cmp .mc-hit").forEach(el =>
     el.onclick = () => seleccionar(el.dataset.s));
   g.querySelectorAll(".kpi[data-k]").forEach(el => el.onclick = () => elegirIndicador(el.dataset.k));
   /* Clicar un año del gráfico hace lo mismo que su botón de gestión. Con eso
