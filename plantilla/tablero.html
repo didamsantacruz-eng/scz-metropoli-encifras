@@ -125,7 +125,30 @@ body.dark .aviso b{color:var(--orange)}
    al elegir un municipio. Acá el panel derecho sirve siempre: muestra la
    comparación de los nueve, que es la lectura por defecto de una región. */
 #panel-det{display:flex!important;flex-direction:column}
-#panel-det .p-body{overflow-y:auto;padding:12px 14px}
+/* ★ RITMO VERTICAL, UNA SOLA ESCALA (2026-08-26). Medido con una sonda: los
+   bloques del panel se separaban 2, 3, 6, 9, 11 y 14 px según de qué margen
+   viniera cada hueco, y los dos paneles tenían relleno distinto —12 y 13—. El
+   ojo no lee eso como una desprolijidad puntual: lo lee como que el panel no
+   está terminado.
+   Ahora los bloques mayores se separan con `gap` del contenedor —un solo
+   número, imposible de desincronizar— y los márgenes de los hijos se anulan.
+   La escala es **6 / 12 / 18**: dentro de un bloque · entre un bloque y su
+   lectura · entre secciones.
+   ⚠️ `:empty` es imprescindible: `#dist` y `#serie` existen SIEMPRE y están
+      vacíos en el tablero municipal. Con `gap`, un hijo vacío separa igual, así
+      que sin esto quedaban 36 px de aire donde no hay nada. */
+#panel-det .p-body{overflow-y:auto;padding:13px 14px;
+  display:flex;flex-direction:column;gap:18px}
+#panel-det .p-body > *:empty{display:none}
+/* La misma escala en la cabecera de la izquierda. Estas reglas viven acá y no
+   en `estilo-atlas.css` porque esa hoja la comparten los tres tableros del
+   ecosistema y acá sólo se está afinando éste. */
+#panel-ind .cat-bar{padding:13px 14px}
+#panel-ind .p-kick{margin-bottom:6px}
+#panel-ind .busca-caja{margin-top:12px}
+#panel-ind #p-sub{margin:0 0 12px}
+/* explícito para no depender del colapso de márgenes: el hueco lo pone #p-sub */
+#panel-ind #lista{margin-top:0}
 /* ★ EL PANEL DERECHO ES MÁS ANCHO QUE EL IZQUIERDO (pedido de Carlos,
    2026-08-26). El de la izquierda es una lista de indicadores y se lee en
    vertical; el de la derecha ahora lleva la mancuerna, que necesita ancho para
@@ -138,24 +161,42 @@ body.dark .aviso b{color:var(--orange)}
    si no acompañan, el nuevo ancho los deja debajo del panel */
 .zc{right:calc(var(--det-w) + 26px)}
 .termo{width:min(34rem,calc(100vw - var(--panel-w) - var(--det-w) - 6rem))}
-@media (max-width:900px){
-  /* en móvil el panel derecho es una hoja que sube desde abajo y el ancho lo
-     manda el viewport: la variable no debe pisarlo */
+/* ⚠️ 820 Y NO 900. La hoja deslizable de `estilo-atlas.css` entra a los 820:
+   con el corte en 900, entre esos dos anchos el panel se quedaba en su posición
+   fija de escritorio pero con `width:auto` — o sea pegado al borde derecho y
+   sin ancho propio. Los dos números tienen que ser EL MISMO, y el que manda es
+   el de la hoja. */
+@media (max-width:820px){
   #panel-det{width:auto}
-  .zc{right:16px}
+  .zc{right:8px}
 }
 
 /* ── El puente al banco de láminas ──────────────────────────────────────────
    Va al PIE del panel: es una salida, no una lectura. Con el aspecto de una
    acción y no de un dato, para que no compita con las cifras de arriba. */
-.lam-link{display:flex;align-items:flex-start;gap:8px;margin-top:14px;padding:9px 11px;
-  background:var(--card-solid);border:1px solid var(--linea);text-decoration:none;
+/* Pastilla flotante en la esquina SUPERIOR izquierda del mapa.
+   ⚠️ Primero se probó abajo, frente a la botonera de zoom, y se pisaba con el
+      termómetro: la leyenda es un bloque centrado que se estira hasta ocupar
+      todo el ancho libre entre los dos paneles, así que abajo no hay esquina
+      libre. Arriba sí, y de paso queda en el mismo sitio que en el teléfono. */
+#lamina{position:fixed;z-index:9;left:calc(var(--panel-w) + 26px);top:74px}
+#lamina:empty{display:none}
+.lam-link{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;
+  background:var(--glass);border:1px solid var(--linea);box-shadow:var(--sh);
+  text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   transition:border-color .2s ease,background-color .2s ease}
-.lam-link:hover{border-color:var(--sel);background:var(--linea-2)}
-.lam-i{font-size:.9rem;line-height:1;color:var(--sel);margin-top:1px}
-.lam-link b{display:block;font-size:.67rem;font-weight:600;color:var(--tx);line-height:1.3}
-.lam-link em{display:block;font-style:normal;font-size:.58rem;color:var(--faint);
-  line-height:1.35;margin-top:2px}
+.lam-link:hover{border-color:var(--sel);background:var(--card-solid)}
+.lam-i{font-size:.82rem;line-height:1;color:var(--sel)}
+.lam-link b{font-size:.66rem;font-weight:600;color:var(--tx);line-height:1;white-space:nowrap}
+/* ⚠️ ESTA ANULACIÓN VA DESPUÉS DE LA REGLA BASE, no en el bloque de móvil de
+   más arriba: tienen la misma especificidad, así que gana la última que se lee.
+   Puesta antes, la pastilla conservaba su  de escritorio y en el teléfono
+   aparecía encima de la botonera de zoom, cortada por el borde. */
+@media (max-width:820px){
+  /* abajo está ocupado por la hoja y por el termómetro: la pastilla sube al
+     borde superior del mapa, que en móvil arranca en 202 px */
+  #lamina{left:8px;right:auto;top:210px}
+}
 
 /* ── Comparar dos indicadores ───────────────────────────────────────────────
    El selector vive en la cabecera del panel derecho y no en el izquierdo: no
@@ -215,7 +256,7 @@ body.dark .aviso b{color:var(--orange)}
    9 px) y el panel derecho se leía de otro tamaño que el resto del tablero. */
 .cmp-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
   font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
-  color:var(--faint);margin:2px 0 6px}
+  color:var(--faint);margin:0 0 6px}
 .cmp-t span{font-family:var(--f);text-transform:none;letter-spacing:0;
   font-size:.62rem;font-weight:600;color:var(--suave)}
 .cmp{width:100%;height:auto;display:block;overflow:hidden}
@@ -258,7 +299,7 @@ body.dark .ind.on .mini{opacity:1!important;filter:saturate(1.05)!important}
 
 .cmp-t .mc-ti{flex:none}
 .cmp-t .mc-ti i{font-style:normal;font-size:.85em;color:var(--faint);margin:0 2px;letter-spacing:0}
-.mc-lg{display:flex;flex-wrap:wrap;gap:2px 11px;margin:-3px 0 6px;
+.mc-lg{display:flex;flex-wrap:wrap;gap:2px 11px;margin:0 0 6px;
   font-size:.55rem;font-weight:600;color:var(--faint)}
 .mc-lg span{display:inline-flex;align-items:center;gap:4px}
 /* las dos bolitas de la leyenda miden LO MISMO, igual que en el gráfico: lo
@@ -282,7 +323,7 @@ body.dark .ind.on .mini{opacity:1!important;filter:saturate(1.05)!important}
 .cmp.mc .mc-hit:hover{fill:var(--tx);fill-opacity:.05}
 /* La lectura escrita, debajo del gráfico. Rellena el panel con lo que el dibujo
    no puede decir, en vez de estirar el gráfico hasta el borde. */
-.mc-lee{margin:11px 0 2px;padding-top:9px;border-top:1px solid var(--linea-2);
+.mc-lee{margin:12px 0 0;padding-top:12px;border-top:1px solid var(--linea-2);
   display:flex;flex-direction:column;gap:6px}
 .mc-lee p{font-size:.68rem;line-height:1.5;color:var(--suave);margin:0}
 .mc-lee b{color:var(--tx);font-weight:600}
@@ -439,6 +480,11 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
 
 <div class="panel" id="panel-det">
   <div class="sheet-top" id="sheet-grip">
+    <!-- ★ EL ASA. `estilo-atlas.css` la estiliza (`.grip-bar`) desde que el
+         tablero heredó la hoja del Atlas, pero el marcado nunca la tuvo: sin
+         ella no hay nada de dónde tirar ni pista de que la hoja se mueve. En
+         escritorio está oculta por `.grip-bar{display:none}`. -->
+    <div class="grip-bar" aria-hidden="true"></div>
     <div class="det-head"><div class="d-mun" id="d-mun">RMSC + 3</div><div class="d-sub" id="d-sub">9 municipios</div></div>
     <div class="pk" id="pk"></div>
     <!-- ★ COMPARAR DOS INDICADORES (2026-08-26). El tablero contestaba «cómo
@@ -451,14 +497,19 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
     <div id="dist"></div>
     <div id="serie"></div>
     <div class="kgrid" id="kgrid"></div>
-    <!-- ★ EL BANCO Y EL TABLERO SE HABLAN (2026-08-26). Cada lámina del
-         catálogo ES un indicador de este tablero y eran dos mundos separados.
-         El enlace se arma de la CLAVE: verificado que los 213 indicadores
-         censales tienen su PNG y que no sobra ninguno, así que la
-         correspondencia es 1 a 1 y no hace falta un índice aparte. -->
-    <div id="lamina"></div>
   </div>
 </div>
+
+<!-- ★ EL BANCO Y EL TABLERO SE HABLAN (2026-08-26). Cada lámina del catálogo
+     ES un indicador de este tablero y eran dos mundos separados. El enlace se
+     arma de la CLAVE: verificado que los 213 indicadores censales tienen su PNG
+     y que no sobra ninguno, así que la correspondencia es 1 a 1.
+     ⚠️ VIVE SOBRE EL MAPA Y NO EN EL PANEL (pedido de Carlos, 2026-08-26):
+        al pie de la columna derecha quedaba debajo de la mancuerna, la lectura
+        y las nueve tarjetas, o sea a un scroll entero de distancia justo cuando
+        el lector ya está mirando el mapa. Acá está a la vista sin buscarlo, del
+        lado opuesto a la botonera de zoom para no pelearse con ella. -->
+<div id="lamina"></div>
 
 <div class="zc"><button id="z-in">+</button><button id="z-out">−</button><button id="z-rst">⤢</button></div>
 
@@ -1229,6 +1280,7 @@ Promise.all([
   montarBuscador();
   montarComparar();
   montarTeclado();
+  montarHoja();
   actualizarCobertura();
   document.body.setAttribute("data-listo", JSON.stringify({
     grupos: CAT.grupos.length,
@@ -2069,6 +2121,155 @@ const indPorKey = k => {
   return null;
 };
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   LA HOJA DESLIZABLE DEL MÓVIL
+   ═══════════════════════════════════════════════════════════════════════════
+   ⛔ EL BUG: en móvil el panel derecho SE PERDÍA. `estilo-atlas.css` ya traía
+     todo el CSS del bottom-sheet heredado del Atlas Socioeconómico —incluida la
+     posición de partida `transform:translateY(100%)`— pero **nunca se escribió
+     el JavaScript que lo mueve**. Resultado: la hoja quedaba empujada fuera de
+     la pantalla para siempre y el lector de móvil perdía la mitad del tablero
+     sin ningún indicio de que existía.
+
+   ★ DOS POSICIONES, NUNCA CERRADA. La hoja vive en `peek` —asomando su
+     cabecera— o en `full`. No hay estado cerrado a propósito: un tablero cuya
+     mitad se puede hacer desaparecer sin dejar rastro es exactamente el bug que
+     esto viene a arreglar. Siempre queda un asa visible para volver a subirla.
+
+   ★ SE MIDE, NO SE SUPONE. El desplazamiento va en PÍXELES calculados de la
+     altura real de la hoja y de su cabecera. Con porcentajes, un cambio de
+     tipografía o una línea más en el título dejaban el asa cortada por el borde
+     inferior en unos teléfonos y flotando en otros.                          */
+const ES_MOVIL = () => matchMedia("(max-width:820px)").matches;
+const HOJA = {estado: "peek", alto: 0, asa: 0, montada: false};
+
+function hojaMedir(){
+  const p = document.getElementById("panel-det");
+  const t = document.getElementById("sheet-grip");
+  if (!p) return;
+  HOJA.alto = p.getBoundingClientRect().height;
+  HOJA.asa = t ? t.getBoundingClientRect().height : 96;
+}
+
+function hojaY(estado){
+  return estado === "full" ? 0 : Math.max(0, HOJA.alto - HOJA.asa);
+}
+
+function hojaIr(estado, animar){
+  const p = document.getElementById("panel-det");
+  if (!p || !ES_MOVIL()) return;
+  HOJA.estado = estado;
+  p.classList.toggle("dragging", !animar);
+  p.style.transform = `translateY(${hojaY(estado)}px)`;
+  document.body.classList.toggle("sheet-open", estado === "full");
+  if (!animar) requestAnimationFrame(() => p.classList.remove("dragging"));
+  hojaFinDeLista();
+}
+
+/* El degradado del pie es la pista de que todavía hay contenido debajo. Se
+   apaga al llegar al final: dejarlo encendido sobre el último renglón hace
+   creer que falta algo y el lector sigue tirando de una lista terminada. */
+function hojaFinDeLista(){
+  const p = document.getElementById("panel-det");
+  const b = p && p.querySelector(".p-body");
+  if (!p || !b) return;
+  p.classList.toggle("at-end", b.scrollTop + b.clientHeight >= b.scrollHeight - 4);
+}
+
+function montarHoja(){
+  const p = document.getElementById("panel-det");
+  const asa = document.getElementById("sheet-grip");
+  if (!p || !asa || HOJA.montada) return;
+  HOJA.montada = true;
+
+  const cuerpo = p.querySelector(".p-body");
+  if (cuerpo) cuerpo.addEventListener("scroll", hojaFinDeLista, {passive: true});
+
+  let y0 = 0, t0 = 0, base = 0, arrastrando = false, movido = 0;
+
+  asa.addEventListener("pointerdown", ev => {
+    if (!ES_MOVIL()) return;
+    hojaMedir();
+    arrastrando = true; movido = 0;
+    y0 = ev.clientY; t0 = performance.now(); base = hojaY(HOJA.estado);
+    p.classList.add("dragging");
+    /* La captura es lo que evita que el dedo «se salga» del asa a media
+       tirada: sin ella, un movimiento rápido pierde el puntero apenas el
+       cursor deja el elemento y la hoja se queda a mitad de camino. */
+    try { asa.setPointerCapture(ev.pointerId); } catch (_) {}
+  });
+
+  asa.addEventListener("pointermove", ev => {
+    if (!arrastrando) return;
+    const dy = ev.clientY - y0;
+    movido = Math.abs(dy);
+    /* Se permite tirar un poco más allá de los topes y se AMORTIGUA: sin esto
+       la hoja se siente clavada, y con esto sola —sin amortiguar— se despega
+       del borde y deja ver el mapa por debajo. */
+    let y = base + dy;
+    if (y < 0) y = y * .35;
+    const tope = hojaY("peek");
+    if (y > tope) y = tope + (y - tope) * .35;
+    p.style.transform = `translateY(${y}px)`;
+    ev.preventDefault();
+  });
+
+  const soltar = ev => {
+    if (!arrastrando) return;
+    arrastrando = false;
+    try { asa.releasePointerCapture(ev.pointerId); } catch (_) {}
+    const dy = ev.clientY - y0;
+    const vel = dy / Math.max(1, performance.now() - t0);   // px por ms
+    /* Un gesto RÁPIDO manda aunque sea corto: es lo que distingue un
+       «flick» de arrastrar despacio hasta la mitad. Por debajo de ese
+       umbral decide la distancia recorrida. */
+    let destino;
+    if (Math.abs(vel) > .5) destino = vel > 0 ? "peek" : "full";
+    else destino = (base + dy) > hojaY("peek") / 2 ? "peek" : "full";
+    hojaIr(destino, true);
+  };
+  asa.addEventListener("pointerup", soltar);
+  asa.addEventListener("pointercancel", soltar);
+
+  /* Un toque limpio en el asa alterna. Se distingue del arrastre por la
+     distancia: si el dedo se movió más de 6 px, fue un arrastre y ya lo
+     resolvió `soltar`. */
+  asa.addEventListener("click", () => {
+    if (!ES_MOVIL() || movido > 6) return;
+    hojaIr(HOJA.estado === "full" ? "peek" : "full", true);
+  });
+
+  /* Al girar el teléfono o al abrirse el teclado cambia la altura: si no se
+     vuelve a medir, el asa queda cortada o flotando. */
+  const remedir = () => {
+    if (!ES_MOVIL()){
+      p.style.transform = "";
+      document.body.classList.remove("sheet-open");
+      return;
+    }
+    hojaMedir();
+    hojaIr(HOJA.estado, false);
+  };
+  addEventListener("resize", remedir);
+  addEventListener("orientationchange", () => setTimeout(remedir, 220));
+  matchMedia("(max-width:820px)").addEventListener("change", remedir);
+
+  hojaMedir();
+  hojaIr("peek", false);
+}
+
+/* La tira de asomo: lo que se ve con la hoja abajo. Lleva el color del mapa, el
+   indicador y la cifra — lo mínimo para saber qué hay dentro sin abrirla. */
+function pintarAsomo(m, i, e, v){
+  const pk = document.getElementById("pk");
+  if (!pk) return;
+  if (!i){ pk.innerHTML = ""; return; }
+  const hay = v !== null && v !== undefined && isFinite(v);
+  pk.innerHTML = `<span class="pk-chip" style="background:${tonoDe(e, hay ? v : null)}"></span>
+    <span class="pk-lab">${m ? m.nombre : "RMSC + 3"}<b>${i.label}</b></span>
+    <span class="pk-val">${hay ? fmtM(v, i) : "s/d"}</span>`;
+}
+
 function pintar(){
   if (!ind_actual) return;
   const i = ind_actual;
@@ -2718,14 +2919,17 @@ function ficha(e, i){
       }).join("");
     }
   }
+  /* La tira de asomo del móvil: es lo único que se ve con la hoja abajo. */
+  pintarAsomo(sel ? MUN.find(x => x.sigep === sel) : null, i, e,
+              sel ? valorMunicipal(MUN.find(x => x.sigep === sel), i)
+                  : ((r => r && r.v !== null ? r.v : null)(refRegion(i))));
   /* La lámina existe para los 213 censales; los 30 fiscales no tienen. */
   const _lam = document.getElementById("lamina");
   if (_lam)
     _lam.innerHTML = (i.fuente !== "fiscal")
-      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png" target="_blank" rel="noopener">
-           <span class="lam-i" aria-hidden="true">▤</span>
-           <span><b>Ver la lámina de este indicador</b>
-           <em>3200×1800 · los nueve municipios, con el cambio 2012→2024</em></span></a>`
+      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png" target="_blank"
+             rel="noopener" title="Lámina de «${i.label}» · 3200×1800 · los nueve municipios, con el cambio 2012→2024">
+           <span class="lam-i" aria-hidden="true">▤</span><b>Ver la lámina</b></a>`
       : "";
   g.querySelectorAll(".kpi[data-s]").forEach(el => el.onclick = () => seleccionar(el.dataset.s));
   document.querySelectorAll("#dist .ds-hit").forEach(el =>
@@ -2758,6 +2962,10 @@ function seleccionar(s){
   } else encuadrar();
   pintar();
   escribirURL(true);
+  /* Tocar un municipio en el mapa es pedir su ficha: en móvil la hoja sube
+     sola. Si no, el dato aparece detrás de una hoja bajada y parece que el
+     toque no hizo nada. */
+  if (sel && ES_MOVIL()) hojaIr("full", true);
 }
 
 /* ── TOOLTIP ─────────────────────────────────────────────────────────────────
@@ -2765,7 +2973,10 @@ function seleccionar(s){
    según contra qué se lea. Así que el tooltip no muestra el número, muestra el
    número EN SU LUGAR — el tono que le tocó en la rampa, dónde cae dentro del
    rango, y una o dos referencias explícitas (la región, el urbano del municipio,
-   el puesto entre los nueve, el percentil entre las manzanas).
+   el percentil entre las manzanas).
+   ✂ Ya NO lleva el puesto entre los nueve: convertía la comparación en un
+     ranking, y el tablero muestra cómo está cada municipio respecto de la
+     región, no quién le gana a quién.
    Mismo molde que el Atlas Socioeconómico y el Fiscal (`#pop` en la hoja
    extraída), así que los tres se leen igual. */
 
@@ -2862,9 +3073,11 @@ function tooltipHTML(p, esMz){
         const pr = e.pivReal != null ? e.pivReal : e.piv;
         filas += `<div class="pr"><span>${e.tipo}</span><span><b>${fmtM(pr, i)}</b> ${flecha(v - pr, uMode(i))}</span></div>`;
       }
-      const otros = MUN.map(x => valorMunicipal(x, i)).filter(z => z !== null && z !== undefined && isFinite(z));
-      const puesto = otros.filter(z => z > v).length + 1;
-      filas += `<div class="pr"><span>puesto</span><span><b>${puesto}.º</b> más alto de ${otros.length}</span></div>`;
+      /* ✂ SE FUE EL PUESTO (pedido de Carlos, 2026-08-26). Decía «3.º más alto
+         de 9» y convertía una comparación en un RANKING: pone a los municipios
+         a competir por un lugar cuando lo que el tablero muestra es cómo está
+         cada uno respecto de la región. La distancia contra la referencia
+         —que sigue arriba— dice lo mismo sin repartir podios. */
     }
     if (!hay) nota = mudo(i) ? motivoSinSerie(i) : "Sin dato publicado para este indicador.";
   }
