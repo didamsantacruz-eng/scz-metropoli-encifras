@@ -145,6 +145,18 @@ body.dark .aviso b{color:var(--orange)}
   .zc{right:16px}
 }
 
+/* ── Comparar dos indicadores ───────────────────────────────────────────────
+   El selector vive en la cabecera del panel derecho y no en el izquierdo: no
+   cambia lo que el mapa muestra, cambia cómo se LEE. */
+#cmp-b{width:100%;margin-top:8px;font-family:var(--f);font-size:.64rem;
+  font-weight:500;padding:5px 7px;color:var(--suave);background:var(--card-solid);
+  border:1px solid var(--linea);border-radius:0;outline:none;cursor:pointer}
+#cmp-b:focus{border-color:var(--sel)}
+.cmp.dz{margin-top:2px}
+.cmp.dz .dz-n{font:600 2.5px var(--f);fill:var(--suave)}
+.cmp.dz .dz-n.sel{fill:var(--sel)}
+.cmp.dz .dz-eje{font:500 2.6px var(--f);fill:var(--faint)}
+
 /* ── Buscador ───────────────────────────────────────────────────────────────
    Vive dentro de la barra de categoría, debajo del selector: es el otro camino
    al mismo sitio, no una función aparte. */
@@ -417,6 +429,10 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
   <div class="sheet-top" id="sheet-grip">
     <div class="det-head"><div class="d-mun" id="d-mun">RMSC + 3</div><div class="d-sub" id="d-sub">9 municipios</div></div>
     <div class="pk" id="pk"></div>
+    <!-- ★ COMPARAR DOS INDICADORES (2026-08-26). El tablero contestaba «cómo
+         está X» y nunca «¿X y Z van juntos?». El mapa sigue mostrando el
+         principal; la dispersión de los nueve va en este panel. -->
+    <select id="cmp-b" aria-label="Comparar con otro indicador"></select>
   </div>
   <div class="p-body">
     <div id="cmp"></div>
@@ -1193,6 +1209,7 @@ Promise.all([
   if (_est && _est.i) aplicarEstado(_est, false);
   else elegirCategoria(CAT.grupos[0].key);
   montarBuscador();
+  montarComparar();
   montarTeclado();
   actualizarCobertura();
   document.body.setAttribute("data-listo", JSON.stringify({
@@ -1877,6 +1894,163 @@ function montarTeclado(){
   });
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   3 · COMPARAR DOS INDICADORES
+   ═══════════════════════════════════════════════════════════════════════════
+   El tablero contestaba «cómo está X», nunca «¿X y Z van juntos?». Con nueve
+   municipios la forma honesta de contestarlo es una DISPERSIÓN: cada municipio
+   un punto, un indicador en cada eje. Se ve de una si el orden coincide, quién
+   rompe el patrón y por cuánto.
+
+   ★ POR QUÉ NO UN MAPA BIVARIADO. Sería lo vistoso, y con nueve polígonos es
+     ilegible: una matriz de 3×3 colores sobre nueve áreas obliga al lector a
+     decodificar cada tono contra una leyenda cuadrada para nueve datos que
+     entran en un gráfico. El mapa sigue mostrando el indicador principal.
+
+   ★ SE INFORMA SPEARMAN, NO PEARSON. Son nueve puntos: una correlación lineal
+     la mueve un solo municipio, y acá varios indicadores tienen a Santa Cruz de
+     la Sierra como un valor extremo por tamaño. Spearman compara ÓRDENES, así
+     que resiste ese punto y responde la pregunta que de verdad se hace —«¿los
+     que están arriba en uno están arriba en el otro?»—.
+   ★ Y SE DICE QUE SON NUEVE. Con n = 9 ninguna correlación es concluyente; el
+     texto lo declara en vez de dejar que el número parezca una prueba.        */
+let IND_B = null;
+
+function _rangos(v){
+  /* Rangos con empates promediados, que es lo que pide Spearman: si dos
+     municipios tienen el mismo valor, repartirles 3.º y 4.º al azar inventaría
+     un orden que el dato no trae. */
+  const idx = v.map((x, k) => [x, k]).sort((a, b) => a[0] - b[0]);
+  const r = new Array(v.length);
+  let k = 0;
+  while (k < idx.length){
+    let j = k;
+    while (j + 1 < idx.length && idx[j + 1][0] === idx[k][0]) j++;
+    const med = (k + j) / 2 + 1;
+    for (let t = k; t <= j; t++) r[idx[t][1]] = med;
+    k = j + 1;
+  }
+  return r;
+}
+
+function spearman(xs, ys){
+  if (xs.length < 3) return null;
+  const rx = _rangos(xs), ry = _rangos(ys), n = xs.length;
+  const mx = rx.reduce((a, b) => a + b, 0) / n, my = ry.reduce((a, b) => a + b, 0) / n;
+  let num = 0, dx = 0, dy = 0;
+  for (let k = 0; k < n; k++){
+    const a = rx[k] - mx, b = ry[k] - my;
+    num += a * b; dx += a * a; dy += b * b;
+  }
+  return (dx && dy) ? num / Math.sqrt(dx * dy) : null;
+}
+
+function dispersionDos(iA, iB, e){
+  const pts = MUN.map(m => ({m, x: valorMunicipal(m, iA), y: valorMunicipal(m, iB)}))
+    .filter(p => p.x !== null && p.y !== null && isFinite(p.x) && isFinite(p.y));
+  if (pts.length < 3)
+    return `<div class="sin">No hay suficientes municipios con dato en los dos indicadores.</div>`;
+
+  const W = 100, H = 74, L = 3, R = 3, T = 5, B = 11;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const rango = v => {
+    let lo = Math.min(...v), hi = Math.max(...v);
+    if (lo === hi){ lo -= 1; hi += 1; }
+    const p = (hi - lo) * .12;
+    return [lo - p, hi + p];
+  };
+  const [x0, x1] = rango(xs), [y0, y1] = rango(ys);
+  const X = v => L + ((v - x0) / (x1 - x0)) * (W - L - R);
+  const Y = v => H - B - ((v - y0) / (y1 - y0)) * (H - T - B);
+
+  let s = `<rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}"
+             fill="none" stroke="var(--linea-2)" stroke-width=".3"/>`;
+  /* ── LOS RÓTULOS, DENTRO DEL LIENZO Y SIN PISARSE ────────────────────────
+     Con `text-anchor:middle` fijo, «Santa Cruz de la Sierra» se salía por la
+     derecha cuando el municipio caía contra el borde —y es el que más veces cae
+     ahí, porque suele ser el extremo—. Y en el racimo de abajo, tres nombres
+     apilados a la misma altura se tapaban entre sí.
+     Se resuelve con dos reglas simples: el rótulo se ancla al borde cuando el
+     punto está cerca de él, y si ya hay un nombre ocupando esa zona, este baja
+     debajo del punto en vez de ir encima. */
+  const puestos = [];
+  const colocado = (cx, cy) => puestos.some(q => Math.abs(q[0] - cx) < 16 && Math.abs(q[1] - cy) < 4.2);
+  pts.slice().sort((a, b) => Y(a.y) - Y(b.y)).forEach(p => {
+    const sel_ = p.m.sigep === sel;
+    const cx = X(p.x), cy = Y(p.y);
+    s += `<circle cx="${cx}" cy="${cy}" r="${sel_ ? 2.4 : 1.9}"
+            fill="${tonoDe(e, p.x)}" stroke="var(--tx)" stroke-width="${sel_ ? .55 : .3}"/>`;
+    const nom = nombreCorto(p.m.nombre);
+    /* ⚠️ El ancho del texto se ESTIMA —en SVG no se puede medir sin renderizar—
+       y por eso el rótulo se SUJETA además dentro de la caja: con la estimación
+       sola, «Colpa Bélgica» se salía por la izquierda porque el cálculo se
+       quedaba corto. Anclar y sujetar es redundante a propósito: la estimación
+       elige el mejor sitio y la sujeción garantiza que entre. */
+    const medio = nom.length * .80;            // media anchura estimada del texto
+    let an = "middle", tx = cx;
+    if (cx - medio < L){ an = "start"; tx = L + .5; }
+    else if (cx + medio > W - R){ an = "end"; tx = W - R - .5; }
+    else tx = Math.min(Math.max(cx, L + medio), W - R - medio);
+    const abajo = colocado(tx, cy - 2.9);
+    const ty = abajo ? cy + 4.6 : cy - 2.9;
+    puestos.push([tx, ty]);
+    s += `<text x="${tx}" y="${ty}" class="dz-n${sel_ ? " sel" : ""}"
+            text-anchor="${an}">${nom}</text>`;
+    s += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="4" fill="transparent"
+            class="mc-hit" data-s="${p.m.sigep}"><title>${p.m.nombre}
+${iA.label}: ${fmtM(p.x, iA)}
+${iB.label}: ${fmtM(p.y, iB)}</title></circle>`;
+  });
+  s += `<text x="${W - R}" y="${H - 3.4}" class="dz-eje" text-anchor="end">${iA.label} &rarr;</text>`;
+  s += `<text x="${L}" y="${T - 1.4}" class="dz-eje">&uarr; ${iB.label}</text>`;
+
+  const rho = spearman(xs, ys);
+  let lectura = "";
+  if (rho !== null){
+    const a = Math.abs(rho);
+    const fuerza = a >= .8 ? "muy de la mano" : a >= .55 ? "bastante de la mano"
+                 : a >= .3 ? "de forma floja" : "casi nada";
+    const sentido = rho >= 0 ? "en el mismo sentido" : "en sentidos opuestos";
+    lectura = a < .3
+      ? `<p>Los dos indicadores <b>casi no se ordenan igual</b> entre los nueve
+         (Spearman ${nf(rho, 2)}): saber uno no ayuda a adivinar el otro.</p>`
+      : `<p>Los nueve se ordenan <b>${fuerza}</b> y ${sentido}
+         (Spearman ${nf(rho, 2)}).</p>`;
+    lectura += `<p class="mc-adv">Son nueve municipios: con tan pocos casos una
+      correlación no prueba nada por sí sola, sirve para mirar dónde y no para
+      concluir por qué.</p>`;
+  }
+  return `<div class="cmp-t"><span class="mc-ti">Los nueve, en dos ejes</span>
+      <span>${pts.length} con dato en ambos</span></div>
+    <svg class="cmp dz" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>
+    <div class="mc-lee">${lectura}</div>`;
+}
+
+/* El selector: todas las categorías, agrupadas, más la opción de apagarlo. */
+function montarComparar(){
+  const sl = document.getElementById("cmp-b");
+  if (!sl || !CAT) return;
+  sl.innerHTML = `<option value="">Comparar con…</option>` + CAT.grupos.map(g =>
+    `<optgroup label="${g.label}">` + g.indicadores
+      .filter(i => i.k_mun && i.fuente !== "fiscal")
+      .map(i => `<option value="${i.key}">${i.label}</option>`).join("")
+    + `</optgroup>`).join("");
+  sl.value = IND_B || "";
+  sl.onchange = () => {
+    IND_B = sl.value || null;
+    /* Compararse consigo mismo dibuja una diagonal perfecta y no dice nada. */
+    if (IND_B && ind_actual && IND_B === ind_actual.key){ IND_B = null; sl.value = ""; }
+    pintar();
+  };
+}
+const indPorKey = k => {
+  for (const g of CAT.grupos){
+    const i = g.indicadores.find(x => x.key === k);
+    if (i) return i;
+  }
+  return null;
+};
+
 function pintar(){
   if (!ind_actual) return;
   const i = ind_actual;
@@ -2426,8 +2600,13 @@ function ficha(e, i){
      entre los dos y no una foto de un año. Sin `s12` —los 30 fiscales y 35
      censales que declaran por qué no comparan— no hay mancuerna posible y
      quedan las barras de siempre. */
-  document.getElementById("cmp").innerHTML =
-    (i.s12 && i.fuente !== "fiscal" && i.k_mun) ? mancuerna(e, i) : comparativo(e, i);
+  /* Con un segundo indicador elegido, este lugar lo ocupa la dispersión: es la
+     lectura que contesta la pregunta que se acaba de hacer. La mancuerna vuelve
+     apenas se apaga la comparación. */
+  const _b = IND_B ? indPorKey(IND_B) : null;
+  document.getElementById("cmp").innerHTML = _b
+    ? dispersionDos(i, _b, e)
+    : ((i.s12 && i.fuente !== "fiscal" && i.k_mun) ? mancuerna(e, i) : comparativo(e, i));
   /* La distribución va SIEMPRE que el indicador baje a manzana: es la lectura
      que el panel no tenía. Con un municipio elegido queda resaltado, así que
      sirve igual en los dos estados. */
