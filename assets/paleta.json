@@ -25,8 +25,8 @@
       "por_que": "Pedido de Carlos (2026-08-19): «bajale un poco a los colores, se ve medio chillón». Baja la SATURACIÓN un 20% y deja la luminosidad quieta, así que el orden de la rampa no se mueve — sólo deja de gritar. Vivía sólo en el banco; desde 2026-08-20 vale también para los tableros, que es lo que hace que la lámina y la pantalla muestren el mismo color para el mismo valor."
     },
     "realce_oscuro": {
-      "valor": 0.26,
-      "por_que": "En tema oscuro NO se cambia de rampa: se usan los mismos tonos, más brillantes. El realce es proporcional a lo que le falta a cada tono para llegar al blanco (l + (1-l)·k), no una suma fija: los oscuros —que sobre fondo oscuro se cierran— suben mucho y los que ya eran claros casi no se mueven. El tono no se toca, que es lo que hace que se reconozca la misma paleta."
+      "valor": 0.0,
+      "por_que": "Pedido de Carlos (2026-08-26): «que la paleta en modo negro se mantenga; ahora lo cambia a más brilloso, yo quiero que sea el color tal cual, pero más intenso, es decir, no tan transparente». Estaba en 0,26 —cada tono se acercaba un 26% al blanco— y el resultado era una rampa distinta: los verdes salían neón y el ocre se lavaba, así que el mismo dato no se reconocía al cambiar de tema. El realce existía para compensar que el relleno era MÁS transparente en oscuro (0,42 contra 0,55), o sea que se estaba arreglando con color un problema de opacidad. La corrección va donde estaba la causa: realce 0 —una sola rampa, de verdad— y el relleno sube a 0,80, que es lo que hace que el color se imponga sobre el fondo oscuro sin cambiar de tono."
     },
     "sin_secuencial": {
       "valor": true,
@@ -45,13 +45,13 @@
       "#9a412c"
     ],
     "divergente_oscuro": [
-      "#16c46f",
-      "#6dbb67",
-      "#a8cc78",
-      "#f5f0d9",
-      "#e2b657",
-      "#e69048",
-      "#d06147"
+      "#0c683b",
+      "#499044",
+      "#89b84c",
+      "#f0e9cd",
+      "#ca9829",
+      "#c46b20",
+      "#9a412c"
     ],
     "sin_dato": "#8b8f95",
     "senal": "#8bc53f",

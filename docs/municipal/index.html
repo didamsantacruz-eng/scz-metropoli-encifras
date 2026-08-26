@@ -422,7 +422,7 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
    conversión a HSL — la hace el script, una vez, fuera del navegador. */
 /* ⇩⇩ PALETA GENERADA — no editar a mano: sale de assets/paleta.json ⇩⇩ */
 const DIV_CLARA  = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
-const DIV_OSCURO = ["#16c46f","#6dbb67","#a8cc78","#f5f0d9","#e2b657","#e69048","#d06147"];
+const DIV_OSCURO = ["#0c683b","#499044","#89b84c","#f0e9cd","#ca9829","#c46b20","#9a412c"];
 const SIN_DATO = {claro:"#8b8f95", oscuro:"#8b8f95"};
 const SENAL = "#8bc53f";
 /* ⇧⇧ FIN DE LA PALETA GENERADA ⇧⇧ */
@@ -465,7 +465,12 @@ const UMBRAL_ZOOM = 11.4;     // a partir de acá el nivel manzana tiene sentido
    `pct_agua_pozo`, mediana 0,0%) el mapa entero se vuelve un bloque de verde
    neón sobre el fondo oscuro y deja de leerse la ciudad debajo. */
 const OPACIDAD_CLARO  = {mun: .55, mz: .62};
-const OPACIDAD_OSCURO = {mun: .42, mz: .46};
+/* ★ EN OSCURO EL RELLENO VA CASI OPACO (2026-08-26). Estaba MÁS transparente
+   que en claro (0,42 contra 0,55) y por eso hacía falta aclarar la rampa para
+   que se viera: se compensaba con color un problema de opacidad, y el precio
+   era que el mismo dato tuviera dos colores según el tema. Ahora la rampa es
+   una sola y lo que cambia es cuánto se impone sobre el fondo. */
+const OPACIDAD_OSCURO = {mun: .80, mz: .82};
 const opacidades = () => esOscuro() ? OPACIDAD_OSCURO : OPACIDAD_CLARO;
 
 /* (SENAL se declara en el bloque generado de la paleta, más arriba.) */
@@ -925,7 +930,11 @@ const ATRIB = MAPA_BASE.atribucion;
    puede competir con la coropleta, y en vectorial no hay una opacidad global
    que valga para las 66 capas de una vez. Una capa `background` translúcida
    encima de la base hace lo mismo con una sola declaración. */
-const VELO = {claro: .10, oscuro: .26};
+/* El velo baja en oscuro ahora que el relleno es opaco: antes tenía que
+   apagar un mapa base que se veía a través de una coropleta translúcida; hoy la
+   coropleta ya lo tapa, y lo único que necesita el velo es asentar el basemap
+   donde NO hay dato. Dejarlo en 0,26 apagaba las calles justo en los huecos. */
+const VELO = {claro: .10, oscuro: .16};
 const CAPAS_BASE = {
   claro: MAPA_BASE.capas.claro.map(c => c.id),
   oscuro: MAPA_BASE.capas.oscuro.map(c => c.id),
@@ -2180,13 +2189,16 @@ function ficha(e, i){
          Con un indicador sin serie 2012, en modo Cambio las nueve tarjetas
          salían todas con «s/d»: nueve veces el mismo vacío, debajo de un motivo
          que ya está escrito arriba una vez y bien. */
-    /* ★ YA NO HAY CASO EN QUE LAS NUEVE TARJETAS APORTEN ALGO (2026-08-26).
-         Los dos gráficos del panel —la mancuerna y las barras— recorren los
-         nueve con nombre, valor y fila clicable, y debajo va la lectura escrita.
-         Las tarjetas repetían municipio, valor y orden, y agregaban el ámbito y
-         el conteo de manzanas, que ya están en la ficha del municipio elegido.
-         Se conserva la rama por si vuelve a hacer falta un recorrido tabular. */
-    if (true){
+    /* ★ Y VUELVEN, DEBAJO DEL GRÁFICO NUEVO (Carlos, 2026-08-26). La primera
+         vez se fueron porque repetían las barras: mismo municipio, mismo valor,
+         mismo orden. Con la mancuerna arriba el reparto cambió — el gráfico da
+         la COMPARACIÓN y las tarjetas dan la FICHA: el ámbito, el conteo de
+         manzanas urbanas y la cifra en grande, que en el gráfico va a cuerpo de
+         etiqueta. Ya no compiten, se turnan.
+         Sólo se callan cuando no hay nada que poner en ellas: con un indicador
+         sin serie 2012, en modo Cambio salían nueve veces «s/d» debajo de un
+         motivo que ya está escrito arriba una vez y bien. */
+    if (mudo(i)){
       g.innerHTML = "";
     } else {
       g.innerHTML = MUN.slice().sort((a,b) => {

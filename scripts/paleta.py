@@ -121,7 +121,15 @@ def _suavizar(h, f):
 
 def _brillar(h, k):
     """Acerca el tono al blanco en proporción a lo que le falta, sin cambiar de
-    tono. La saturación sube apenas para que el aclarado no lo lave."""
+    tono. La saturación sube apenas para que el aclarado no lo lave.
+
+    ⚠️ Con `k == 0` devuelve el color INTACTO. La compensación de saturación
+    existe para que el aclarado no lave el tono; sin aclarado no hay nada que
+    compensar, y aplicarla igual movía la rampa oscura uno o dos puntos por
+    canal respecto de la clara. Imperceptible, pero deja de ser cierto que «es
+    la misma rampa», que es justamente lo que se decidió el 2026-08-26."""
+    if not k:
+        return h
     y, l, s = colorsys.rgb_to_hls(*_hex_rgb(h))
     return _rgb_hex(colorsys.hls_to_rgb(y, l + (1 - l) * k, min(1.0, s * 1.06)))
 
