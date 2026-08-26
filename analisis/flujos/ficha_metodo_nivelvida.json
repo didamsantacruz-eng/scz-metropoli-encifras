@@ -1,0 +1,93 @@
+{
+ "indice_riqueza": {
+  "metodo": "Componentes principales sobre variables estandarizadas",
+  "referencia": "Filmer & Pritchett (2001), Demography 38(1); corrección urbano/rural de Rutstein (2008), DHS WP 60",
+  "variables": 33,
+  "variables_comunes": 20,
+  "varianza_explicada_comun": 19.6,
+  "cargas_del_componente_comun": {
+   "bien_lavadora": 0.336,
+   "bien_refri": 0.332,
+   "bien_compu": 0.31,
+   "bien_aire": 0.297,
+   "bien_tv": 0.286,
+   "bien_auto": 0.271,
+   "piso_ceramica": 0.245,
+   "energia_red": 0.241,
+   "pared_ladrillo": 0.225,
+   "bien_inet_movil": 0.21,
+   "bien_bici": 0.203,
+   "bien_moto": 0.061,
+   "techo_precario": -0.072,
+   "agua_insegura": -0.079,
+   "pared_precaria": -0.081,
+   "pers_dormitorio": -0.111,
+   "sin_bano": -0.167,
+   "cocina_lena": -0.181,
+   "piso_tierra": -0.203,
+   "sin_cuarto_cocina": -0.216
+  },
+  "es_ordinal": true,
+  "advertencia": "El índice ordena hogares; NO expresa ingreso. «Quintil 5» es «entre el 20% con más activos de la región», no un monto en bolivianos."
+ },
+ "privaciones": {
+  "metodo": "Privaciones declaradas una por una, en las dimensiones del NBI",
+  "por_que_no_es_el_nbi_oficial": "Los umbrales y normas exactas del NBI del INE no están en el diccionario del censo. Rotular «NBI» un cálculo con umbrales propios sería presentar como oficial algo que no lo es.",
+  "umbrales": {
+   "mat_pared": {
+    "umbral": "pared de tabique, quinche, caña, palma o tronco",
+    "dimension": "Vivienda · materiales"
+   },
+   "mat_techo": {
+    "umbral": "techo de paja, palma, caña, barro, jatata o motacú",
+    "dimension": "Vivienda · materiales"
+   },
+   "mat_piso": {
+    "umbral": "piso de tierra",
+    "dimension": "Vivienda · materiales"
+   },
+   "esp_hacinamiento": {
+    "umbral": "más de 3 personas por dormitorio",
+    "dimension": "Vivienda · espacio"
+   },
+   "esp_sin_cocina": {
+    "umbral": "sin un cuarto exclusivo para cocinar",
+    "dimension": "Vivienda · espacio"
+   },
+   "srv_agua": {
+    "umbral": "el agua no llega por cañería de red ni se distribuye dentro del lote",
+    "dimension": "Servicios básicos"
+   },
+   "srv_saneamiento": {
+    "umbral": "sin baño ni letrina, o desagüe a la calle, quebrada o río",
+    "dimension": "Servicios básicos"
+   },
+   "srv_energia": {
+    "umbral": "sin energía eléctrica de ninguna fuente",
+    "dimension": "Servicios básicos"
+   },
+   "srv_basura": {
+    "umbral": "la basura se bota a un terreno baldío, la calle o el río",
+    "dimension": "Servicios básicos"
+   },
+   "ins_combustible": {
+    "umbral": "cocina con leña, guano, bosta o taquia",
+    "dimension": "Insumos energéticos"
+   }
+  }
+ },
+ "capacidad_de_pago": {
+  "metodo": "Capacidad revelada: servicios de pago voluntario y recurrente que el hogar sostiene de hecho",
+  "servicios": [
+   "internet fijo",
+   "aire acondicionado",
+   "lavadora de ropa",
+   "computadora"
+  ],
+  "por_que": "No son necesidades. Sostenerlos es evidencia directa de capacidad de pago y no requiere estimar un ingreso."
+ },
+ "lo_que_el_censo_no_tiene": {
+  "ingreso": "El CPV 2024 no pregunta ingreso ni gasto. Ninguna de sus 114 variables de persona ni de sus 44 de vivienda lo mide.",
+  "como_se_obtendria": "Estimación por áreas pequeñas (Elbers, Lanjouw & Lanjouw 2003): modelo de consumo ajustado en la Encuesta de Hogares con variables idénticas al censo, predicho sobre el censo, con error estándar por bootstrap. Requiere el microdato de la EH (ANDA)."
+ }
+}

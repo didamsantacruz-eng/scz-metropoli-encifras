@@ -1,0 +1,481 @@
+<title>Quién se mueve en la metrópoli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root{
+  --ground:#f6f4ee; --panel:#fdfcf9; --panel-2:#f1eee5; --panel-3:#e8e4d8;
+  --ink:#14180f; --ink-2:#4b5145; --ink-3:#7c8176;
+  --rule:#ded9cc; --rule-2:#ebe7dc;
+  --acc:#00733b; --acc-2:#8a5aa8; --amber:#bd8309; --rust:#a8381e;
+  --acc-soft:rgba(0,115,59,.10); --acc2-soft:rgba(138,90,168,.12);
+  --amber-soft:rgba(189,131,9,.13); --rust-soft:rgba(168,56,30,.10);
+  --r0:#f0ede3; --r1:#cfe0cb; --r2:#a2c8a4; --r3:#6aab78; --r4:#358a54; --r5:#00733b;
+  --shadow:0 1px 2px rgba(20,24,15,.06);
+  --sh-lift:0 2px 10px rgba(20,24,15,.09);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#161814; --panel:#1d201a; --panel-2:#23271f; --panel-3:#2b3027;
+    --ink:#eceadf; --ink-2:#b3b7aa; --ink-3:#868b7d;
+    --rule:#343930; --rule-2:#272b23;
+    --acc:#3a9c48; --acc-2:#a582cc; --amber:#d29b28; --rust:#cf6d55;
+    --acc-soft:rgba(58,156,72,.15); --acc2-soft:rgba(165,130,204,.15);
+    --amber-soft:rgba(210,155,40,.14); --rust-soft:rgba(207,109,85,.13);
+    --r0:#22261e; --r1:#2c4030; --r2:#33583c; --r3:#357048; --r4:#358a4f; --r5:#4fae59;
+    --shadow:0 1px 2px rgba(0,0,0,.35); --sh-lift:0 2px 10px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161814; --panel:#1d201a; --panel-2:#23271f; --panel-3:#2b3027;
+  --ink:#eceadf; --ink-2:#b3b7aa; --ink-3:#868b7d;
+  --rule:#343930; --rule-2:#272b23;
+  --acc:#3a9c48; --acc-2:#a582cc; --amber:#d29b28; --rust:#cf6d55;
+  --acc-soft:rgba(58,156,72,.15); --acc2-soft:rgba(165,130,204,.15);
+  --amber-soft:rgba(210,155,40,.14); --rust-soft:rgba(207,109,85,.13);
+  --r0:#22261e; --r1:#2c4030; --r2:#33583c; --r3:#357048; --r4:#358a4f; --r5:#4fae59;
+  --shadow:0 1px 2px rgba(0,0,0,.35); --sh-lift:0 2px 10px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);
+  font-family:'Archivo',system-ui,-apple-system,sans-serif;
+  font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.narrow{max-width:66ch}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+h1{font-size:clamp(2.05rem,5vw,3.05rem);line-height:1.03;letter-spacing:-.03em;font-weight:700}
+h2{font-size:clamp(1.4rem,2.9vw,1.8rem);line-height:1.14;letter-spacing:-.02em;font-weight:600}
+h3{font-size:1.04rem;letter-spacing:-.008em;font-weight:600}
+h4{font-size:.83rem;font-weight:600;letter-spacing:.01em}
+p{margin:0}
+.serif{font-family:'Source Serif 4',Georgia,serif;font-size:1.02rem;line-height:1.6}
+.mono,code,.eyebrow,.chip,.tag{font-family:'IBM Plex Mono',Consolas,monospace}
+code{font-size:.85em;background:var(--panel-2);padding:.1em .34em;border-radius:2px;color:var(--ink-2)}
+.eyebrow{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.tag{font-size:.7rem;color:var(--ink-3);line-height:1.45}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* ── navegación ── */
+nav{position:sticky;top:0;z-index:30;background:var(--ground);
+  border-bottom:1px solid var(--rule);backdrop-filter:blur(6px)}
+nav .in{max-width:1080px;margin:0 auto;padding:0 20px;display:flex;gap:2px;
+  overflow-x:auto;scrollbar-width:none}
+nav .in::-webkit-scrollbar{display:none}
+nav button{padding:12px 11px;font-size:.775rem;font-weight:500;color:var(--ink-3);
+  border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:-.004em}
+nav button:hover{color:var(--ink)}
+nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--acc);font-weight:600}
+
+section{padding:60px 0 0;scroll-margin-top:56px}
+section.oculta{display:none}
+.sec-head{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+.stack{display:flex;flex-direction:column;gap:20px}
+.stack-sm{display:flex;flex-direction:column;gap:12px}
+
+.card{background:var(--panel);border:1px solid var(--rule);padding:20px;
+  display:flex;flex-direction:column;gap:15px;box-shadow:var(--shadow)}
+.card.tight{padding:15px;gap:11px}
+
+/* ── controles ── */
+.controles{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;
+  padding:12px 14px;background:var(--panel-2);border:1px solid var(--rule)}
+.grupo{display:flex;flex-direction:column;gap:5px}
+.grupo>span{font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);font-family:'IBM Plex Mono',monospace}
+.segm{display:flex;border:1px solid var(--rule);background:var(--panel)}
+.segm button{padding:6px 11px;font-size:.755rem;color:var(--ink-3);border-right:1px solid var(--rule)}
+.segm button:last-child{border-right:0}
+.segm button[aria-pressed="true"]{background:var(--acc);color:#fff;font-weight:600}
+:root[data-theme="dark"] .segm button[aria-pressed="true"],
+@media (prefers-color-scheme:dark){}
+select{font-family:'Archivo',sans-serif;font-size:.775rem;padding:6px 9px;
+  background:var(--panel);color:var(--ink);border:1px solid var(--rule)}
+
+/* ── matriz ── */
+.matriz-box{overflow-x:auto;padding-bottom:4px}
+table.mx{border-collapse:separate;border-spacing:2px;font-variant-numeric:tabular-nums}
+table.mx th{font-size:.68rem;font-weight:500;color:var(--ink-3);padding:3px 6px;
+  text-align:right;white-space:nowrap}
+table.mx th.col{text-align:center;writing-mode:vertical-rl;transform:rotate(180deg);
+  height:92px;vertical-align:bottom;padding:5px 2px}
+table.mx td{padding:0}
+.celda{width:100%;min-width:52px;height:40px;display:flex;align-items:center;
+  justify-content:center;font-size:.72rem;font-weight:600;border:1px solid transparent;
+  transition:transform .08s}
+.celda[data-clic="1"]{cursor:pointer}
+.celda[data-clic="1"]:hover{border-color:var(--ink);transform:scale(1.05);z-index:2;position:relative}
+.celda.sel{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.celda.diag{background:repeating-linear-gradient(45deg,transparent,transparent 4px,var(--rule-2) 4px,var(--rule-2) 5px)}
+.escala{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--ink-3);flex-wrap:wrap}
+.escala i{width:26px;height:11px;display:block}
+
+/* ── ficha ── */
+.ficha-head{display:flex;flex-direction:column;gap:6px;padding-bottom:14px;
+  border-bottom:2px solid var(--ink)}
+.ficha-tit{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.ficha-tit b{font-size:1.22rem;font-weight:700;letter-spacing:-.02em}
+.flecha{color:var(--acc);font-weight:700}
+.ficha-n{display:flex;flex-wrap:wrap;gap:5px 20px;align-items:baseline}
+.ficha-n .v{font-size:1.65rem;font-weight:700;letter-spacing:-.028em;font-variant-numeric:tabular-nums}
+.ficha-n .l{font-size:.73rem;color:var(--ink-3)}
+
+.familias{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:14px;align-items:start}
+.fam{border:1px solid var(--rule);background:var(--panel);padding:14px;
+  display:flex;flex-direction:column;gap:10px}
+.fam-h{display:flex;align-items:baseline;gap:7px;border-bottom:1px solid var(--rule-2);
+  padding-bottom:7px}
+.fam-h .num{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--acc);font-weight:500}
+
+/* fila indicador */
+.ind{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:baseline;
+  font-size:.79rem;padding:2px 0}
+.ind .k{color:var(--ink-2)}
+.ind .v{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ind .bar{grid-column:1/-1;height:3px;background:var(--rule-2);position:relative}
+.ind .bar i{position:absolute;left:0;top:0;height:100%;background:var(--acc)}
+.dv{font-size:.68rem;font-family:'IBM Plex Mono',monospace;padding-left:5px}
+.dv.up{color:var(--acc)} .dv.dn{color:var(--amber)}
+
+/* huella */
+.huella{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:2px 26px}
+.hr{display:grid;grid-template-columns:minmax(0,1fr) 92px 62px;gap:9px;align-items:center;
+  font-size:.745rem;padding:3px 0}
+.hr .k{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr .g{position:relative;height:13px;background:var(--panel-2);width:92px}
+.hr .g .z{position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--ink-3);opacity:.55}
+.hr .g i{position:absolute;top:2px;height:9px;background:var(--acc)}
+.hr .g i.dn{background:var(--amber)}
+.hr .n{font-size:.7rem;font-variant-numeric:tabular-nums;color:var(--ink-2);text-align:right;font-family:'IBM Plex Mono',monospace}
+
+/* distribución */
+.dist{display:flex;flex-direction:column;gap:4px}
+.dr{display:grid;grid-template-columns:1fr 42px;gap:8px;align-items:center;font-size:.755rem}
+.dr .k{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dr .b{height:11px;background:var(--panel-2);position:relative}
+.dr .b i{position:absolute;left:0;top:0;height:100%;background:var(--acc)}
+.dr .n{font-variant-numeric:tabular-nums;text-align:right;font-size:.71rem;color:var(--ink-2)}
+.quint{display:flex;height:22px;border:1px solid var(--rule)}
+.quint div{display:flex;align-items:center;justify-content:center;font-size:.63rem;
+  font-weight:600;color:var(--ink);min-width:0;overflow:hidden}
+
+/* tablas */
+.tw{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+table.dat{border-collapse:collapse;width:100%;font-size:.795rem;font-variant-numeric:tabular-nums}
+table.dat th{text-align:left;font-size:.645rem;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);padding:10px 11px;border-bottom:1px solid var(--rule);
+  background:var(--panel-2);white-space:nowrap;font-weight:600}
+table.dat td{padding:8px 11px;border-bottom:1px solid var(--rule-2);color:var(--ink-2)}
+table.dat tbody tr:last-child td{border-bottom:0}
+table.dat td.n,table.dat th.n{text-align:right;white-space:nowrap}
+table.dat td.k{color:var(--ink);font-weight:500;white-space:nowrap}
+table.dat tr.hi td{background:var(--acc-soft)}
+table.dat tr.ref td{background:var(--panel-2);font-style:italic;color:var(--ink-3)}
+table.dat tbody tr:hover td{background:var(--panel-2)}
+table.dat tr.hi:hover td{background:var(--acc-soft)}
+.tcap{font-size:.755rem;line-height:1.5;color:var(--ink-3);max-width:76ch}
+.tcap b{color:var(--ink-2)}
+
+/* notas */
+.nota{border-left:2px solid var(--rule);padding:2px 0 2px 15px;font-size:.875rem;
+  color:var(--ink-2);line-height:1.55}
+.nota.ojo{border-left-color:var(--amber)}
+.nota.alerta{border-left-color:var(--rust)}
+.nota .lede{display:block;font-size:.645rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:3px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.nota.ojo .lede{color:var(--amber)} .nota.alerta .lede{color:var(--rust)}
+
+.hero-n{display:flex;flex-wrap:wrap;gap:8px 26px}
+.hn{display:flex;flex-direction:column;gap:1px;min-width:92px}
+.hn .v{font-size:1.7rem;font-weight:700;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hn .v.acc{color:var(--acc)} .hn .v.al{color:var(--rust)}
+.hn .l{font-size:.7rem;color:var(--ink-3);line-height:1.3;max-width:23ch}
+
+.chartbox{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:'Archivo',sans-serif;font-variant-numeric:tabular-nums}
+figure{margin:0;display:flex;flex-direction:column;gap:11px}
+figcaption{font-size:.765rem;line-height:1.5;color:var(--ink-3);
+  border-top:1px solid var(--rule-2);padding-top:9px}
+figcaption b{color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;align-items:center;font-size:.73rem;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:block}
+
+/* lista de municipios */
+.muni-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:12px}
+.muni{border:1px solid var(--rule);background:var(--panel);padding:14px;
+  display:flex;flex-direction:column;gap:9px;text-align:left;box-shadow:var(--shadow)}
+.muni:hover{box-shadow:var(--sh-lift);border-color:var(--ink-3)}
+.muni[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.muni .nm{font-weight:600;font-size:.95rem;letter-spacing:-.01em}
+.muni .st{font-size:.72rem;color:var(--ink-3)}
+
+#tip{position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:60;
+  background:var(--ink);color:var(--ground);padding:7px 10px;font-size:.73rem;
+  line-height:1.4;font-variant-numeric:tabular-nums;max-width:262px;box-shadow:0 3px 12px rgba(0,0,0,.24)}
+#tip b{font-weight:600} #tip .d{opacity:.72;font-size:.68rem}
+
+footer{margin-top:64px;border-top:2px solid var(--ink);padding:18px 0 80px;
+  font-size:.765rem;color:var(--ink-3);line-height:1.55;max-width:74ch}
+footer b{color:var(--ink-2)}
+
+@media (max-width:640px){
+  body{font-size:15px}
+  .wrap{padding:0 14px}
+  section{padding-top:40px}
+  .familias{grid-template-columns:1fr}
+  .huella{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<nav><div class="in" id="nav"></div></nav>
+
+<div class="wrap">
+  <header style="padding:56px 0 0">
+    <p class="eyebrow">Santa Cruz Metrópoli En Cifras · Censo 2024</p>
+    <h1 style="margin:14px 0 0">Quién se mueve en la metrópoli</h1>
+    <p class="serif" style="color:var(--ink-2);max-width:60ch;margin-top:14px">
+      La composición de cada flujo de gente hacia y dentro de la Región Metropolitana de
+      Santa Cruz: quién llega, de dónde, con qué escuela, en qué trabaja, cómo vive y qué
+      le falta. <b>7.487 relaciones</b> medidas sobre el microdato del censo.</p>
+  </header>
+
+  <div id="secciones"></div>
+
+  <footer>
+    <b>De dónde sale cada número.</b> Microdato del Censo de Población y Vivienda 2024
+    (INE Bolivia), procesado por <code>analisis/flujos/01→04</code> sobre las 2.282.770
+    personas censadas en los nueve municipios. Ningún número está escrito a mano.
+    <b>Los indicadores de vivienda se leen como personas:</b> «38% con alcantarillado»
+    significa que el 38% de esas personas vive en un hogar que lo tiene, no que el 38% de
+    las viviendas lo tenga. Las relaciones con menos de 40 personas se cuentan pero no se
+    perfilan: por debajo de ese tamaño los porcentajes son ruido.
+  </footer>
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script id="datos" type="application/json">__DATOS__</script>
+<script>
+const D = JSON.parse(document.getElementById("datos").textContent);
+const N9 = D.meta.municipios, COD9 = Object.keys(N9);
+const REF = D.referencias;
+const fmt = n => (n==null?"—":Number(n).toLocaleString("es-BO"));
+const dec = (n,d=1) => (n==null||Number.isNaN(n))?"—":Number(n).toLocaleString("es-BO",{minimumFractionDigits:d,maximumFractionDigits:d});
+const ES = D.indicadores;
+const CONTEOS = new Set(["n"]);
+const esPct = k => CONTEOS.has(k) ? false : (ES[k] ? ES[k].es_porcentaje : true);
+const val = (v,k) => v==null ? "—" : (k==="n" ? fmt(v) : (esPct(k) ? dec(v,1)+"%" : dec(v,2)));
+
+/* nombres publicables de los indicadores */
+const NOM = {
+  n:"personas", pct_mujer:"mujeres", pct_jefe:"jefas y jefes de hogar",
+  pct_indigena:"se autoidentifica indígena", pct_discapacidad:"con discapacidad",
+  tam_hogar:"personas por hogar", edad_mediana:"edad mediana",
+  anios_estudio:"años de estudio", pct_superior:"con educación superior",
+  pct_sin_nivel:"sin ningún nivel", pct_analfabeto:"analfabetismo (15+)",
+  pct_asiste_6_17:"asiste a clases (6-17)", pct_asiste_privado:"en establecimiento privado",
+  pct_ocupado:"ocupados", pct_desocupado:"desocupados",
+  pct_conmuta:"trabaja en otro municipio", pct_trabaja_en_casa:"trabaja en su vivienda",
+  pct_urbano:"área urbana", pct_agua_red:"agua por cañería de red",
+  pct_agua_dentro:"agua dentro de la vivienda", pct_alcantarillado:"alcantarillado",
+  pct_energia_red:"energía eléctrica de red", pct_cocina_lena:"cocina con leña",
+  pct_basura_servicio:"basura al servicio público", pct_piso_tierra:"piso de tierra",
+  pct_pared_ladrillo:"pared de ladrillo", pct_hacinamiento:"hacinamiento",
+  pers_por_dormitorio:"personas por dormitorio", pct_propia:"vivienda propia",
+  pct_alquila:"alquila", quintil_medio:"quintil de riqueza", riqueza_media:"índice de riqueza",
+  pct_auto:"auto en el hogar", pct_moto:"moto", pct_bici:"bicicleta", pct_refri:"refrigerador",
+  pct_lavadora:"lavadora", pct_aire:"aire acondicionado", pct_compu:"computadora",
+  pct_inet_fijo:"internet fijo", pct_inet_movil:"internet móvil",
+  pagos_voluntarios:"servicios voluntarios sostenidos", pct_paga_alguno:"sostiene alguno",
+  pct_paga_tres:"sostiene tres o más", privaciones:"privaciones (de 10)",
+  pct_sin_seguro:"sin seguro de salud", pct_sin_cedula:"sin cédula boliviana (18+)",
+  pct_cedula_extranjero:"con cédula de extranjero", pct_sin_registro:"sin registro civil boliviano",
+  pct_priv_pared:"pared precaria", pct_priv_techo:"techo precario", pct_priv_piso:"piso de tierra",
+  pct_priv_hacina:"hacinamiento", pct_priv_agua:"sin agua adecuada",
+  pct_priv_saneamiento:"sin saneamiento", pct_priv_energia:"sin electricidad",
+  pct_priv_basura:"basura a la calle o el río", pct_priv_combustible:"cocina con leña",
+  pct_salud_publica:"acude al sistema público", pct_salud_caja:"acude a una caja",
+  pct_salud_privada:"acude a un privado", pct_salud_automedica:"se automedica",
+  pct_hogar_emigro:"hogar con alguien en el exterior"
+};
+const nom = k => NOM[k] || k;
+
+/* categorías que en el dato viajan como clave técnica */
+const CAT = {en_la_vivienda:"Dentro o junto a la vivienda",
+  mismo_municipio:"En el mismo municipio, fuera de la vivienda",
+  otro_municipio:"En otro municipio", otro_pais:"En otro país", sd:"Sin especificar"};
+/* distribuciones que tienen un orden propio: ordenarlas por tamaño las vuelve ilegibles */
+const ORDEN_DIST = {edad_tramo:["0-14","15-24","25-39","40-64","65+"],
+  nivel_educativo:["Ninguno","Primaria","Secundaria","Superior"]};
+
+const FAM_IND = {
+  1:["pct_mujer","edad_mediana","pct_jefe","tam_hogar","pct_indigena","pct_discapacidad"],
+  2:["anios_estudio","pct_superior","pct_sin_nivel","pct_analfabeto","pct_asiste_6_17","pct_asiste_privado"],
+  3:["pct_ocupado","pct_desocupado","pct_conmuta","pct_trabaja_en_casa"],
+  4:["pct_urbano","pct_agua_red","pct_alcantarillado","pct_energia_red","pct_cocina_lena","pct_hacinamiento","pers_por_dormitorio","pct_propia","pct_alquila"],
+  5:["quintil_medio","pct_auto","pct_moto","pct_refri","pct_lavadora","pct_compu","pct_inet_fijo","pagos_voluntarios","pct_paga_tres"],
+  6:["privaciones","pct_sin_seguro","pct_sin_cedula","pct_cedula_extranjero","pct_priv_agua","pct_priv_saneamiento","pct_priv_piso","pct_priv_combustible","pct_salud_publica","pct_salud_automedica"]
+};
+const FAM_DIST = {1:["edad_tramo","tipo_hogar"],2:["nivel_educativo"],
+  3:["rama","ocupacion","categoria_ocupacional","lugar_de_trabajo"],
+  4:["tenencia","saneamiento","agua_fuente","combustible"],5:["quintil"],6:["afiliacion_salud"]};
+/* para estos, MÁS es PEOR: la barra de desvío se pinta al revés */
+const MENOS_ES_MEJOR = new Set(["privaciones","pct_sin_seguro","pct_sin_cedula","pct_analfabeto",
+  "pct_hacinamiento","pct_sin_nivel","pct_desocupado","pct_piso_tierra","pct_cocina_lena",
+  "pct_priv_pared","pct_priv_techo","pct_priv_piso","pct_priv_hacina","pct_priv_agua",
+  "pct_priv_saneamiento","pct_priv_energia","pct_priv_basura","pct_priv_combustible",
+  "pct_salud_automedica","pers_por_dormitorio"]);
+
+/* ══════════ tooltip ══════════ */
+const tip = document.getElementById("tip");
+function verTip(e,html){tip.innerHTML=html;tip.style.opacity="1";moverTip(e)}
+function moverTip(e){const r=tip.getBoundingClientRect();
+  let x=e.clientX+14,y=e.clientY-r.height-12;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;
+  if(y<8)y=e.clientY+18;
+  tip.style.left=x+"px";tip.style.top=y+"px"}
+function sinTip(){tip.style.opacity="0"}
+function conTip(el,html){el.addEventListener("pointerenter",e=>verTip(e,html));
+  el.addEventListener("pointermove",moverTip);el.addEventListener("pointerleave",sinTip)}
+
+/* ══════════ utilidades de dibujo ══════════ */
+const h = (tag,attrs,...hijos)=>{
+  const e=document.createElement(tag);
+  for(const k in (attrs||{})){
+    if(k==="class")e.className=attrs[k];
+    else if(k==="html")e.innerHTML=attrs[k];
+    else if(k.startsWith("on"))e.addEventListener(k.slice(2),attrs[k]);
+    else if(attrs[k]!=null)e.setAttribute(k,attrs[k]);
+  }
+  hijos.flat().forEach(c=>c!=null&&e.append(c.nodeType?c:document.createTextNode(c)));
+  return e;
+};
+const NS="http://www.w3.org/2000/svg";
+const s = (tag,attrs,txt)=>{const e=document.createElementNS(NS,tag);
+  for(const k in attrs)if(attrs[k]!=null)e.setAttribute(k,attrs[k]);
+  if(txt!=null)e.textContent=txt;return e};
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* fila de indicador con desvío contra la referencia */
+function filaInd(k,v,ref){
+  const f=h("div",{class:"ind"});
+  f.append(h("span",{class:"k"},nom(k)));
+  const der=h("span",{class:"v"},val(v,k));
+  if(ref!=null&&v!=null){
+    const d=v-ref, malo=MENOS_ES_MEJOR.has(k);
+    const bueno = malo ? d<0 : d>0;
+    if(Math.abs(d) > (esPct(k)?0.6:0.03))
+      der.append(h("span",{class:"dv "+(bueno?"up":"dn")},
+        (d>0?"+":"−")+(esPct(k)?dec(Math.abs(d),1):dec(Math.abs(d),2))));
+  }
+  f.append(der);
+  return f;
+}
+
+function bloqueDist(nombre,dist){
+  if(!dist)return null;
+  const ord=ORDEN_DIST[nombre];
+  let ent=Object.entries(dist);
+  if(ord) ent.sort((a,b)=>ord.indexOf(a[0])-ord.indexOf(b[0]));
+  else{ent.sort((a,b)=>b[1]-a[1]);
+       // el residuo va al final aunque sea grande: arriba se lee como una categoría
+       ent=ent.filter(e=>e[0]!=="Otros").concat(ent.filter(e=>e[0]==="Otros"));}
+  const max=Math.max(...ent.map(e=>e[1]));
+  return h("div",{class:"stack-sm"},
+    h("h4",{style:"color:var(--ink-3);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase"},
+      nombre.replace(/_/g," ")),
+    h("div",{class:"dist"},ent.map(([k,v])=>{
+      const b=h("div",{class:"b"});b.append(h("i",{style:`width:${100*v/max}%`}));
+      const et=CAT[k]||k;
+      const r=h("div",{class:"dr"},h("span",{class:"k",title:et},et),h("span",{class:"n"},dec(v,1)+"%"));
+      const cont=h("div",{style:"display:flex;flex-direction:column;gap:2px"},r,b);
+      conTip(cont,`<b>${et}</b><br>${dec(v,1)}%`);
+      return cont;
+    })));
+}
+
+function tiraQuintil(dist){
+  if(!dist)return null;
+  const cols=["--r1","--r2","--r3","--r4","--r5"];
+  const t=h("div",{class:"quint"});
+  for(let q=1;q<=5;q++){
+    const v=dist[String(q)]||0;
+    const d=h("div",{style:`width:${v}%;background:var(${cols[q-1]})`}, v>=8?dec(v,0)+"%":"");
+    conTip(d,`<b>Quintil ${q}</b> de riqueza<br>${dec(v,1)}% de este grupo`);
+    t.append(d);
+  }
+  return h("div",{class:"stack-sm"},
+    h("h4",{style:"color:var(--ink-3);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase"},
+      "reparto por quintil de riqueza"),t,
+    h("p",{class:"tag"},"El quintil 1 es el 20% de la región con menos activos; el 5, el 20% con más."));
+}
+
+/* ══════════ LA HUELLA ══════════ */
+function huella(c,ref){
+  const g=h("div",{class:"huella"});
+  D.huella.forEach(k=>{
+    const v=c[k], r=ref?ref[k]:null;
+    if(v==null||r==null)return;
+    const d=v-r, esc=esPct(k)?Math.max(30,Math.abs(r)*0.9):Math.max(1,Math.abs(r)*0.7);
+    const p=Math.max(-1,Math.min(1,d/esc));
+    const malo=MENOS_ES_MEJOR.has(k), bueno= malo? d<0 : d>0;
+    const gr=h("div",{class:"g"});
+    gr.append(h("span",{class:"z"}));
+    gr.append(h("i",{class:bueno?"":"dn",
+      style:`left:${p<0?50+p*50:50}%;width:${Math.abs(p)*50}%`}));
+    const fila=h("div",{class:"hr"},h("span",{class:"k",title:nom(k)},nom(k)),
+      h("div",{style:"display:flex;align-items:center;gap:6px"},gr,
+        h("span",{class:"n"},val(v,k))));
+    conTip(fila,`<b>${nom(k)}</b><br>este flujo: ${val(v,k)}<br>referencia: ${val(r,k)}`
+      +`<br><span class="d">${d>0?"+":"−"}${esPct(k)?dec(Math.abs(d),1):dec(Math.abs(d),2)} de diferencia</span>`);
+    g.append(fila);
+  });
+  return g;
+}
+
+/* ══════════ LA FICHA DE UNA RELACIÓN ══════════ */
+function ficha(c,titulo,subtitulo,ref,refNom){
+  const cont=h("div",{class:"stack"});
+  cont.append(h("div",{class:"ficha-head"},
+    h("p",{class:"eyebrow"},subtitulo),
+    h("div",{class:"ficha-tit"},h("b",{},titulo)),
+    h("div",{class:"ficha-n"},
+      h("span",{class:"v"},fmt(c.n)),h("span",{class:"l"},"personas"),
+      c.anios_estudio!=null?h("span",{class:"v"},dec(c.anios_estudio,2)):null,
+      c.anios_estudio!=null?h("span",{class:"l"},"años de estudio"):null,
+      c.quintil_medio!=null?h("span",{class:"v"},dec(c.quintil_medio,2)):null,
+      c.quintil_medio!=null?h("span",{class:"l"},"quintil de riqueza medio"):null)));
+
+  if(c.anios_estudio==null){
+    cont.append(h("p",{class:"nota ojo",html:
+      "<span class='lede'>Sin perfil</span>Esta relación tiene menos de 40 personas. "
+      +"Se cuenta, pero no se perfila: por debajo de ese tamaño los porcentajes son ruido."}));
+    return cont;
+  }
+  if(ref){
+    cont.append(h("div",{class:"card tight"},
+      h("div",{class:"fam-h"},h("h3",{},"La huella"),
+        h("span",{class:"tag"},"cada barra es la diferencia contra "+refNom)),
+      huella(c,ref)));
+  }
+  const fams=h("div",{class:"familias"});
+  Object.entries(D.familias_de_indicadores).forEach(([nro,nombre])=>{
+    const caja=h("div",{class:"fam"});
+    caja.append(h("div",{class:"fam-h"},h("span",{class:"num"},nro),h("h4",{},nombre)));
+    (FAM_IND[nro]||[]).forEach(k=>{if(c[k]!=null)caja.append(filaInd(k,c[k],ref?ref[k]:null))});
+    (FAM_DIST[nro]||[]).forEach(dk=>{
+      if(dk==="quintil"){const t=tiraQuintil(c.quintil);if(t)caja.append(t);}
+      else{const b=bloqueDist(dk,c[dk]);if(b)caja.append(b);}
+    });
+    if(caja.childElementCount>1)fams.append(caja);
+  });
+  cont.append(fams);
+  return cont;
+}
+__SECCIONES__
+</script>

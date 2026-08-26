@@ -28,3 +28,12 @@ docs/_prueba_*.html
 # verdad, que es lo único que agarra una constante borrada — un error de runtime
 # no rompe la sintaxis y deja el tablero en blanco sin avisar.
 !docs/_prueba_humo.html
+
+# ── salida de la cadena de flujos (analisis/flujos/01→05) ────────────────────
+# 19 MB de JSON y un HTML de 3,1 MB, todo REGENERABLE con los cinco scripts.
+# Va acá por la misma regla de arriba: el repo guarda las reglas, no los pasos.
+# Y porque `.git` ya pesa 611 MB y esto se regenera varias veces por sesión.
+analisis/flujos/salida/
+analisis/flujos/web/flujos_metro.json
+analisis/flujos/web/quien_se_mueve.html
+analisis/flujos/_log_*.txt
