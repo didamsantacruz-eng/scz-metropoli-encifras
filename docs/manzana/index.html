@@ -153,29 +153,41 @@ body.dark .aviso b{color:var(--orange)}
 .cmp .cmp-v{font:700 3.9px var(--f);fill:var(--tx);font-variant-numeric:tabular-nums}
 .cmp .cmp-piv{stroke:var(--tx);stroke-width:.5;stroke-dasharray:1.6 1.4;opacity:.55}
 /* ── Mancuerna 2012 → 2024 ───────────────────────────────────────────────────
-   La leyenda va ARRIBA del gráfico y no debajo: abajo llega después de que el
-   lector ya intentó descifrar los aros. Es la misma corrección que se le hizo
-   a la lámina del banco cuando Carlos la vio por primera vez. */
+   Todo más fino que el comparativo de barras: la mancuerna es una lectura de
+   precisión —dos puntos y la distancia entre ellos— y a cuerpo grande se
+   convierte en un cartel. La leyenda va ARRIBA del gráfico y no debajo: abajo
+   llega después de que el lector ya intentó descifrar las bolitas. Es la misma
+   corrección que se le hizo a la lámina del banco. */
 .cmp-t .mc-ti{flex:none}
-.cmp-t .mc-ti i{font-style:normal;font-size:.85em;color:var(--faint);
-  margin:0 2px;letter-spacing:0}
+.cmp-t .mc-ti i{font-style:normal;font-size:.85em;color:var(--faint);margin:0 2px;letter-spacing:0}
+.mc-lg{display:flex;flex-wrap:wrap;gap:2px 11px;margin:-3px 0 6px;
+  font-size:.55rem;font-weight:600;color:var(--faint)}
+.mc-lg span{display:inline-flex;align-items:center;gap:4px}
+/* las dos bolitas de la leyenda miden LO MISMO, igual que en el gráfico: lo
+   único que las separa es si están pintadas */
+.mc-lg i{width:7px;height:7px;border-radius:50%;display:block;flex:none;
+  border:1px solid var(--suave);background:var(--card-solid)}
+.mc-lg i.mc-t{width:12px;height:2px;border-radius:2px;border:0;background:var(--suave)}
+.mc-lg i.on{border-color:var(--tx);background:var(--tx)}
+.mc-lg i.mc-t.on{background:var(--tx);height:2.5px}
+.mc-lg span:has(i.on){color:var(--tx)}
+/* letra propia, más chica que la de las barras */
+.cmp.mc .cmp-n{font-size:3.2px;font-weight:500}
+.cmp.mc .cmp-v{font-size:3.3px}
+.cmp.mc .cmp-v2{font:500 2.7px var(--f);fill:var(--faint);font-variant-numeric:tabular-nums}
 /* la fila de la región va en tinta plena: es la referencia, no un municipio más */
 .cmp .cmp-n.mc-reg{fill:var(--tx);font-weight:700}
 .cmp .cmp-v.mc-reg{fill:var(--tx)}
-.mc-lg{display:flex;flex-wrap:wrap;gap:2px 12px;margin:-2px 0 7px;
-  font-size:.58rem;font-weight:600;color:var(--faint)}
-.mc-lg span{display:inline-flex;align-items:center;gap:5px}
-.mc-lg i{width:9px;height:9px;border-radius:50%;display:block;flex:none;
-  border:1.4px solid var(--suave);background:var(--card-solid);opacity:.6}
-.mc-lg i.mc-b{background:var(--suave);border-color:var(--suave)}
-.mc-lg i.mc-t{width:14px;height:3px;border-radius:2px;border:0;background:var(--suave)}
-/* el juego activo se enciende: es el que el conmutador de año está pintando */
-.mc-lg i.on{opacity:1;border-color:var(--tx)}
-.mc-lg i.mc-b.on{background:var(--tx)}
-.mc-lg i.mc-t.on{background:var(--tx);height:4px}
-.mc-lg span:has(i.on){color:var(--tx)}
+.cmp .cmp-v2.mc-reg{fill:var(--suave)}
 .cmp.mc .mc-hit{cursor:pointer}
 .cmp.mc .mc-hit:hover{fill:var(--tx);fill-opacity:.05}
+/* La lectura escrita, debajo del gráfico. Rellena el panel con lo que el dibujo
+   no puede decir, en vez de estirar el gráfico hasta el borde. */
+.mc-lee{margin:11px 0 2px;padding-top:9px;border-top:1px solid var(--linea-2);
+  display:flex;flex-direction:column;gap:6px}
+.mc-lee p{font-size:.68rem;line-height:1.5;color:var(--suave);margin:0}
+.mc-lee b{color:var(--tx);font-weight:600}
+.mc-adv{display:block;margin-top:2px;font-size:.94em;color:var(--faint);font-style:italic}
 /* ── Distribución dentro del municipio ───────────────────────────────────────
    Mismas unidades de viewBox que el comparativo (1 unidad = 2,2-3,0 px reales),
    así las dos lecturas se apilan sin cambiar de tamaño de letra. El bigote es
@@ -1128,9 +1140,9 @@ Promise.all([
     nuevaCapa({id: "mun-line", type: "line", source: "mun",
       paint: {"line-color": BORDE_MUN[esOscuro() ? "oscuro" : "claro"],
               "line-width": ["interpolate", ["linear"], ["zoom"],
-                             Z0, 1.15, Z1, .95, 15.5, .8],
+                             Z0, .7, Z1, .55, 15.5, .45],
               "line-opacity": ["interpolate", ["linear"], ["zoom"],
-                               Z0, .82, Z1, .78, 15.5, .72]}});
+                               Z0, .62, Z1, .58, 15.5, .5]}});
     nuevaCapa({id: "mun-sel", type: "line", source: "mun",
       paint: {"line-color": SENAL, "line-width": 2.4},
       filter: ["==", ["get", "sigep"], ""]});
@@ -1615,40 +1627,58 @@ function termometro(e, i){
      dato de 2012, que ya viajaba en `municipal_2012` y sólo se veía cambiando
      el mapa entero de año.
 
-   Acá cada municipio es UNA fila con sus dos censos: **aro = 2012, punto lleno
-   = 2024**, y el trazo que los une ES la magnitud del cambio. Es la misma
-   lectura que la lámina del banco, que ya estaba resuelta ahí.
+   Cada municipio es UNA fila con sus dos censos, y el trazo que los une ES la
+   magnitud del cambio. Misma lectura que la lámina del banco.
 
-   ★ EL CONMUTADOR DE AÑO PINTA LA BOLITA, no cambia de gráfico. Con 2024
-     manda el punto lleno; con 2012, el aro; en Cambio el protagonista es el
-     TRAZO, coloreado por signo. Un solo objeto que cambia de énfasis en vez de
-     tres gráficos distintos: la fila no se mueve de sitio y el ojo puede
-     seguirla mientras se conmuta.
+   ★ SEGUNDA PASADA (mismo día, después de verlo). Estaba enorme y demasiado
+     separado. Ahora:
+     · las DOS bolitas miden LO MISMO — lo único que las distingue es si están
+       pintadas o huecas, que es la señal necesaria y ninguna más;
+     · filas de 8,6 unidades en vez de 12,5, y trazos finos;
+     · el gráfico NO trata de llenar el panel: ocupa lo que necesita y debajo va
+       una lectura escrita, que es lo que el dibujo no puede decir.
 
-   ★ SE ESCRIBE UNA SOLA CIFRA, la del año en pantalla. Con las dos, a este
-     ancho, las etiquetas se pisaban entre sí y con el nombre del municipio.
-     Las dos juntas siguen estando: en el `<title>` de cada fila, que el
-     navegador muestra al posarse encima.
+   ★ EL CONMUTADOR DE AÑO PINTA LA BOLITA, no cambia de gráfico. Con 2024 se
+     llena el punto de 2024; con 2012, el de 2012; en Cambio el protagonista es
+     el TRAZO. Un solo objeto que cambia de énfasis en vez de tres gráficos: la
+     fila no se mueve de sitio y el ojo puede seguirla mientras se conmuta.
 
-   ★ EL ORDEN LO DA EL AÑO EN PANTALLA (`valorMunicipal` ya resuelve cuál es),
-     así que en Cambio la lista queda ordenada por cuánto cambió cada uno, que
-     es lo que ese modo quiere leer.
+   ★ EL RITMO ANUAL (pedido de Carlos). En modo Cambio, al lado del cambio total
+     va su promedio por año sobre los `ANIOS_INTERCENSAL` que ya declara el
+     pipeline (`catalogo/armar_metro.py`: 12,0 — no se inventa acá otro número).
+     Un conteo se COMPONE —tasa anual equivalente— y una tasa se reparte lineal
+     en puntos. ⚠️ Es un PROMEDIO, no una trayectoria: el censo da dos puntos y
+     entre ellos no sabe nada. Por eso el rótulo dice «ritmo anual» y la lectura
+     de abajo lo advierte con todas las letras.
 
    Sólo aplica a los 178 indicadores con `s12`. Los otros 65 —los 30 fiscales y
-   35 censales sin comparación declarada— siguen con las barras de un solo año,
-   porque ahí no hay mancuerna que dibujar. */
+   35 censales sin comparación declarada— siguen con las barras de un solo año. */
+const ANIOS_INTERCENSAL = 12.0;   // lo declara catalogo/armar_metro.py
 const nombreCorto = nom => {
   if (nom.length <= 19) return nom;
   const dos = nom.split(" ").slice(0, 2).join(" ");
   return dos.length <= 19 ? dos : dos.slice(0, 18) + "…";
 };
+/* El ritmo por año. Un conteo se compone; una tasa se reparte en puntos. */
+function ritmoAnual(a, b, ind){
+  if (a === null || b === null || !isFinite(a) || !isFinite(b)) return null;
+  if (esConteo(ind)) return a > 0 ? 100 * (Math.pow(b / a, 1 / ANIOS_INTERCENSAL) - 1) : null;
+  return (b - a) / ANIOS_INTERCENSAL;
+}
+const signo = v => v > 0 ? "+" : v < 0 ? "−" : "";
+/* Los decimales se deciden UNA vez para toda la columna. Fila por fila, un
+   «+2,1» junto a un «+0,96» deja el número dentado y cuesta compararlos. */
+let RITMO_DEC = 1;
+const ritmoTxt = r => r === null ? "" : signo(r) + nf(Math.abs(r), RITMO_DEC) + "/año";
+
 function mancuerna(e, ind){
-  const v12de = m => { const c = m.municipal_2012; const v = c ? c[ind.k_mun] : null;
-                       return (v === undefined || !isFinite(v)) ? null : v; };
-  const v24de = m => { const c = m.municipal; const v = c ? c[ind.k_mun] : null;
-                       return (v === undefined || !isFinite(v)) ? null : v; };
-  const filas = MUN.map(m => ({m, a: v12de(m), b: v24de(m), act: valorMunicipal(m, ind)}))
-    .sort((p, q) => (q.act === null ? -Infinity : q.act) - (p.act === null ? -Infinity : p.act));
+  const lim = v => (v === undefined || v === null || !isFinite(v)) ? null : v;
+  const filas = MUN.map(m => ({
+    m,
+    a: lim(m.municipal_2012 ? m.municipal_2012[ind.k_mun] : null),
+    b: lim(m.municipal ? m.municipal[ind.k_mun] : null),
+    act: valorMunicipal(m, ind)
+  })).sort((p, q) => (q.act === null ? -Infinity : q.act) - (p.act === null ? -Infinity : p.act));
   const con = filas.filter(f => f.a !== null || f.b !== null);
   if (!con.length) return `<div class="sin">Sin datos para este indicador.</div>`;
 
@@ -1658,123 +1688,134 @@ function mancuerna(e, ind){
   const vals = con.flatMap(f => [f.a, f.b]).filter(v => v !== null);
   let lo = Math.min(...vals), hi = Math.max(...vals);
   if (lo === hi){ lo -= 1; hi += 1; }
-  const pad = (hi - lo) * .06; lo -= pad; hi += pad;
+  const pad = (hi - lo) * .07; lo -= pad; hi += pad;
 
-  /* VX corta bien antes del borde: la cifra va SIEMPRE a la derecha del eje, y
-     con VX=82 el punto del valor mas alto quedaba montado sobre su propio
-     numero («+11,5 pp» encima de la bolita de Santa Cruz). */
-  const H = 12.5, W = 100, LX = 33, VX = 75, TX = 79;   // unidades de viewBox
-  const REG_H = 15;                       // la franja de la region, al pie
-  const anchoTexto = s => s.length * 2.1;
-  const alto = filas.length * H + 9 + REG_H;
-  const x = v => LX + ((v - lo) / (hi - lo)) * (VX - LX);
   const esCambio = ANIO === "cambio", es12 = ANIO === "2012";
+  if (esCambio){
+    const rs = filas.map(f => ritmoAnual(f.a, f.b, ind))
+                    .filter(r => r !== null).map(Math.abs);
+    RITMO_DEC = rs.length && Math.max(...rs) < 3 ? 2 : 1;
+  }
+  /* Geometría fina. En Cambio la pista se acorta para dejar DOS columnas de
+     cifras —el total y el ritmo por año— sin que ninguna quede apretada. */
+  const H = 8.6, W = 100, R = 1.9;
+  const LX = 28, VX = esCambio ? 57 : 70;
+  const TX = esCambio ? 79 : 100, TX2 = 100;
+  const alto = filas.length * H + 15;
+  const x = v => LX + ((v - lo) / (hi - lo)) * (VX - LX);
+
+  /* Una bolita. Las dos del MISMO tamaño: lo único que cambia es si está
+     pintada (el año en pantalla) o hueca (el otro). */
+  const bolita = (cx, cy, llena, color) =>
+    `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${llena ? color : "var(--card-solid)"}"
+       stroke="${llena ? color : "var(--suave)"}" stroke-width=".7"/>`;
 
   let s = "";
   filas.forEach((f, k) => {
-    const y = k * H + 3, cy = y + 4.6, sel_ = f.m.sigep === sel;
-    /* «Santa Cruz de la S…» no dice nada que «Santa Cruz» no diga, y el
-       recorte con puntos suspensivos ensucia una columna que se lee en
-       vertical. Cuando el nombre no entra se queda con sus dos primeras
-       palabras, que en los nueve alcanza siempre para distinguirlos. */
-    const corto = nombreCorto(f.m.nombre);
-    s += `<text x="0" y="${cy + 1.5}" class="cmp-n${sel_ ? " sel" : ""}">${corto}</text>`;
+    const y = k * H + 2, cy = y + 3.4, sel_ = f.m.sigep === sel;
+    s += `<text x="0" y="${cy + 1.2}" class="cmp-n${sel_ ? " sel" : ""}">${nombreCorto(f.m.nombre)}</text>`;
     if (f.a === null && f.b === null){
-      s += `<text x="${LX}" y="${cy + 1.5}" class="cmp-v">s/d</text>`;
+      s += `<text x="${LX}" y="${cy + 1.2}" class="cmp-v">s/d</text>`;
       return;
     }
     const xa = f.a !== null ? x(f.a) : null, xb = f.b !== null ? x(f.b) : null;
-    /* El trazo: en Cambio es el dato y va grueso y coloreado por su signo; en
-       los otros dos modos es sólo el vínculo entre los dos censos. */
     if (xa !== null && xb !== null){
       const col = esCambio && f.act !== null ? tonoDe(e, f.act) : "var(--linea)";
       s += `<line x1="${xa}" y1="${cy}" x2="${xb}" y2="${cy}" stroke="${col}"
-              stroke-width="${esCambio ? 3.4 : 1.1}" stroke-linecap="round"
-              opacity="${esCambio ? .95 : .8}"/>`;
+              stroke-width="${esCambio ? 2 : .9}" stroke-linecap="round"/>`;
     }
-    /* El aro de 2012 y el punto de 2024. El activo lleva el color del mapa y su
-       tamaño; el otro queda como referencia tenue. */
-    if (xa !== null){
-      const act = es12;
-      s += `<circle cx="${xa}" cy="${cy}" r="${act ? 2.5 : 1.7}"
-              fill="${act && !esCambio ? tonoDe(e, f.a) : "var(--card-solid)"}"
-              stroke="${act ? "var(--tx)" : "var(--suave)"}"
-              stroke-width="${act ? 1 : .7}" opacity="${act || esCambio ? 1 : .75}"/>`;
-    }
-    if (xb !== null){
-      const act = !es12;
-      s += `<circle cx="${xb}" cy="${cy}" r="${act ? 2.6 : 1.7}"
-              fill="${act && !esCambio ? tonoDe(e, f.b) : (act ? "var(--tx)" : "var(--card-solid)")}"
-              stroke="${act ? "var(--tx)" : "var(--suave)"}"
-              stroke-width="${act ? 1 : .7}" opacity="${act || esCambio ? 1 : .75}"/>`;
-    }
-    if (sel_ && (xa !== null || xb !== null))
-      s += `<rect x="${LX - 2}" y="${y}" width="${VX - LX + 4}" height="${H - 2}"
-              fill="none" stroke="${SENAL}" stroke-width=".6" rx="1"/>`;
-    /* Una sola cifra, la del año en pantalla, siempre a la derecha del eje para
-       que la columna de números quede alineada y se pueda leer en vertical. */
-    const txt = f.act === null ? "s/d" : fmtM(f.act, ind);
-    s += `<text x="${Math.min(TX, W - anchoTexto(txt))}" y="${cy + 1.5}" class="cmp-v">${txt}</text>`;
-    const par = `2012: ${f.a === null ? "s/d" : fmt(f.a, ind.unit)}  ·  2024: ${
-                  f.b === null ? "s/d" : fmt(f.b, ind.unit)}`;
-    s += `<rect x="0" y="${y}" width="${W}" height="${H - 2}" fill="transparent"
+    const tono = v => (!esCambio && v !== null) ? tonoDe(e, v) : "var(--tx)";
+    /* En Cambio el punto de 2024 queda PINTADO igual: sin eso las dos bolitas
+       son idénticas y no se sabe hacia qué lado fue el cambio — un municipio que
+       BAJÓ tiene su 2024 a la IZQUIERDA y la fila se leería al revés. */
+    if (xa !== null) s += bolita(xa, cy, es12 && !esCambio, tono(f.a));
+    if (xb !== null) s += bolita(xb, cy, !es12, tono(f.b));
+    if (sel_)
+      s += `<rect x="${LX - 2.5}" y="${y - .4}" width="${VX - LX + 5}" height="${H - 1}"
+              fill="none" stroke="${SENAL}" stroke-width=".5" rx="1"/>`;
+    /* Las cifras van ancladas a la DERECHA: así la columna se lee en vertical
+       sin tener que estimar el ancho de cada número. */
+    s += `<text x="${TX}" y="${cy + 1.2}" class="cmp-v" text-anchor="end">${
+            f.act === null ? "s/d" : fmtM(f.act, ind)}</text>`;
+    if (esCambio)
+      s += `<text x="${TX2}" y="${cy + 1.2}" class="cmp-v2" text-anchor="end">${
+              ritmoTxt(ritmoAnual(f.a, f.b, ind))}</text>`;
+    s += `<rect x="0" y="${y - .4}" width="${W}" height="${H - 1}" fill="transparent"
             class="mc-hit" data-s="${f.m.sigep}"><title>${f.m.nombre}
-${par}</title></rect>`;
+2012: ${f.a === null ? "s/d" : fmt(f.a, ind.unit)}   2024: ${f.b === null ? "s/d" : fmt(f.b, ind.unit)}</title></rect>`;
   });
 
   /* ── LA REGIÓN, AL PIE Y EN EL MISMO LENGUAJE ─────────────────────────────
-     ★ «que en el cambio se resalte un gráfico del cambio total» (Carlos).
-       En vez de otro gráfico aparte, la región entra como una fila más —misma
-       escala, mismo aro, mismo punto— separada por un filete. Así el total no
-       es un número suelto en un encabezado: se LEE contra los nueve, y en modo
-       Cambio su trazo se compara de un vistazo con el de cada municipio.
-     El agregado viene DECLARADO en `CAT.region`, no recalculado: cada indicador
-     se pondera por SU PROPIO universo y rehacerlo por población da otra cifra
-     (ver la nota de `armar_tableros.py`). */
+     El total no es un número suelto en un encabezado: entra como una fila más
+     —misma escala, misma bolita— separada por un filete, y así se LEE contra
+     los nueve. El agregado viene DECLARADO en `CAT.region`, no recalculado:
+     cada indicador se pondera por SU propio universo. */
   const cajaR = CAT.region || {};
-  const rA = cajaR.municipal_2012 ? cajaR.municipal_2012[ind.k_mun] : null;
-  const rB = cajaR.municipal ? cajaR.municipal[ind.k_mun] : null;
-  const rV = (v => v === undefined || !isFinite(v) ? null : v);
-  const ra = rV(rA), rb = rV(rB);
+  const ra = lim(cajaR.municipal_2012 ? cajaR.municipal_2012[ind.k_mun] : null);
+  const rb = lim(cajaR.municipal ? cajaR.municipal[ind.k_mun] : null);
   const ract = esCambio ? difIntercensal(ra, rb, ind) : (es12 ? ra : rb);
-  const yR = filas.length * H + 7.5, cyR = yR + 4.6;
-  s += `<line x1="0" y1="${yR - 2.5}" x2="${W}" y2="${yR - 2.5}"
-          stroke="var(--linea)" stroke-width=".45"/>`;
-  s += `<text x="0" y="${cyR + 1.5}" class="cmp-n mc-reg">Región metropolitana</text>`;
-  if (ra !== null || rb !== null){
-    const xra = ra !== null && ra >= lo && ra <= hi ? x(ra) : null;
-    const xrb = rb !== null && rb >= lo && rb <= hi ? x(rb) : null;
-    if (xra !== null && xrb !== null)
-      s += `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}"
-              stroke="var(--tx)" stroke-width="${esCambio ? 3.4 : 1.1}"
-              stroke-linecap="round" opacity=".55"/>`;
-    if (xra !== null)
-      s += `<circle cx="${xra}" cy="${cyR}" r="${es12 ? 2.5 : 1.7}" fill="var(--card-solid)"
-              stroke="var(--tx)" stroke-width="${es12 ? 1 : .7}" opacity="${es12 ? 1 : .6}"/>`;
-    if (xrb !== null)
-      s += `<circle cx="${xrb}" cy="${cyR}" r="${!es12 ? 2.6 : 1.7}"
-              fill="${!es12 && !esCambio ? "var(--tx)" : "var(--card-solid)"}"
-              stroke="var(--tx)" stroke-width="${!es12 ? 1 : .7}" opacity="${!es12 ? 1 : .6}"/>`;
-  }
-  const txtR = ract === null ? "s/d" : fmtM(ract, ind);
-  s += `<text x="${Math.min(TX, W - anchoTexto(txtR))}" y="${cyR + 1.5}" class="cmp-v mc-reg">${txtR}</text>`;
+  const yR = filas.length * H + 4.5, cyR = yR + 3.4;
+  s += `<line x1="0" y1="${yR - 1.6}" x2="${W}" y2="${yR - 1.6}" stroke="var(--linea)" stroke-width=".4"/>`;
+  s += `<text x="0" y="${cyR + 1.2}" class="cmp-n mc-reg">Región metropolitana</text>`;
+  const xra = ra !== null && ra >= lo && ra <= hi ? x(ra) : null;
+  const xrb = rb !== null && rb >= lo && rb <= hi ? x(rb) : null;
+  if (xra !== null && xrb !== null)
+    s += `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}" stroke="var(--tx)"
+            stroke-width="${esCambio ? 2 : .9}" stroke-linecap="round" opacity=".5"/>`;
+  if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)");
+  if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)");
+  s += `<text x="${TX}" y="${cyR + 1.2}" class="cmp-v mc-reg" text-anchor="end">${
+          ract === null ? "s/d" : fmtM(ract, ind)}</text>`;
+  if (esCambio)
+    s += `<text x="${TX2}" y="${cyR + 1.2}" class="cmp-v2 mc-reg" text-anchor="end">${
+            ritmoTxt(ritmoAnual(ra, rb, ind))}</text>`;
 
-  /* El encabezado lleva la lectura de la REGIÓN: en Cambio, cuánto cambió el
-     total; en los otros dos, el agregado del año que se está mirando. */
-  const rg = refRegion(ind);
-  /* Ya NO repite la cifra de la región: ésa quedó al pie, dentro del gráfico y
-     en su misma escala. Acá va lo que el gráfico no puede decir: en qué unidad
-     se está leyendo el cambio, que no es la misma para una tasa que para un
-     conteo (puntos contra porcentaje). */
   const cab = esCambio
-    ? (esConteo(ind) ? "variación en %" : "diferencia en puntos")
-    : (rg && rg.tipo ? rg.tipo + " de los nueve" : "");
-  void rg;
+    ? (esConteo(ind) ? "variación % · por año" : "puntos · por año")
+    : "pintado = el año en pantalla";
   return `<div class="cmp-t"><span class="mc-ti">2012 <i>→</i> 2024</span><span>${cab}</span></div>
-    <div class="mc-lg"><span><i class="mc-a${es12 ? " on" : ""}"></i>2012</span>
-      <span><i class="mc-b${!es12 && !esCambio ? " on" : ""}"></i>2024</span>
+    <div class="mc-lg"><span><i class="${es12 && !esCambio ? "on" : ""}"></i>2012</span>
+      <span><i class="${!es12 && !esCambio ? "on" : ""}"></i>2024</span>
       <span><i class="mc-t${esCambio ? " on" : ""}"></i>cambio</span></div>
-    <svg class="cmp mc" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
+    <svg class="cmp mc" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>
+    ${lecturaMancuerna(filas, ind, ra, rb)}`;
+}
+
+/* ── LA LECTURA ──────────────────────────────────────────────────────────────
+   ★ «No trates de usar todo el espacio, puedes añadir abajo texto para que
+     rellene» (Carlos). El gráfico ocupa lo que necesita; lo que sobra se llena
+     con lo que el dibujo NO puede decir: quién encabeza, quién cierra, cuánto
+     hay entre las dos puntas, cuántos están por encima de la región y —en modo
+     Cambio— cuántos suben y a qué ritmo. Todo sale del MISMO dato que acaba de
+     dibujarse, así que no puede desincronizarse del gráfico de arriba. */
+function lecturaMancuerna(filas, ind, ra, rb){
+  const u = uMode(ind);
+  const con = filas.filter(f => f.act !== null && isFinite(f.act));
+  if (con.length < 2) return "";
+  const esCambio = ANIO === "cambio";
+  const alto_ = con[0], bajo_ = con[con.length - 1];
+  const li = [];
+  li.push(`<b>${alto_.m.nombre}</b> encabeza con ${fmtM(alto_.act, ind)} y <b>${bajo_.m.nombre}</b>
+           cierra con ${fmtM(bajo_.act, ind)}: ${nf(Math.abs(alto_.act - bajo_.act), 1)}${u === "%" ? "%" : " " + u} entre las dos puntas.`);
+  const refv = esCambio ? difIntercensal(ra, rb, ind) : (ANIO === "2012" ? ra : rb);
+  if (refv !== null && isFinite(refv)){
+    const arriba = con.filter(f => f.act > refv).length;
+    li.push(`<b>${arriba}</b> de ${con.length} ${arriba === 1 ? "queda" : "quedan"} por encima
+             de la región (${fmtM(refv, ind)}).`);
+  }
+  if (esCambio){
+    const suben = con.filter(f => f.act > 0).length, bajan = con.filter(f => f.act < 0).length;
+    li.push(suben === con.length ? "Los nueve suben entre los dos censos."
+      : bajan === con.length ? "Los nueve bajan entre los dos censos."
+      : `<b>${suben}</b> ${suben === 1 ? "sube" : "suben"} y <b>${bajan}</b> ${bajan === 1 ? "baja" : "bajan"} entre los dos censos.`);
+    const r = ritmoAnual(ra, rb, ind);
+    if (r !== null)
+      li.push(`La región se mueve a <b>${signo(r)}${nf(Math.abs(r), Math.abs(r) < 1 ? 2 : 1)}${
+               esConteo(ind) ? "%" : " " + u} por año</b>, repartido sobre los ${nf(ANIOS_INTERCENSAL, 0)}
+               años entre censos. <span class="mc-adv">Es un promedio: el censo da dos puntos y no
+               dice nada de lo que pasó en el medio.</span>`);
+  }
+  return `<div class="mc-lee">${li.map(t => `<p>${t}</p>`).join("")}</div>`;
 }
 
 function comparativo(e, ind){
