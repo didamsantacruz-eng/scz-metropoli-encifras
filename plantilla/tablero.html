@@ -193,7 +193,7 @@ body.dark .ind.on .mini{opacity:1!important;filter:saturate(1.05)!important}
 /* las dos bolitas de la leyenda miden LO MISMO, igual que en el gráfico: lo
    único que las separa es si están pintadas */
 .mc-lg i{width:7px;height:7px;border-radius:50%;display:block;flex:none;
-  border:1px solid var(--suave);background:var(--card-solid)}
+  border:1px solid var(--tx);background:var(--card-solid)}
 .mc-lg i.mc-t{width:12px;height:2px;border-radius:2px;border:0;background:var(--suave)}
 .mc-lg i.on{border-color:var(--tx);background:var(--tx)}
 .mc-lg i.mc-t.on{background:var(--tx);height:2.5px}
@@ -1744,9 +1744,9 @@ function mancuerna(e, ind){
 
   /* Una bolita. Las dos del MISMO tamaño: lo único que cambia es si está
      pintada (el año en pantalla) o hueca (el otro). */
-  const bolita = (cx, cy, llena, color, borde) =>
+  const bolita = (cx, cy, llena, color, grueso) =>
     `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${llena ? color : "var(--card-solid)"}"
-       stroke="${borde || "var(--suave)"}" stroke-width=".4"/>`;
+       stroke="var(--tx)" stroke-width="${grueso ? .58 : .28}"/>`;
 
   let s = "";
   filas.forEach((f, k) => {
@@ -1777,9 +1777,8 @@ function mancuerna(e, ind){
        son idénticas y no se sabe hacia qué lado fue el cambio — un municipio que
        BAJÓ tiene su 2024 a la IZQUIERDA y la fila se leería al revés. */
     const sin12 = f.a === null;
-    if (xa !== null) s += bolita(xa, cy, es12 && !esCambio, tono(f.a), "var(--suave)");
-    if (xb !== null) s += bolita(xb, cy, !es12, tono(f.b),
-                                 sin12 ? "var(--tx)" : "var(--suave)");
+    if (xa !== null) s += bolita(xa, cy, es12 && !esCambio, tono(f.a), false);
+    if (xb !== null) s += bolita(xb, cy, !es12, tono(f.b), sin12);
     if (sel_)
       s += `<rect x="${LX - 2.2}" y="${y - .3}" width="${VX - LX + 4.4}" height="${H - .8}"
               fill="none" stroke="${SENAL}" stroke-width=".35" rx="1"/>`;
@@ -1815,8 +1814,8 @@ function mancuerna(e, ind){
            fill="var(--tx)" opacity=".55"/>`
       : `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}" stroke="var(--tx)"
            stroke-width=".5" stroke-linecap="round" opacity=".5"/>`;
-  if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)", "var(--suave)");
-  if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)", "var(--suave)");
+  if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)", false);
+  if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)", false);
   s += `<text x="${TX}" y="${cyR + 1.2}" class="cmp-v mc-reg" text-anchor="end">${
           ract === null ? "s/d" : fmtM(ract, ind)}</text>`;
   if (esCambio)
@@ -1878,7 +1877,7 @@ function lecturaPanel(filas, ind, refv, ra, rb){
     li.push(`<span class="mc-adv">${sin12.length === 1
       ? `<b>${sin12[0].m.nombre}</b> no tiene cifra de 2012`
       : `<b>${sin12.length}</b> municipios no tienen cifra de 2012`}: su bolita va con
-      filete de tinta y sin trazo, porque no hay con qué compararla.</span>`);
+      el filete más grueso y sin trazo, porque no hay con qué compararla.</span>`);
   return `<div class="mc-lee">${li.map(t => `<p>${t}</p>`).join("")}</div>`;
 }
 
