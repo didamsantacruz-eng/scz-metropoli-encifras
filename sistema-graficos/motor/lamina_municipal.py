@@ -32,7 +32,7 @@ convierte un ranking en una historia.
 El bloque **Fiscal** (30 indicadores) queda fuera a propósito: no vive en
 `municipal[]` sino en `fiscal.json`, como serie 2016-2025, y pide otra lámina.
 
-    python scripts/banco/lamina_municipal.py [--indicador CLAVE] [--todas]
+    python sistema-graficos/motor/lamina_municipal.py [--indicador CLAVE] [--todas]
 """
 import argparse, json, math, pathlib, re, sys
 import matplotlib

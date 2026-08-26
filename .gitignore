@@ -29,11 +29,17 @@ docs/_prueba_*.html
 # no rompe la sintaxis y deja el tablero en blanco sin avisar.
 !docs/_prueba_humo.html
 
-# ── salida de la cadena de flujos (analisis/flujos/01→05) ────────────────────
-# 19 MB de JSON y un HTML de 3,1 MB, todo REGENERABLE con los cinco scripts.
-# Va acá por la misma regla de arriba: el repo guarda las reglas, no los pasos.
-# Y porque `.git` ya pesa 611 MB y esto se regenera varias veces por sesión.
-analisis/flujos/salida/
-analisis/flujos/web/flujos_metro.json
-analisis/flujos/web/quien_se_mueve.html
-analisis/flujos/_log_*.txt
+# ── ⛔ LA SALIDA DE FLUJOS SÍ VA AL REPO (revertido el 2026-08-26) ───────────
+# Acá decía que eran «19 MB REGENERABLES con los cinco scripts» y se excluían por
+# la regla de arriba: el repo guarda las reglas, no los pasos.
+#
+# La regla era buena y la conclusión, falsa. Los cinco scripts NO regeneran nada
+# solos: el paso 1 lee `Persona_CPV-2024.csv`, 3,1 GB de microdato del INE que
+# vive fuera del repo y que no puede entrar. Para quien clone esto, «regenerable»
+# significaba «irrecuperable». Y el repo pasa a manos de alguien más, que necesita
+# los datos para rediseñar el explorador sin rehacer la cadena entera.
+# ⇒ `dinamica-metropolitana/salida/` y `web/flujos_metro.json` viajan. Son 19 MB.
+#   El HTML servible NO viaja: son 3,1 MB que salen de plantilla + secciones +
+#   datos con `python 05_armar_pagina.py`, y esos tres SÍ están en el repo.
+dinamica-metropolitana/web/quien_se_mueve.html
+dinamica-metropolitana/_log_*.txt

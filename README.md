@@ -13,6 +13,23 @@ Tablero territorial de la **Región Metropolitana de Santa Cruz** — 9 municipi
 
 ---
 
+## Las dos carpetas de trabajo
+
+No producen el sitio: producen **lo que hace falta para rehacerlo y mejorarlo**.
+Cada una tiene su propio README, escrito para quien llegue sin contexto previo.
+
+| carpeta | qué es | empezar por |
+|---|---|---|
+| **`sistema-graficos/`** | el sistema de generación masiva de gráficos: 375 láminas PNG de 3200×1800 más su índice navegable, todo desde el mismo catálogo que sirve al tablero | [`sistema-graficos/README.md`](sistema-graficos/README.md) |
+| **`dinamica-metropolitana/`** | quién se mueve hacia y dentro de la región, desde el microdato del censo: la cadena de cálculo, **los datos ya calculados** y el explorador | [`dinamica-metropolitana/README.md`](dinamica-metropolitana/README.md) |
+
+⭐ **Los datos de `dinamica-metropolitana/salida/` viajan en el repo a propósito.**
+La cadena que los produce lee 3,1 GB de microdato del INE que no está —ni puede
+estar— acá. Sin esos JSON no hay con qué trabajar, así que «regenerable» habría
+significado «irrecuperable» para cualquiera que clone el repo.
+
+---
+
 ## Cómo se ve
 
 No hace falta compilar nada: es HTML estático.

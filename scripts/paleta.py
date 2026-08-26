@@ -4,8 +4,8 @@ LA PALETA, DECLARADA UNA SOLA VEZ.
 ===================================
 
 ★ EL PROBLEMA QUE ESTO RESUELVE (2026-08-20). La rampa estaba escrita a mano en
-  cuatro archivos —`plantilla/tablero.html`, `scripts/banco/estilo.py`,
-  `scripts/portal/plantilla_portal.html` y `scripts/banco/plantilla_sitio.html`—
+  cuatro archivos —`plantilla/tablero.html`, `sistema-graficos/motor/estilo.py`,
+  `scripts/portal/plantilla_portal.html` y `sistema-graficos/motor/plantilla_sitio.html`—
   y `estilo.py` lo decía sin vueltas: «SI CAMBIA EL TABLERO, CAMBIA ESTO. Son dos
   implementaciones del mismo criterio; no hay forma de que una se entere sola de
   la otra». No se enteró: el tablero y el banco terminaron pintando el MISMO dato
@@ -15,7 +15,7 @@ LA PALETA, DECLARADA UNA SOLA VEZ.
   módulo lo deriva y lo escribe, y los consumidores lo leen:
 
       assets/paleta.json  ──┬── plantilla/tablero.html   (literal inyectado acá)
-                            └── scripts/banco/estilo.py  (lo lee al importar)
+                            └── sistema-graficos/motor/estilo.py  (lo lee al importar)
 
   `python scripts/paleta.py` recalcula y sincroniza.
   `python scripts/paleta.py --verificar` falla si alguien se desvió. Es lo que

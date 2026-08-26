@@ -18,7 +18,7 @@ banco, este script vuelve a correr y la página se entera sola.
    secas en ningún lado, porque dejaría fuera del nombre a un tercio de lo que
    está mostrando.
 
-    python scripts/banco/armar_sitio.py
+    python sistema-graficos/motor/armar_sitio.py
 """
 import json, pathlib, re, sys, unicodedata
 

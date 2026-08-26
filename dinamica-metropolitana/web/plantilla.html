@@ -249,7 +249,7 @@ footer b{color:var(--ink-2)}
 
   <footer>
     <b>De dónde sale cada número.</b> Microdato del Censo de Población y Vivienda 2024
-    (INE Bolivia), procesado por <code>analisis/flujos/01→04</code> sobre las 2.282.770
+    (INE Bolivia), procesado por <code>dinamica-metropolitana/01→04</code> sobre las 2.282.770
     personas censadas en los nueve municipios. Ningún número está escrito a mano.
     <b>Los indicadores de vivienda se leen como personas:</b> «38% con alcantarillado»
     significa que el 38% de esas personas vive en un hogar que lo tiene, no que el 38% de
@@ -275,7 +275,12 @@ const val = (v,k) => v==null ? "—" : (k==="n" ? fmt(v) : (esPct(k) ? dec(v,1)+
 const NOM = {
   n:"personas", pct_mujer:"mujeres", pct_jefe:"jefas y jefes de hogar",
   pct_indigena:"se autoidentifica indígena", pct_discapacidad:"con discapacidad",
-  tam_hogar:"personas por hogar", edad_mediana:"edad mediana",
+  tam_hogar:"personas en su hogar", edad_mediana:"edad mediana",
+  /* ⚠️ «en SU hogar» y no «por hogar»: como todo el resto de la ficha, es un
+     promedio sobre PERSONAS, o sea el tamaño del hogar de la persona promedio
+     (4,72 en la región). El tamaño medio del hogar es otro número, 3,58, y sale
+     de dividir personas entre hogares. Rotularlo «por hogar» prometía el segundo
+     y entregaba el primero. */
   anios_estudio:"años de estudio", pct_superior:"con educación superior",
   pct_sin_nivel:"sin ningún nivel", pct_analfabeto:"analfabetismo (15+)",
   pct_asiste_6_17:"asiste a clases (6-17)", pct_asiste_privado:"en establecimiento privado",

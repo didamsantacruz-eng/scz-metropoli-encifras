@@ -19,7 +19,7 @@ imagen suelta necesita para poder viajar sin el tablero al lado:
    mouse y enterarse; en una imagen que viaja sola, si no está escrito, el gris
    se lee como "acá no vive nadie".
 
-    python scripts/banco/lamina_manzana.py [--municipio SLUG] [--indicador CLAVE]
+    python sistema-graficos/motor/lamina_manzana.py [--municipio SLUG] [--indicador CLAVE]
 """
 import argparse, json, pathlib, re, sys
 import matplotlib
