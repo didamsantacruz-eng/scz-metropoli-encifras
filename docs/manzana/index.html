@@ -1286,6 +1286,7 @@ Promise.all([
      no a la vista. El encuadre se aplica DESPUÉS, cuando el mapa existe (ver
      más abajo): acá todavía puede no haber contexto WebGL. */
   const _est = leerURL();
+  if (_est && esRecarga()) delete _est.m;      // ver `esRecarga()`
   if (_est && _est.i) aplicarEstado(_est, false);
   else elegirCategoria(CAT.grupos[0].key);
   montarBuscador();
@@ -1818,6 +1819,27 @@ function escribirURL(empujar){
   const url = location.pathname + (q ? "#" + q : "");
   if (url === location.pathname + location.hash) return;
   try { history[empujar ? "pushState" : "replaceState"](e, "", url); } catch (_) {}
+}
+
+/* ★ RECARGAR EMPIEZA LIMPIO (pedido de Carlos, 2026-08-26).
+   Síntoma: «al abrir la página señala Colpa Bélgica». No lo señalaba nadie —se
+   midió: `sel` arranca en null y sólo cambia por un clic o por la URL—. Lo que
+   pasaba es que el hash guarda el municipio elegido y SOBREVIVE al recargar, así
+   que volver a la pestaña devolvía la selección de la visita anterior.
+
+   Eso está bien para un enlace que alguien te manda y mal para abrir el tablero:
+   la vista por defecto tiene que ser la REGIÓN, sin ningún municipio señalado.
+   La diferencia está en cómo se llegó a la página, y el navegador la sabe:
+     · «navigate» → alguien abrió un enlace: se restaura todo, municipio incluido.
+     · «reload»   → F5 sobre la propia pestaña: se ignora el municipio y se
+                    entra por la puerta de siempre.
+   El indicador, el año y el encuadre se restauran en los dos casos: recargar y
+   perder en qué mapa estabas sería peor que el problema que esto arregla. */
+function esRecarga(){
+  try {
+    const n = performance.getEntriesByType("navigation")[0];
+    return !!n && n.type === "reload";
+  } catch (_) { return false; }
 }
 
 function leerURL(){
