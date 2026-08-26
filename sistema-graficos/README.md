@@ -149,32 +149,50 @@ que todavía no existe.
 
 ---
 
-## 6. ⚠️ Estado conocido: el índice tiene la rampa oscura vieja
+## 6. ⚠️ Estado conocido: el banco está UNA REGENERACIÓN ATRASADA
 
-**Correr `armar_sitio.py` sobre el repo tal como está produce un diff en
-`docs/banco/index.html`, y ese diff es correcto.** No es ruido ni un bug: es una
-diferencia real que todavía no se propagó.
+Son dos cosas distintas con la misma causa. El 2026-08-26 se cambiaron el modo
+oscuro y las descripciones de los indicadores; el tablero se regeneró y **el
+banco no**, porque Carlos pidió expresamente no tocarlo en esa sesión.
 
-El 2026-08-26 se cambió la rampa del **modo oscuro** por pedido de Carlos —«que
-sea el color tal cual, pero más intenso, no tan transparente»—, y quedó idéntica
-a la clara (`realce_oscuro = 0`). El tablero se regeneró; **el banco no**, porque
-en esa misma sesión Carlos pidió expresamente no tocarlo. Así que hoy:
+**Consecuencia práctica: regenerar produce diffs, y esos diffs son correctos.**
+No son ruido ni un bug. Antes de suponer que algo se rompió, leer esto.
+
+### a) Las láminas traen las descripciones viejas
+
+La lámina imprime el campo `desc` del catálogo. Ese texto se reescribió entero
+—237 definiciones censales más 30 fiscales— para que dijera **qué se busca
+medir** en vez de repetir el título con el denominador. Los PNG versionados son
+anteriores.
+
+Medido sobre tres indicadores al azar desde un clon limpio: **dos de tres
+regeneran distinto** (`pct_hacinamiento` pasa de 456.620 a 463.601 bytes,
+`pct_agua_mejorada` también cambia; `pct_edu_superior` sale idéntica). Es de
+esperar que la mayoría de las 375 cambie.
+
+### b) El índice tiene la rampa oscura vieja
+
+El modo oscuro cambió por pedido de Carlos —«que sea el color tal cual, pero más
+intenso, no tan transparente»— y quedó idéntico a la rampa clara
+(`realce_oscuro = 0`). `docs/banco/index.html` sigue con la anterior:
 
 | | `divergente_oscuro` |
 |---|---|
 | `assets/paleta.json` (el contrato) | `#0c683b #499044 #89b84c #f0e9cd #ca9829 #c46b20 #9a412c` |
 | `docs/banco/index.html` (publicado) | `#16c46f #6dbb67 #a8cc78 #f5f0d9 #e2b657 #e69048 #d06147` |
 
-**En modo oscuro el índice del banco pinta con una rampa que el tablero ya no
-usa.** Se arregla con `python sistema-graficos/motor/armar_sitio.py` y nada más
-—las 375 láminas no se tocan, sólo el índice—, pero **es una decisión de Carlos**,
-porque cambia cómo se ve el banco. Preguntarle antes.
+**En modo oscuro el índice pinta con una rampa que el tablero ya no usa.**
 
-⚠️ **`paleta.py --verificar` no lo detecta**, y decir «OK: paleta sincronizada»
-mientras esto pasa es exactamente el punto ciego que hay que conocer: verifica
-las FUENTES (`plantilla/tablero.html`, `motor/estilo.py`, las dos plantillas), no
-los HTML ya generados en `docs/`. Un producto generado antes de un cambio de
-paleta queda desactualizado y el verificador dice que todo está bien.
+### Cómo se pone al día
+
+`python sistema-graficos/generar_todo.py` arregla las dos. Pero **es decisión de
+Carlos**: cambia cómo se ve el banco y son 375 archivos. Preguntarle antes.
+
+⚠️ **`paleta.py --verificar` no detecta (b)**, y decir «OK: paleta sincronizada»
+mientras esto pasa es el punto ciego que hay que conocer: verifica las FUENTES
+—`plantilla/tablero.html`, `motor/estilo.py`, las dos plantillas—, no los HTML ya
+generados en `docs/`. Un producto generado antes de un cambio de paleta queda
+atrasado sin que el verificador se entere.
 
 ---
 
