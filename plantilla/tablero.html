@@ -158,6 +158,26 @@ body.dark .aviso b{color:var(--orange)}
    convierte en un cartel. La leyenda va ARRIBA del gráfico y no debajo: abajo
    llega después de que el lector ya intentó descifrar las bolitas. Es la misma
    corrección que se le hizo a la lámina del banco. */
+/* ── El minimapa de cada tarjeta ────────────────────────────────────────────
+   Tres estados y una sola transición: dormido (apagado, filete tenue), al pasar
+   por encima (medio) y elegido (color pleno, filete de tinta). La saturación la
+   trae `estilo-atlas.css`; acá va el FILETE, que allá no existía. */
+.mini path{stroke:var(--linea);stroke-width:.55;
+  transition:stroke .28s ease,stroke-width .28s ease}
+.ind:hover .mini path{stroke:var(--suave);stroke-width:.7}
+.ind.on .mini path{stroke:#11110f;stroke-width:1.4}
+body.dark .mini path{stroke:#2a3138}
+body.dark .ind:hover .mini path{stroke:#55606a}
+body.dark .ind.on .mini path{stroke:#e6e3d8;stroke-width:1.1}
+/* el elegido pasa de «casi gris» a color pleno; los demás bajan un poco más
+   para que la diferencia se note sin que la lista se apague entera */
+.mini{opacity:.5!important;filter:saturate(.26)!important}
+.ind:hover .mini{opacity:.82!important;filter:saturate(.6)!important}
+.ind.on .mini{opacity:1!important;filter:saturate(1.05) contrast(1.03)!important}
+body.dark .mini{opacity:.4!important;filter:saturate(.42) brightness(.92)!important}
+body.dark .ind:hover .mini{opacity:.78!important;filter:saturate(.78) brightness(.98)!important}
+body.dark .ind.on .mini{opacity:1!important;filter:saturate(1.05)!important}
+
 .cmp-t .mc-ti{flex:none}
 .cmp-t .mc-ti i{font-style:normal;font-size:.85em;color:var(--faint);margin:0 2px;letter-spacing:0}
 .mc-lg{display:flex;flex-wrap:wrap;gap:2px 11px;margin:-3px 0 6px;
@@ -171,10 +191,11 @@ body.dark .aviso b{color:var(--orange)}
 .mc-lg i.on{border-color:var(--tx);background:var(--tx)}
 .mc-lg i.mc-t.on{background:var(--tx);height:2.5px}
 .mc-lg span:has(i.on){color:var(--tx)}
+.mc-lg .mc-dir{color:var(--faint);font-weight:500;font-style:italic}
 /* letra propia, más chica que la de las barras */
-.cmp.mc .cmp-n{font-size:3.2px;font-weight:500}
-.cmp.mc .cmp-v{font-size:3.3px}
-.cmp.mc .cmp-v2{font:500 2.7px var(--f);fill:var(--faint);font-variant-numeric:tabular-nums}
+.cmp.mc .cmp-n{font-size:2.4px;font-weight:500}
+.cmp.mc .cmp-v{font-size:2.45px}
+.cmp.mc .cmp-v2{font:500 2.05px var(--f);fill:var(--faint);font-variant-numeric:tabular-nums}
 /* la fila de la región va en tinta plena: es la referencia, no un municipio más */
 .cmp .cmp-n.mc-reg{fill:var(--tx);font-weight:700}
 .cmp .cmp-v.mc-reg{fill:var(--tx)}
@@ -323,14 +344,15 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
     <a class="marca-pie" href="https://www.santacruz.gob.bo" target="_blank" rel="noopener">
       <img src="img/scz-claro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
     </a>
-    <div class="fuente-pie">Fuente: INE · Censo de Población y Vivienda 2024</div>
+    <div class="fuente-pie"><b>RMSC + 3</b> · Región Metropolitana de Santa Cruz
+      más su área de influencia<br>Fuente: INE · Censo de Población y Vivienda 2024</div>
     <div class="cober" id="cober"></div>
   </div>
 </div>
 
 <div class="panel" id="panel-det">
   <div class="sheet-top" id="sheet-grip">
-    <div class="det-head"><div class="d-mun" id="d-mun">Región Metropolitana</div><div class="d-sub" id="d-sub">9 municipios</div></div>
+    <div class="det-head"><div class="d-mun" id="d-mun">RMSC + 3</div><div class="d-sub" id="d-sub">9 municipios</div></div>
     <div class="pk" id="pk"></div>
   </div>
   <div class="p-body">
@@ -1698,17 +1720,17 @@ function mancuerna(e, ind){
   }
   /* Geometría fina. En Cambio la pista se acorta para dejar DOS columnas de
      cifras —el total y el ritmo por año— sin que ninguna quede apretada. */
-  const H = 8.6, W = 100, R = 1.9;
-  const LX = 28, VX = esCambio ? 57 : 70;
+  const H = 6.6, W = 100, R = 1.45;
+  const LX = 27, VX = esCambio ? 56 : 70;
   const TX = esCambio ? 79 : 100, TX2 = 100;
-  const alto = filas.length * H + 15;
+  const alto = filas.length * H + 12;
   const x = v => LX + ((v - lo) / (hi - lo)) * (VX - LX);
 
   /* Una bolita. Las dos del MISMO tamaño: lo único que cambia es si está
      pintada (el año en pantalla) o hueca (el otro). */
-  const bolita = (cx, cy, llena, color) =>
+  const bolita = (cx, cy, llena, color, borde) =>
     `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${llena ? color : "var(--card-solid)"}"
-       stroke="${llena ? color : "var(--suave)"}" stroke-width=".7"/>`;
+       stroke="${borde || "var(--suave)"}" stroke-width=".4"/>`;
 
   let s = "";
   filas.forEach((f, k) => {
@@ -1722,17 +1744,28 @@ function mancuerna(e, ind){
     if (xa !== null && xb !== null){
       const col = esCambio && f.act !== null ? tonoDe(e, f.act) : "var(--linea)";
       s += `<line x1="${xa}" y1="${cy}" x2="${xb}" y2="${cy}" stroke="${col}"
-              stroke-width="${esCambio ? 2 : .9}" stroke-linecap="round"/>`;
+              stroke-width="${esCambio ? 1 : .5}" stroke-linecap="round"/>`;
+      /* La punta de flecha va a MEDIA ASTA y apunta al 2024. Es la segunda
+         marca del sentido —la primera es el relleno— y con las dos juntas la
+         fila no se puede leer al revés cuando el municipio BAJÓ y su 2024
+         quedó a la izquierda. A media asta no le compite a ninguna bolita. */
+      if (esCambio && Math.abs(xb - xa) > 4){
+        const d = xb > xa ? 1 : -1, mx = (xa + xb) / 2;
+        s += `<path d="M${mx - d * .55} ${cy - .8} L${mx + d * .85} ${cy} L${mx - d * .55} ${cy + .8} Z"
+                fill="${col}" stroke="none"/>`;
+      }
     }
     const tono = v => (!esCambio && v !== null) ? tonoDe(e, v) : "var(--tx)";
     /* En Cambio el punto de 2024 queda PINTADO igual: sin eso las dos bolitas
        son idénticas y no se sabe hacia qué lado fue el cambio — un municipio que
        BAJÓ tiene su 2024 a la IZQUIERDA y la fila se leería al revés. */
-    if (xa !== null) s += bolita(xa, cy, es12 && !esCambio, tono(f.a));
-    if (xb !== null) s += bolita(xb, cy, !es12, tono(f.b));
+    const sin12 = f.a === null;
+    if (xa !== null) s += bolita(xa, cy, es12 && !esCambio, tono(f.a), "var(--suave)");
+    if (xb !== null) s += bolita(xb, cy, !es12, tono(f.b),
+                                 sin12 ? "var(--tx)" : "var(--suave)");
     if (sel_)
-      s += `<rect x="${LX - 2.5}" y="${y - .4}" width="${VX - LX + 5}" height="${H - 1}"
-              fill="none" stroke="${SENAL}" stroke-width=".5" rx="1"/>`;
+      s += `<rect x="${LX - 2.2}" y="${y - .3}" width="${VX - LX + 4.4}" height="${H - .8}"
+              fill="none" stroke="${SENAL}" stroke-width=".35" rx="1"/>`;
     /* Las cifras van ancladas a la DERECHA: así la columna se lee en vertical
        sin tener que estimar el ancho de cada número. */
     s += `<text x="${TX}" y="${cy + 1.2}" class="cmp-v" text-anchor="end">${
@@ -1756,14 +1789,14 @@ function mancuerna(e, ind){
   const ract = esCambio ? difIntercensal(ra, rb, ind) : (es12 ? ra : rb);
   const yR = filas.length * H + 4.5, cyR = yR + 3.4;
   s += `<line x1="0" y1="${yR - 1.6}" x2="${W}" y2="${yR - 1.6}" stroke="var(--linea)" stroke-width=".4"/>`;
-  s += `<text x="0" y="${cyR + 1.2}" class="cmp-n mc-reg">Región metropolitana</text>`;
+  s += `<text x="0" y="${cyR + 1.2}" class="cmp-n mc-reg">RMSC + 3</text>`;
   const xra = ra !== null && ra >= lo && ra <= hi ? x(ra) : null;
   const xrb = rb !== null && rb >= lo && rb <= hi ? x(rb) : null;
   if (xra !== null && xrb !== null)
     s += `<line x1="${xra}" y1="${cyR}" x2="${xrb}" y2="${cyR}" stroke="var(--tx)"
-            stroke-width="${esCambio ? 2 : .9}" stroke-linecap="round" opacity=".5"/>`;
-  if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)");
-  if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)");
+            stroke-width="${esCambio ? 1 : .5}" stroke-linecap="round" opacity=".5"/>`;
+  if (xra !== null) s += bolita(xra, cyR, es12 && !esCambio, "var(--tx)", "var(--suave)");
+  if (xrb !== null) s += bolita(xrb, cyR, !es12, "var(--tx)", "var(--suave)");
   s += `<text x="${TX}" y="${cyR + 1.2}" class="cmp-v mc-reg" text-anchor="end">${
           ract === null ? "s/d" : fmtM(ract, ind)}</text>`;
   if (esCambio)
@@ -1775,8 +1808,9 @@ function mancuerna(e, ind){
     : "pintado = el año en pantalla";
   return `<div class="cmp-t"><span class="mc-ti">2012 <i>→</i> 2024</span><span>${cab}</span></div>
     <div class="mc-lg"><span><i class="${es12 && !esCambio ? "on" : ""}"></i>2012</span>
-      <span><i class="${!es12 && !esCambio ? "on" : ""}"></i>2024</span>
-      <span><i class="mc-t${esCambio ? " on" : ""}"></i>cambio</span></div>
+      <span><i class="${!es12 ? "on" : ""}"></i>2024</span>
+      <span><i class="mc-t${esCambio ? " on" : ""}"></i>cambio</span>${
+        esCambio ? '<span class="mc-dir">la flecha va de 2012 a 2024</span>' : ""}</div>
     <svg class="cmp mc" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="xMidYMin meet">${s}</svg>
     ${lecturaMancuerna(filas, ind, ra, rb)}`;
 }
@@ -1801,7 +1835,7 @@ function lecturaMancuerna(filas, ind, ra, rb){
   if (refv !== null && isFinite(refv)){
     const arriba = con.filter(f => f.act > refv).length;
     li.push(`<b>${arriba}</b> de ${con.length} ${arriba === 1 ? "queda" : "quedan"} por encima
-             de la región (${fmtM(refv, ind)}).`);
+             de la RMSC + 3 (${fmtM(refv, ind)}).`);
   }
   if (esCambio){
     const suben = con.filter(f => f.act > 0).length, bajan = con.filter(f => f.act < 0).length;
@@ -1810,11 +1844,17 @@ function lecturaMancuerna(filas, ind, ra, rb){
       : `<b>${suben}</b> ${suben === 1 ? "sube" : "suben"} y <b>${bajan}</b> ${bajan === 1 ? "baja" : "bajan"} entre los dos censos.`);
     const r = ritmoAnual(ra, rb, ind);
     if (r !== null)
-      li.push(`La región se mueve a <b>${signo(r)}${nf(Math.abs(r), Math.abs(r) < 1 ? 2 : 1)}${
+      li.push(`La RMSC + 3 se mueve a <b>${signo(r)}${nf(Math.abs(r), Math.abs(r) < 1 ? 2 : 1)}${
                esConteo(ind) ? "%" : " " + u} por año</b>, repartido sobre los ${nf(ANIOS_INTERCENSAL, 0)}
                años entre censos. <span class="mc-adv">Es un promedio: el censo da dos puntos y no
                dice nada de lo que pasó en el medio.</span>`);
   }
+  const sin12 = filas.filter(f => f.a === null && f.b !== null);
+  if (sin12.length)
+    li.push(`<span class="mc-adv">${sin12.length === 1
+      ? `<b>${sin12[0].m.nombre}</b> no tiene cifra de 2012`
+      : `<b>${sin12.length}</b> municipios no tienen cifra de 2012`}: su bolita va con
+      filete de tinta y sin trazo, porque no hay con qué compararla.</span>`);
   return `<div class="mc-lee">${li.map(t => `<p>${t}</p>`).join("")}</div>`;
 }
 
@@ -2094,7 +2134,7 @@ function ficha(e, i){
     }).join("");
   } else {
     document.getElementById("serie").innerHTML = "";
-    document.getElementById("d-mun").textContent = "Región Metropolitana";
+    document.getElementById("d-mun").textContent = "RMSC + 3";
     // ✂ Y ACÁ TAMPOCO VA LA POBLACIÓN. Es el MISMO renglón que el del municipio
     //   elegido: dejar el total de la región mientras el municipio ya no lo
     //   muestra parte el criterio en dos dentro del mismo elemento.
@@ -2109,7 +2149,12 @@ function ficha(e, i){
        ★ Y DESDE 2026-08-26 TAMPOCO VAN CUANDO HAY MANCUERNA: ésa ya recorre los
          nueve, con el nombre, el valor y además los dos censos. Repetirlas
          debajo era decir tres veces lo mismo. */
-    if ((MZS && i.k_mz && MZS[i.k_mz]) || (i.s12 && i.fuente !== "fiscal" && i.k_mun)){
+    /* ★ Y TAMPOCO VAN CUANDO NO HAY NADA QUE PONER EN ELLAS (2026-08-26).
+         Con un indicador sin serie 2012, en modo Cambio las nueve tarjetas
+         salían todas con «s/d»: nueve veces el mismo vacío, debajo de un motivo
+         que ya está escrito arriba una vez y bien. */
+    if ((MZS && i.k_mz && MZS[i.k_mz]) || (i.s12 && i.fuente !== "fiscal" && i.k_mun)
+        || mudo(i)){
       g.innerHTML = "";
     } else {
       g.innerHTML = MUN.slice().sort((a,b) => {
