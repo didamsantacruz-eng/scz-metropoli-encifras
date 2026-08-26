@@ -98,6 +98,21 @@ def main():
     if cambios:
         print("  paleta resincronizada:", ", ".join(cambios))
     base = FUENTE.read_text(encoding="utf-8")
+    # ★ EL MAPA BASE, HORNEADO (2026-08-26). CARTO empezó a exigir clave para sus
+    #   bases ráster y el sitio publicado apareció con «API KEY REQUIRED» encima
+    #   de los dos mapas. Ahora la base es vectorial y viene fijada en
+    #   `plantilla/mapa_base.json`, que produce `scripts/bajar_mapa_base.py`.
+    #   Se inyecta acá y no se pide en caliente: el mapa se construye de forma
+    #   síncrona y meter un `fetch` antes obligaría a envolver todo el tablero
+    #   en la promesa.
+    mapa_base = RAIZ / "plantilla" / "mapa_base.json"
+    if not mapa_base.exists():
+        sys.exit(f"falta {mapa_base}\n  correr antes: python scripts/bajar_mapa_base.py")
+    if "__MAPA_BASE__" not in base:
+        sys.exit("la plantilla no tiene el marcador __MAPA_BASE__")
+    estilo = mapa_base.read_text(encoding="utf-8").replace("</script", "<\\/script")
+    base = base.replace("__MAPA_BASE__", estilo)
+    print(f"  mapa base horneado: {len(estilo)/1024:.0f} KB")
     for slug, cfg in SITIOS.items():
         d = RAIZ / "docs" / slug
         d.mkdir(exist_ok=True)

@@ -299,6 +299,11 @@ body.dark{--ser-mun:#43b3bd;--ser-reg:#c3d0d6}
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
+<!-- Los dos estilos vectoriales de CARTO, horneados. Los baja y fusiona
+     `scripts/bajar_mapa_base.py` en `plantilla/mapa_base.json` y los inyecta
+     acá `generar_sitios.py`. Va como JSON y no como literal de JavaScript para
+     que ningún carácter del estilo pueda romper el parseo. -->
+<script id="mapa-base" type="application/json">__MAPA_BASE__</script>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
    ATLAS METROPOLITANO DE SANTA CRUZ
@@ -514,10 +519,19 @@ function aplicarTema(oscuro, guardar){
   const b = document.getElementById("theme-btn");
   if (b) b.title = oscuro ? "Modo claro" : "Modo oscuro";
   if (guardar) { try { localStorage.setItem("scz-tema", oscuro ? "dark" : "light"); } catch(_){} }
-  if (map && map.getLayer && map.getLayer("base_claro")){
-    map.setLayoutProperty("base_claro", "visibility", oscuro ? "none" : "visible");
-    map.setLayoutProperty("base_oscuro", "visibility", oscuro ? "visible" : "none");
-    map.setPaintProperty("fondo", "background-color", oscuro ? "#12181c" : "#eeebe1");
+  if (map && map.getLayer && map.getLayer("velo")){
+    /* Ya no son dos capas ráster sino dos juegos de 67 capas vectoriales, uno
+       por tema. Conmutar visibilidad es instantáneo —MapLibre saltea las
+       invisibles— y sigue evitando `setStyle()`, que se llevaría puestas las
+       capas de municipios y manzanas. */
+    for (const id of CAPAS_BASE.claro)
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", oscuro ? "none" : "visible");
+    for (const id of CAPAS_BASE.oscuro)
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", oscuro ? "visible" : "none");
+    const fondo = oscuro ? "#12181c" : "#eeebe1";
+    map.setPaintProperty("fondo", "background-color", fondo);
+    map.setPaintProperty("velo", "background-color", fondo);
+    map.setPaintProperty("velo", "background-opacity", oscuro ? VELO.oscuro : VELO.claro);
     const borde = oscuro ? "#12181c" : "#ffffff";
     if (map.getLayer("mun-line")) map.setPaintProperty("mun-line", "line-color", borde);
     if (map.getLayer("mz-line")) map.setPaintProperty("mz-line", "line-color", borde);
@@ -786,32 +800,63 @@ function fmtM(v, ind){
    Teselas CARTO (las mismas que ya usa el Observatorio Urbano), en versión
    clara y oscura para acompañar el tema. Es la única dependencia externa del
    tablero además de la tipografía. */
-const BASE = {
-  claro: "https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  oscuro: "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+/* ⛔ 2026-08-26 — CARTO EMPEZÓ A EXIGIR CLAVE PARA SUS BASES RÁSTER.
+   El sitio publicado apareció con «API KEY REQUIRED» estampado sobre los dos
+   mapas. No falla ni da error: responde 200 y devuelve la tesela con la marca
+   encima, así que el tablero «funciona» y se ve roto. Se verificó renderizando
+   una por una: están marcadas `light_all`, `dark_all` y también las partidas
+   `light_nolabels` / `dark_nolabels` ⇒ **partir la ráster NO alcanza**.
+
+   Lo que sigue siendo gratuito y sin clave son los estilos VECTORIALES GL más
+   la capa ráster de SÓLO RÓTULOS, que sí sale limpia. Es la combinación que usa
+   `desarrollo-infantil.pages.dev`, el tablero que inspiró este zoom, y de ahí
+   salió el arreglo.
+
+   Los dos estilos vienen HORNEADOS por `scripts/bajar_mapa_base.py` en
+   `plantilla/mapa_base.json`, y los inyecta `generar_sitios.py`. Se hornean, y
+   no se piden en caliente, porque el mapa se construye de forma SÍNCRONA y todo
+   lo que sigue depende de que `map` exista: meter un `fetch` antes obligaría a
+   envolver el resto en la promesa, que es la clase de cambio que ya dejó una vez
+   el tablero en blanco en producción. */
+const MAPA_BASE = JSON.parse(document.getElementById("mapa-base").textContent);
+const ATRIB = MAPA_BASE.atribucion;
+/* El velo repone el desvanecido que antes daba `raster-opacity`: la base no
+   puede competir con la coropleta, y en vectorial no hay una opacidad global
+   que valga para las 66 capas de una vez. Una capa `background` translúcida
+   encima de la base hace lo mismo con una sola declaración. */
+const VELO = {claro: .10, oscuro: .26};
+const CAPAS_BASE = {
+  claro: MAPA_BASE.capas.claro.map(c => c.id),
+  oscuro: MAPA_BASE.capas.oscuro.map(c => c.id),
 };
-const ATRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/attributions">CARTO</a>';
 /* Las DOS bases van en el estilo desde el arranque y se alterna la visibilidad.
    Cambiar de tema con `setStyle()` sería lo obvio y está mal: eso reemplaza el
    estilo entero y se lleva puestas las capas de municipios y manzanas, que
    habría que volver a agregar y repintar. */
 function estiloBase(oscuro){
-  const raster = (id, url, vis, op) => ({
-    id, type: "raster", source: id, layout: {visibility: vis},
-    paint: {"raster-opacity": op, "raster-saturation": -.78}
-  });
+  const fondo = oscuro ? "#12181c" : "#eeebe1";
+  const capas = [{id: "fondo", type: "background",
+                  paint: {"background-color": fondo}}];
+  for (const tema of ["claro", "oscuro"]){
+    const visible = (tema === "oscuro") === !!oscuro;
+    for (const c of MAPA_BASE.capas[tema]){
+      /* copia propia: si se reusara el objeto del paquete, un segundo montaje
+         del mapa heredaría la visibilidad que dejó el primero */
+      const capa = JSON.parse(JSON.stringify(c));
+      capa.layout = Object.assign({}, capa.layout,
+                                  {visibility: visible ? "visible" : "none"});
+      capas.push(capa);
+    }
+  }
+  capas.push({id: "velo", type: "background",
+              paint: {"background-color": fondo,
+                      "background-opacity": oscuro ? VELO.oscuro : VELO.claro}});
   return {
     version: 8,
-    sources: {
-      base_claro: {type: "raster", tiles: [BASE.claro], tileSize: 256, attribution: ATRIB},
-      base_oscuro: {type: "raster", tiles: [BASE.oscuro], tileSize: 256, attribution: ATRIB},
-    },
-    layers: [
-      {id: "fondo", type: "background",
-       paint: {"background-color": oscuro ? "#12181c" : "#eeebe1"}},
-      raster("base_claro", BASE.claro, oscuro ? "none" : "visible", .92),
-      raster("base_oscuro", BASE.oscuro, oscuro ? "visible" : "none", .78),
-    ]
+    glyphs: MAPA_BASE.glyphs,
+    sprite: MAPA_BASE.sprite,
+    sources: MAPA_BASE.sources,
+    layers: capas,
   };
 }
 try {
