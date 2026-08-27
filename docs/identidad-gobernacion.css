@@ -103,15 +103,6 @@ body.dark{
   --sh:0 1px 0 #0006, 0 10px 30px #0004;
 }
 
-/* ── La marca en la barra superior ────────────────────────────────────────
-   El logotipo entregado es apaisado (688×168 ≈ 4,1:1). Se fija por ALTO y el
-   ancho sale solo: fijarlo por ancho lo deformaba al encogerse la barra. */
-.marca{display:flex;align-items:center;flex-shrink:0;height:30px;
-  text-decoration:none;transition:opacity .15s}
-.marca img{height:26px;width:auto;display:block}
-.marca:hover{opacity:.82}
-.marca:focus-visible{outline:2px solid var(--scz-verde);outline-offset:3px;border-radius:2px}
-
 /* ── La marca en el pie del panel izquierdo ─────────────────────────────── */
 .marca-pie{display:block;margin:0 0 7px;text-decoration:none}
 .marca-pie img{height:30px;width:auto;max-width:100%;display:block}
@@ -120,13 +111,6 @@ body.dark .marca-pie img{content:url("img/scz-oscuro.png")}
 
 /* En pantallas angostas la barra se queda sin sitio: primero se va el
    subtítulo y después el logotipo, antes que apretar los conmutadores. */
-@media (max-width:720px){
-  .marca img{height:22px}
-}
-@media (max-width:520px){
-  .marca{display:none}
-}
-
 /* ── Detalles que el cambio de paleta deja fuera de tono ───────────────────
    El contorno del municipio seleccionado y el marcador del termómetro estaban
    en el oro del Observatorio (#ee9b00), que contra la rampa nueva compite con

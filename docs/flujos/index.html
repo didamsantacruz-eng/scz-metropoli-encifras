@@ -22,8 +22,6 @@ html,body{margin:0;background:var(--fondo);color:var(--tx);
   font:400 16px/1.55 var(--f);-webkit-font-smoothing:antialiased}
 header{background:var(--topbar);color:#fff;padding:.9rem 1.4rem;display:flex;align-items:center;gap:.9rem;
   position:sticky;top:0;z-index:30}
-.marca{display:flex;align-items:center;flex:none;text-decoration:none}
-.marca img{height:26px;width:auto;display:block}
 .t-h{font:600 1.02rem/1.2 var(--fd)}
 .t-h b{color:var(--verde)}
 .t-n{font-size:.68rem;color:rgba(255,255,255,.62);margin-top:.15rem}
@@ -154,13 +152,10 @@ svg.bandas{width:100%;height:auto}
 <body>
 
 <header>
-  <a class="marca" href="../index.html" aria-label="Volver al portal">
-    <img src="../img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
-  </a>
-  <div>
+  <a href="../index.html" aria-label="Volver al portal" style="text-decoration:none;color:inherit">
     <div class="t-h"><b>Santa Cruz:</b> dinámica metropolitana</div>
     <div class="t-n">Migración, conmutación laboral y estructura ocupacional en los 9 municipios</div>
-  </div>
+  </a>
   <div class="sp"></div>
   <button class="tbtn" id="tema">Modo oscuro</button>
 </header>
