@@ -1,681 +1,758 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quién llega y quién se mueve · Región Metropolitana de Santa Cruz</title>
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     LOS FLUJOS DE LA REGIÓN METROPOLITANA, CRUZADOS CON QUIÉN ES LA GENTE.
-
-     ★ TRES FENÓMENOS DISTINTOS, Y LA PÁGINA NO LOS MEZCLA. Llamar "migración" a
-       los tres es el error de fondo que esta estructura evita:
-         · de dónde NACIÓ la gente que vive acá  → un STOCK, sin fecha
-         · quién LLEGÓ entre 2019 y 2024         → un FLUJO fechado
-         · quién se MUEVE a trabajar cada día    → NO es migración: nadie se mudó
-       Cada sección dice cuál está mirando y con qué universo.
-
-     ★ LA FORMA SIGUE AL TRABAJO DEL DATO (no al revés):
-         polaridad (saldo, sobre/sub-representación) → barra divergente
-         magnitud comparable entre municipios       → barra secuencial ordenada
-         composición ordinal (distancia al origen)  → apilada con rampa ordinal
-         un número por PAR de municipios            → matriz, nunca un coroplético
-         dos grupos contra los mismos indicadores   → barras agrupadas, 2 colores
-     ═══════════════════════════════════════════════════════════════════════════ -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Santa Cruz Metrópoli en Cifras — Dinámica metropolitana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --f:'Inter',system-ui,sans-serif; --fd:'Fraunces',Georgia,serif;
-  --fondo:#f2efe8; --papel:#fff; --tinta:#0b1318; --suave:#66757e; --tenue:#8b9aa3;
-  --linea:#e2dccf; --linea2:#efeadf; --teal:#005f73; --oro:#ee9b00; --rojo:#c71e1d;
-  --s1:#0a9396; --s2:#ee9b00;
+  --f:'Inter',system-ui,sans-serif; --fd:'Newsreader',Georgia,serif;
+  --fondo:#eeebe1; --papel:#fffefb; --tx:#1d2321; --suave:#5f6a63; --faint:#949c96;
+  --linea:#d7d2c4; --linea2:#e6e2d6;
+  --verde:#8bc53f; --verde-prof:#00733b; --topbar:#04452a;
 }
 body.dark{
-  --fondo:#0b1318; --papel:#16222a; --tinta:#e8eef2; --suave:#94a7b0; --tenue:#6c828d;
-  --linea:#25353f; --linea2:#1d2c34; --teal:#94d2bd;
-  --s1:#1f9e91; --s2:#d99518;
+  --fondo:#12181c; --papel:#19201f; --tx:#e4e9e4; --suave:#9aa6a0; --faint:#6d7a74;
+  --linea:#2b3532; --linea2:#212a28; --topbar:#043520; --verde-prof:#8bc53f; --verde:#c3e08c;
 }
-html{background:var(--fondo)}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:var(--fondo);color:var(--tinta);
-  font:400 15px/1.6 var(--f);-webkit-font-smoothing:antialiased}
-
-header{background:#013a46;color:#fff;padding:.75rem 1.4rem;display:flex;align-items:center;gap:1rem;
-  position:sticky;top:0;z-index:20}
-.logo svg{width:30px;height:30px;display:block}
+html,body{margin:0;background:var(--fondo);color:var(--tx);
+  font:400 16px/1.55 var(--f);-webkit-font-smoothing:antialiased}
+header{background:var(--topbar);color:#fff;padding:.9rem 1.4rem;display:flex;align-items:center;gap:.9rem;
+  position:sticky;top:0;z-index:30}
+.marca{display:flex;align-items:center;flex:none;text-decoration:none}
+.marca img{height:26px;width:auto;display:block}
 .t-h{font:600 1.02rem/1.2 var(--fd)}
-.t-h b{color:var(--oro);font-weight:600}
-.t-n{font-size:.66rem;color:rgba(255,255,255,.6);margin-top:.1rem}
+.t-h b{color:var(--verde)}
+.t-n{font-size:.68rem;color:rgba(255,255,255,.62);margin-top:.15rem}
 .sp{flex:1}
-.tbtn{background:transparent;border:1px solid rgba(255,255,255,.24);color:rgba(255,255,255,.8);
-  font:600 .68rem var(--f);padding:6px 11px;cursor:pointer}
-.tbtn:hover{background:rgba(255,255,255,.12);color:#fff}
+.tbtn{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font:600 .68rem var(--f);
+  padding:6px 11px;cursor:pointer;border-radius:2px}
+.tbtn:hover{background:rgba(255,255,255,.12)}
 
-main{max-width:1080px;margin:0 auto;padding:2rem 1.4rem 4rem}
-.lede{font:400 1.12rem/1.62 var(--f);color:var(--tinta);max-width:63ch;margin:0 0 1.6rem}
-.lede b{font-weight:600}
-h2{font:700 1.32rem/1.25 var(--fd);margin:3rem 0 .2rem;letter-spacing:-.01em}
-h2 .num{color:var(--oro);font-size:.8em;margin-right:.4rem}
-.dek{color:var(--suave);font-size:.9rem;margin:0 0 1.3rem;max-width:66ch}
-.uni{font-size:.72rem;color:var(--tenue);border-left:2px solid var(--linea);
-  padding-left:.7rem;margin:.6rem 0 1.2rem;max-width:70ch;line-height:1.5}
+.nav-buscador{position:sticky;top:57px;z-index:29;background:var(--papel);border-bottom:1px solid var(--linea);
+  padding:.7rem 1.4rem;display:flex;align-items:center;gap:.7rem}
+.nav-buscador label{font:600 .68rem var(--f);text-transform:uppercase;letter-spacing:.05em;color:var(--suave)}
 
-/* ── tarjetas de cifra: un titular no es un gráfico, y forzarlo a serlo lo entierra ── */
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:1px;
-  background:var(--linea);border:1px solid var(--linea);margin:1.6rem 0 .4rem}
-.tile{background:var(--papel);padding:.95rem 1.05rem}
-.tile .k{font-size:.66rem;color:var(--suave);font-weight:600;text-transform:uppercase;
-  letter-spacing:.05em;line-height:1.3;min-height:2.6em}
-.tile .v{font:700 1.86rem/1.05 var(--fd);letter-spacing:-.02em;margin:.35rem 0 .1rem}
-.tile .d{font-size:.74rem;color:var(--suave);line-height:1.4}
-.tile.neg .v{color:var(--rojo)}
-body.dark .tile.neg .v{color:#e8735f}
+.estado-carga{padding:1.4rem;color:var(--suave);font-size:.9rem}
 
-figure{margin:0 0 .6rem;background:var(--papel);border:1px solid var(--linea);padding:1rem 1.1rem}
-figcaption{font-size:.75rem;color:var(--suave);line-height:1.5;border-top:1px solid var(--linea2);
-  padding-top:.6rem;margin-top:.5rem}
-figcaption b{color:var(--tinta);font-weight:600}
-.g{width:100%}
-.dos{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-@media(max-width:820px){.dos{grid-template-columns:1fr}}
+.portada{margin-bottom:2.6rem;padding-bottom:2rem;border-bottom:1px solid var(--linea)}
+.portada h1{font:600 1.5rem/1.3 var(--fd);margin:0 0 1.1rem;letter-spacing:-.01em}
+.tarjetas{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
+@media(max-width:920px){.tarjetas{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.tarjetas{grid-template-columns:1fr}}
+.tarjeta{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;
+  width:100%;text-align:left;vertical-align:top;background:var(--papel);border:1px solid var(--linea);
+  overflow:hidden;transition:transform .12s,box-shadow .12s}
+.tarjeta:hover, .tarjeta:focus-visible{transform:translateY(-3px);box-shadow:0 8px 18px #12203524;outline:none}
+.tarjeta .prev{height:78px;width:100%;flex:none}
+.tarjeta .cuerpo{padding:.8rem .9rem .9rem;flex:1}
+.tarjeta .num{font:600 .6rem var(--f);color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
+.tarjeta h3{font:600 .9rem/1.3 var(--fd);margin:.2rem 0 .35rem;color:var(--tx)}
+.tarjeta p{font-size:.74rem;color:var(--suave);line-height:1.45;margin:0}
 
-table{border-collapse:collapse;width:100%;font-size:.72rem;font-variant-numeric:tabular-nums}
-th,td{padding:.32rem .5rem;border-bottom:1px solid var(--linea2);text-align:right;white-space:nowrap}
-th:first-child,td:first-child{text-align:left}
-thead th{color:var(--suave);font-weight:600;font-size:.63rem;text-transform:uppercase;letter-spacing:.04em}
-details{margin-top:.7rem}
-summary{cursor:pointer;font-size:.73rem;color:var(--teal);font-weight:600}
-.pie{margin-top:3.4rem;padding-top:1.2rem;border-top:1px solid var(--linea);
-  font-size:.76rem;color:var(--suave);line-height:1.65}
-.pie h3{font:600 .9rem var(--fd);color:var(--tinta);margin:1.2rem 0 .3rem}
-.pie code{font-size:.9em;background:var(--linea2);padding:1px 4px}
+main{max-width:1180px;margin:0 auto;padding:1.5rem 1.4rem 4rem}
+h2{font:600 1.15rem/1.3 var(--fd);margin:0 0 .3rem;letter-spacing:-.005em}
+h3.sub{font:600 .9rem/1.3 var(--fd);margin:1.5rem 0 .3rem;color:var(--tx)}
+.dek{color:var(--suave);font-size:.82rem;margin:0 0 .8rem;max-width:70ch;line-height:1.55}
+.expl{background:var(--linea2);border-left:3px solid var(--verde-prof);padding:.55rem .8rem;
+  font-size:.76rem;color:var(--suave);margin:0 0 1rem;max-width:72ch;line-height:1.5}
+.panel{background:var(--papel);border:1px solid var(--linea)}
+section.grafico{margin-bottom:3rem}
+select{font:500 .86rem var(--f);color:var(--tx);background:var(--papel);border:1px solid var(--linea);
+  padding:.5rem .6rem;min-width:200px}
+.campo label{display:block;font:600 .64rem var(--f);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--suave);margin-bottom:.35rem}
+.controles{display:flex;flex-wrap:wrap;gap:1.3rem;margin-bottom:1rem;align-items:end}
+.segm{display:inline-flex;border:1px solid var(--linea)}
+.segm button{all:unset;cursor:pointer;padding:.4rem .8rem;font:600 .76rem var(--f);color:var(--suave)}
+.segm button.on{background:var(--verde-prof);color:#fff}
+.segm button:not(:last-child){border-right:1px solid var(--linea)}
+
+.leyenda{display:flex;flex-wrap:wrap;gap:1rem;padding:.7rem 1.1rem 0;font-size:.7rem;color:var(--suave)}
+.leyenda span{display:inline-flex;align-items:center;gap:.35rem}
+.leyenda i{width:12px;height:12px;display:inline-block;flex:none}
+
+.grad-leyenda{display:flex;align-items:center;gap:.6rem;padding:.6rem 1.1rem 0;font-size:.72rem;color:var(--suave)}
+.grad-barra{flex:1;max-width:320px;height:14px;border:1px solid var(--linea)}
+
+.eje-escala{display:grid;gap:.5rem;padding:.4rem 1.1rem 0;font-size:.66rem;color:var(--faint);
+  font-variant-numeric:tabular-nums}
+.eje-escala .r{display:flex;justify-content:space-between}
+.eje-escala b{font-weight:600}
+
+.rk-fila{display:flex;align-items:center;gap:.7rem;padding:.42rem 1rem;border-bottom:1px solid var(--linea2)}
+.rk-fila:last-child{border-bottom:none}
+.rk-mun{width:180px;flex:none;font-size:.82rem}
+.rk-pista{position:relative;flex:1;height:19px;background:var(--linea2)}
+.rk-b{position:absolute;top:0;bottom:0;left:0;background:var(--verde-prof)}
+
+.pista-v{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:.71rem;font-weight:700;
+  font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none}
+
+.or-fila{display:grid;grid-template-columns:132px 1fr;align-items:center;gap:.7rem;
+  padding:.5rem 1rem;border-bottom:1px solid var(--linea2)}
+.or-fila:last-child{border-bottom:none}
+.or-mun{font-size:.84rem;font-weight:600}
+.or-barra{display:flex;height:24px;overflow:hidden;width:100%}
+.or-seg{display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;
+  overflow:hidden;white-space:nowrap}
+.or-nota{padding:.6rem 1.1rem 0;font-size:.7rem;color:var(--faint)}
+
+.mx-wrap{overflow-x:auto;padding:1.1rem}
+table.mx{border-collapse:collapse;font-size:.72rem;margin:0 auto}
+table.mx th{font-weight:600;color:var(--suave);padding:.3rem .3rem;font-size:.64rem;white-space:nowrap}
+table.mx th.rot{writing-mode:vertical-rl;text-orientation:mixed;height:118px;vertical-align:bottom}
+table.mx th.fila{text-align:right;padding-right:.6rem;color:var(--tx);font-size:.72rem}
+table.mx td{padding:0;text-align:center}
+.mx-cel{width:54px;height:38px;display:flex;align-items:center;justify-content:center;
+  font:700 .7rem var(--f);font-variant-numeric:tabular-nums}
+.mx-cel.diag{background:repeating-linear-gradient(45deg,var(--linea2),var(--linea2) 4px,var(--fondo) 4px,var(--fondo) 8px)}
+
+svg.bandas{width:100%;height:auto}
+.nodo-et{font:600 11.5px var(--f);fill:var(--tx)}
+
+.pf-fila{display:grid;grid-template-columns:180px 1fr 1fr;align-items:center;gap:.6rem;
+  padding:.42rem 1rem;border-bottom:1px solid var(--linea2)}
+.pf-fila:last-child{border-bottom:none}
+.pf-mun{font-size:.82rem}
+.pf-pista{position:relative;height:17px;background:var(--linea2)}
+.pf-b{position:absolute;top:0;bottom:0;left:0}
+.pf-b.a{background:var(--verde)}
+.pf-b.b{background:var(--verde-prof)}
+
+.mono-grupo{padding:.5rem 1.1rem .9rem;border-bottom:1px solid var(--linea2)}
+.mono-grupo:last-child{border-bottom:none}
+.mono-tit{font-size:.78rem;font-weight:600;color:var(--tx);margin-bottom:.35rem}
+.mono-fila{display:grid;grid-template-columns:190px 1fr;align-items:center;gap:.5rem;padding:.16rem 0}
+.mono-et{font-size:.7rem;color:var(--suave)}
+.mono-pista{position:relative;height:15px;background:var(--linea2)}
+.mono-b{position:absolute;top:0;bottom:0;left:0}
+
+.div-fila{display:grid;grid-template-columns:190px 1fr;align-items:center;gap:.5rem;
+  padding:.3rem 1.1rem}
+.div-et{font-size:.74rem;color:var(--suave)}
+.div-pista{position:relative;height:15px;background:var(--linea2)}
+.div-cero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--faint)}
+.div-b{position:absolute;top:0;bottom:0}
+
+.bf-fila{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:.5rem;
+  padding:.4rem 1rem;border-bottom:1px solid var(--linea2)}
+.bf-fila:last-child{border-bottom:none}
+.bf-mun{font-size:.82rem}
+.bf-pista{position:relative;height:19px;background:var(--linea2)}
+.bf-cero{position:absolute;left:50%;top:-3px;bottom:-3px;width:1.5px;background:var(--tx)}
+.bf-izq{position:absolute;right:50%;top:0;bottom:0;background:var(--verde)}
+.bf-der{position:absolute;left:50%;top:0;bottom:0;background:var(--verde-prof)}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo"><svg viewBox="0 0 200 200">
-    <polygon points="100,10 155,35 191,84 173,142 130,183 69,185 26,143 10,84 45,35" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="7"/>
-    <polygon points="100,38 138,55 165,90 152,131 121,160 78,161 47,132 36,90 62,55" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="6"/>
-    <polygon points="100,64 124,75 141,97 133,124 113,143 86,144 66,125 59,97 76,75" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="5"/>
-  </svg></div>
+  <a class="marca" href="../index.html" aria-label="Volver al portal">
+    <img src="../img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
+  </a>
   <div>
-    <div class="t-h"><b>Santa Cruz:</b> quién llega y quién se mueve</div>
-    <div class="t-n">Observatorio de Finanzas Públicas y Desarrollo Territorial · Censo 2024</div>
+    <div class="t-h"><b>Santa Cruz:</b> dinámica metropolitana</div>
+    <div class="t-n">Migración, conmutación laboral y estructura ocupacional en los 9 municipios</div>
   </div>
   <div class="sp"></div>
   <button class="tbtn" id="tema">Modo oscuro</button>
 </header>
 
+<div class="nav-buscador">
+  <label>Buscar gráfico</label>
+  <select id="nav-sel"></select>
+</div>
+
 <main>
-  <p class="lede" id="lede">Cargando…</p>
-  <div class="tiles" id="tiles"></div>
-  <div class="uni">Los tres fenómenos de esta página son distintos y no se suman entre sí:
-    <b>dónde nació</b> la gente que hoy vive acá es un stock sin fecha; <b>quién llegó entre
-    2019 y 2024</b> es un flujo fechado; y <b>quién se mueve a trabajar</b> no es migración —
-    esa gente no se mudó, se desplaza todos los días.</div>
 
-  <h2><span class="num">1</span>El saldo: ocho ganan, uno pierde</h2>
-  <p class="dek" id="dek1"></p>
-  <figure><div class="g" id="g-neto" style="height:330px"></div>
-    <figcaption id="cap-neto"></figcaption></figure>
-  <figure><div class="g" id="g-tasa" style="height:330px"></div>
-    <figcaption id="cap-tasa"></figcaption></figure>
+<div class="estado-carga" id="estado-carga">Cargando datos…</div>
 
-  <h2><span class="num">2</span>De dónde salió la población de cada municipio</h2>
-  <p class="dek" id="dek2"></p>
-  <figure><div class="g" id="g-origen" style="height:380px"></div>
-    <figcaption id="cap-origen"></figcaption>
-    <details><summary>Ver los números exactos</summary><div id="t-origen"></div></details></figure>
+<div id="contenido" style="display:none">
 
-  <h2><span class="num">3</span>Quién se muda adónde, dentro de la región</h2>
-  <p class="dek" id="dek3"></p>
-  <figure><div class="g" id="g-matriz" style="height:440px"></div>
-    <figcaption id="cap-matriz"></figcaption></figure>
+  <section class="portada">
+    <h1>Dinámica metropolitana</h1>
+    <div class="tarjetas" id="portada-tarjetas"></div>
+  </section>
 
-  <h2><span class="num">4</span>Quién llega: el perfil de los recién llegados</h2>
-  <p class="dek" id="dek4"></p>
-  <div class="dos">
-    <figure><div class="g" id="g-perfil" style="height:330px"></div>
-      <figcaption id="cap-perfil"></figcaption></figure>
-    <figure><div class="g" id="g-edades" style="height:330px"></div>
-      <figcaption id="cap-edades"></figcaption></figure>
-  </div>
+  <section class="grafico" id="g-matriz">
+    <h2>Matriz de origen-destino</h2>
+    <div class="controles">
+      <div class="campo">
+        <div class="segm" id="seg-tipo">
+          <button data-v="trabajo" class="on">Conmutación laboral</button>
+          <button data-v="residencia5">Migración 2019–2024</button>
+        </div>
+      </div>
+    </div>
+    <div class="expl" id="expl-flujo"></div>
 
-  <h2><span class="num">5</span>La conmutación: quién se mueve y a qué trabajo entra</h2>
-  <p class="dek" id="dek5"></p>
-  <figure><div class="g" id="g-conm" style="height:330px"></div>
-    <figcaption id="cap-conm"></figcaption></figure>
-  <figure><div class="g" id="g-rama" style="height:430px"></div>
-    <figcaption id="cap-rama"></figcaption></figure>
-  <figure><div class="g" id="g-trab" style="height:430px"></div>
-    <figcaption id="cap-trab"></figcaption></figure>
+    <h3 class="sub">Base de cálculo, por municipio de origen (%)</h3>
+    <p class="dek">Cada fila de la matriz suma 100% sobre esta base — no sobre la población total del
+      municipio.</p>
+    <div class="panel" id="base-lista"></div>
+    <div class="eje-escala" style="grid-template-columns:180px 1fr">
+      <span></span><span class="r"><b>0%</b><b>25%</b><b>50%</b><b>75%</b><b>100%</b></span></div>
 
-  <div class="pie">
-    <h3>De dónde sale cada número</h3>
-    Microdato del <b>Censo de Población y Vivienda 2024</b> (INE), procesado con
-    <code>catalogo/analisis_flujos.py</code> y <code>catalogo/motor_flujos.py</code>.
-    Ningún número de esta página está escrito a mano: todos se leen de
-    <code>flujos_perfil.json</code> y <code>flujos_metro.json</code>.
-    <h3>Los universos, que no son intercambiables</h3>
-    · <b>Origen de toda la vida</b>: los 2.282.770 residentes enumerados, por su municipio de
-      nacimiento.<br>
-    · <b>Migración reciente</b>: residentes de <b>5 años o más</b> que declararon dónde vivían en
-      2019. Los menores de 5 quedan fuera a propósito: no existían, e incluirlos los contaría
-      como "no migrantes" y diluiría la tasa.<br>
-    · <b>Conmutación</b>: ocupados que declararon municipio de trabajo, <b>sin corte de edad</b>.
-      El indicador «Autocontención laboral» del tablero municipal corta en 14 años, así que
-      su porcentaje sale entre 0,1 y 0,4 pp más bajo. Son dos definiciones conviviendo
-      (<code>motor_persona.py:517</code> vs <code>motor_flujos.py:67</code>), no un error de cálculo.
-    <h3>Lo que el censo no puede decir</h3>
-    El lugar de trabajo se codifica <b>sólo hasta el municipio</b>, igual que la residencia.
-    No hay zona, localidad ni manzana: no se puede saber en qué parte de la ciudad trabaja
-    quien viene de Porongo. Las declaraciones parciales —"departamento sin municipio
-    especificado"— se conservan y se clasifican por su departamento, en vez de descartarse.
-  </div>
+    <h3 class="sub">Matriz de flujos (%)</h3>
+    <p class="dek">Fila: municipio de origen · columna: municipio de destino.</p>
+    <div class="panel"><div class="mx-wrap"><table class="mx" id="mx-tabla"></table></div></div>
+    <div class="grad-leyenda" id="mx-leyenda"></div>
+
+    <h3 class="sub">Diagrama de flujo origen-destino</h3>
+    <div class="panel"><svg class="bandas" id="band-svg"></svg></div>
+    <div class="grad-leyenda" id="band-leyenda"></div>
+
+    <h3 class="sub">Destinos de un municipio de origen</h3>
+    <div class="controles">
+      <div class="campo"><label>Municipio de origen</label><select id="sel-origen"></select></div>
+    </div>
+    <div class="panel" id="origen-uno-lista"></div>
+    <div class="eje-escala" style="grid-template-columns:180px 1fr">
+      <span></span><span class="r"><b>0%</b><b>25%</b><b>50%</b><b>75%</b><b>100%</b></span></div>
+  </section>
+
+  <section class="grafico" id="g-relacion">
+    <h2>Relación entre migración reciente y conmutación laboral</h2>
+    <div class="expl">Dos indicadores independientes, cada uno como % de su propia base — no son partes de
+      un mismo total. <b>Migración reciente:</b> % de la población de 5 años o más que llegó entre 2019 y
+      2024. <b>Conmutación:</b> % de los ocupados residentes que trabaja en otro municipio.</div>
+    <div class="panel" id="cruce-lista"></div>
+    <div class="leyenda">
+      <span><i style="background:var(--verde)"></i>% que llegó en los últimos 5 años</span>
+      <span><i style="background:var(--verde-prof)"></i>% que trabaja en otro municipio</span>
+    </div>
+    <div class="eje-escala" style="grid-template-columns:190px 1fr">
+      <span></span><span class="r"><b>0%</b><b>25%</b><b>50%</b><b>75%</b><b>100%</b></span></div>
+  </section>
+
+  <section class="grafico" id="g-origen">
+    <h2>Composición de la población residente por lugar de nacimiento</h2>
+    <p class="dek">Sobre quienes declararon su municipio de nacimiento (de toda la vida, sin fecha).</p>
+    <div class="panel">
+      <div id="or-lista"></div>
+    </div>
+    <div class="leyenda" id="or-leyenda"></div>
+    <p class="or-nota" id="or-nota"></p>
+  </section>
+
+  <section class="grafico" id="g-perfil">
+    <h2>Perfil sociodemográfico de la conmutación laboral</h2>
+    <div class="controles">
+      <div class="campo"><label>Ver</label>
+        <div class="segm" id="seg-modo-pf">
+          <button data-v="ind" class="on">Un indicador, los 9 municipios</button>
+          <button data-v="mun">Un municipio, todo su perfil</button>
+        </div>
+      </div>
+      <div class="campo" id="pf-campo-ind"><label>Indicador</label><select id="pf-car"></select></div>
+      <div class="campo" id="pf-campo-mun" style="display:none"><label>Municipio</label><select id="pf-mun"></select></div>
+    </div>
+    <div class="panel" id="pf-lista"></div>
+    <div class="leyenda">
+      <span><i style="background:var(--verde)"></i>Trabaja en otro municipio de la región</span>
+      <span><i style="background:var(--verde-prof)"></i>Trabaja en su propio municipio</span>
+    </div>
+    <div class="eje-escala" id="pf-eje"></div>
+  </section>
+
+  <section class="grafico" id="g-autocontencion">
+    <h2>Autocontención laboral y estructura ocupacional</h2>
+    <div class="controles">
+      <div class="campo"><label>Ver</label>
+        <div class="segm" id="seg-modo-auto">
+          <button data-v="ind" class="on">Un indicador, los 9 municipios</button>
+          <button data-v="mun">Un municipio, todo su desglose</button>
+        </div>
+      </div>
+      <div class="campo" id="auto-campo-ind"><label>Indicador</label><select id="auto-car"></select></div>
+      <div class="campo" id="auto-campo-mun" style="display:none"><label>Municipio</label><select id="auto-mun"></select></div>
+    </div>
+    <div class="panel" id="auto-vista"></div>
+    <div class="leyenda">
+      <span><i style="background:var(--verde)"></i>Trabaja en otro municipio de la región</span>
+      <span><i style="background:var(--verde-prof)"></i>Trabaja en su propio municipio</span>
+    </div>
+    <div class="eje-escala" id="auto-eje" style="grid-template-columns:180px 1fr"></div>
+  </section>
+
+</div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script>
 const $ = s => document.querySelector(s);
-const oscuro = () => document.body.classList.contains("dark");
-const nf = (v,d=0) => v==null||!isFinite(v) ? "s/d"
-  : (+v).toLocaleString("es-BO",{minimumFractionDigits:d,maximumFractionDigits:d});
-const sg = (v,d=0) => (v>0?"+":"") + nf(v,d);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nf = (v,d=1) => v==null||!isFinite(v) ? "s/d" : (+v).toLocaleString("es-BO",
+  {minimumFractionDigits:d,maximumFractionDigits:d});
+const sg = (v,d=1) => (v>0?"+":"") + nf(v,d);
+function hexRGB(h){ h=h.replace("#",""); const n=parseInt(h,16); return [n>>16&255, n>>8&255, n&255]; }
+function mezclar(h1,h2,t){
+  const a=hexRGB(h1), b=hexRGB(h2);
+  const c=a.map((v,i)=>Math.round(v+(b[i]-v)*Math.max(0,Math.min(1,t))));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+const GAMA = ["#e9d9a6","#c7cf8e","#89b84c","#4c8c46","#0c683b"];
+function gama(t){
+  t = Math.max(0, Math.min(1, t));
+  const n = GAMA.length-1;
+  const seg = Math.min(n-1, Math.floor(t*n));
+  const localT = t*n - seg;
+  return mezclar(GAMA[seg], GAMA[seg+1], localT);
+}
+function luminanciaHex(hex){
+  const [r,g,b] = hexRGB(hex).map(v=>v/255);
+  return .2126*r + .7152*g + .0722*b;
+}
+function luminanciaCSS(color){
+  if (color.startsWith("#")) return luminanciaHex(color);
+  const m = color.match(/\d+/g).map(Number);
+  const [r,g,b] = m.map(v=>v/255);
+  return .2126*r + .7152*g + .0722*b;
+}
+function gradCSS(){ return `linear-gradient(to right, ${GAMA.join(",")})`; }
+function ramaPorLetra(dictRama, letra){
+  const k = Object.keys(dictRama||{}).find(x=>x.startsWith(letra+"."));
+  return k ? dictRama[k] : 0;
+}
+function colorTema(varName){
+  /* la clase .dark vive en <body>, no en <html> — leer la variable desde
+     documentElement siempre devuelve el valor de :root (modo claro) */
+  return getComputedStyle(document.body).getPropertyValue(varName).trim();
+}
+function etiquetaCentrada(inicioPct, anchoPct, texto, colorFondoVar){
+  const centro = inicioPct + anchoPct/2;
+  const bg = colorTema(colorFondoVar);
+  /* color fijo, no una variable de tema: --tx cambia de claro a oscuro según
+     el tema, y acá lo que importa es el contraste contra ESTE fondo puntual */
+  const clr = luminanciaCSS(bg) > .55 ? "#0b1318" : "#fff";
+  return `<span class="pista-v" style="left:${centro}%;color:${clr}">${texto}</span>`;
+}
 
-/* ── PALETA ───────────────────────────────────────────────────────────────────
-   Cada job de color, su regla — y validadas con el script de dataviz, no a ojo.
+// ═══ tema claro/oscuro ═══════════════════════════════════════════════
+function aplicarTema(t){
+  document.body.classList.toggle("dark", t==="dark");
+  $("#tema").textContent = t==="dark" ? "Modo claro" : "Modo oscuro";
+}
+(function(){
+  const guardado = localStorage.getItem("scz-tema");
+  if (guardado) aplicarTema(guardado);
+  $("#tema").onclick = () => {
+    const oscuro = document.body.classList.contains("dark");
+    const nuevo = oscuro ? "light" : "dark";
+    aplicarTema(nuevo);
+    localStorage.setItem("scz-tema", nuevo);
+  };
+})();
 
-   · DOS SERIES que se comparan (llegados / ya estaban): par CATEGÓRICO.
-     `#0a9396` + `#ee9b00` pasa CVD ΔE 17,7 y visión normal 28,1 (el piso duro es
-     15). En oscuro sube a `#1f9e91` + `#d99518`, escalones propios de esa
-     superficie, no un volteo automático del claro.
-   · POLARIDAD (saldo migratorio, sobre/sub-representación por rama): DIVERGENTE
-     rojo↔teal, la del ecosistema, con el pivote clavado en cero.
-   · MAGNITUD (tasa de llegada, matriz): SECUENCIAL de un solo tono.
-   · ORIGEN: es ORDINAL —distancia a casa, de "nació acá" a "exterior"— y por eso
-     va con rampa secuencial y no con 5 hues categóricos. Forzarlo a categórico
-     falla el piso de visión normal (los tres teales quedan a ΔE 10) y además
-     mentiría sobre la naturaleza del dato: no son cinco identidades, es una
-     distancia. */
-const S1 = () => oscuro() ? "#1f9e91" : "#0a9396";
-const S2 = () => oscuro() ? "#d99518" : "#ee9b00";
-const DIV = ["#8f1f22","#c71e1d","#df5d25","#eda13e","#e9d8a6","#94d2bd","#0a9396","#005f73","#00323d"];
-const SEC_CLARO  = ["#e9f2ef","#c4e3d8","#94d2bd","#4fb3a4","#0a9396","#00707c","#005f73","#00323d"];
-const SEC_OSCURO = ["#1a2a31","#1d3d45","#215058","#26666d","#2d8286","#3fa199","#6cc0ae","#a6dccb"];
-const sec = () => oscuro() ? SEC_OSCURO : SEC_CLARO;
-/* rampa ORDINAL de origen: oscuro = nació acá, y se aclara con la distancia */
-const ORIG = () => oscuro()
-  ? ["#a6dccb","#4fa89b","#2d6f78","#1e4c55","#16333a"]
-  : ["#00434f","#0a7d84","#4fb3a4","#a8d8c6","#dcebe4"];
+// ═══ navegación / buscador de gráficos ═══════════════════════════════
+const GRAFICOS = [
+  ["g-matriz","Matriz de origen-destino",
+    "Cuánta gente se mueve entre cada par de municipios, en matriz y en diagrama de flujo."],
+  ["g-relacion","Relación migración–conmutación",
+    "Compara, por municipio, qué % llegó hace poco contra qué % trabaja en otro municipio."],
+  ["g-origen","Composición por lugar de nacimiento",
+    "De qué municipio, departamento o país nació la población que hoy vive en cada uno de los 9."],
+  ["g-perfil","Perfil sociodemográfico de conmutación",
+    "Edad, años de estudio y nivel educativo de quien trabaja en su propio municipio contra quien lo hace en otro."],
+  ["g-autocontencion","Autocontención y estructura ocupacional",
+    "Qué % se queda a trabajar en su municipio, y en qué rubros se concentra cada grupo."],
+];
+const optVacio = document.createElement("option"); optVacio.value=""; optVacio.textContent="";
+$("#nav-sel").appendChild(optVacio);
+GRAFICOS.forEach(([id,lab])=>{
+  const o=document.createElement("option"); o.value=id; o.textContent=lab; $("#nav-sel").appendChild(o);
+});
+function irAGrafico(sel){
+  $("#nav-sel").value = sel;
+  GRAFICOS.forEach(([id])=>{ $("#"+id).style.display = (!sel || sel===id) ? "" : "none"; });
+  if (sel) $("#"+sel).scrollIntoView({behavior:"smooth", block:"start"});
+}
+$("#nav-sel").onchange = () => irAGrafico($("#nav-sel").value);
 
-const ORIGEN = [["aqui","Nació en este municipio"],["region","Otro de la región"],
+// ═══ MATRIZ + BASE + BANDAS + BUSCADOR POR ORIGEN ═══════════════════════
+const EXPL_FLUJO = {
+  trabajo: "<b>Conmutación laboral:</b> personas ocupadas que cada día cruzan a otro municipio para trabajar, sin haberse mudado.",
+  residencia5: "<b>Migración interna 2019–2024:</b> personas que vivían en un municipio distinto al actual en 2019.",
+};
+let tipoFlujo = "trabajo";
+let DATA;
+$$("#seg-tipo button").forEach(b=>b.onclick=()=>{
+  $$("#seg-tipo button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  tipoFlujo = b.dataset.v;
+  $("#expl-flujo").innerHTML = EXPL_FLUJO[tipoFlujo];
+  renderBase(); renderMatriz(); renderBandas(); renderOrigenUno();
+});
+function M(){ return DATA.matrices[tipoFlujo].M; }
+function totalSinDiag(i){ return M()[i].reduce((a,v,j)=>i===j?a:a+v,0); }
+function pctFila(i,j){
+  if (i===j) return null;
+  const tot = totalSinDiag(i);
+  return tot ? M()[i][j]/tot*100 : 0;
+}
+function valoresFila(){
+  const out=[]; const n=DATA.municipios.length;
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++) if(i!==j) out.push(pctFila(i,j));
+  return out;
+}
+function renderBase(){
+  const ms = DATA.municipios;
+  const filas = ms.map((n,i)=>{
+    const total = totalSinDiag(i);
+    const base = tipoFlujo==="trabajo" ? DATA.conmuta[n].ocupados : DATA.contexto[n].pob_total;
+    return {n, pct: base ? total/base*100 : 0};
+  }).sort((a,b)=>b.pct-a.pct);
+  $("#base-lista").innerHTML = filas.map(f=>`
+    <div class="rk-fila"><span class="rk-mun">${f.n}</span>
+      <span class="rk-pista"><span class="rk-b" style="width:${f.pct}%"></span>
+        ${etiquetaCentrada(0, f.pct, nf(f.pct,1)+"%", "--verde-prof")}</span></div>`).join("");
+}
+function renderMatriz(){
+  const ms = DATA.municipios;
+  const vals = valoresFila();
+  const mx = Math.max(...vals);
+  let h = "<thead><tr><th></th>" + ms.map(n=>`<th class="rot">${n}</th>`).join("") + "</tr></thead><tbody>";
+  ms.forEach((_,i)=>{
+    h += `<tr><th class="fila">${ms[i]}</th>`;
+    ms.forEach((__,j)=>{
+      if (i===j){ h += `<td><div class="mx-cel diag"></div></td>`; return; }
+      const v = pctFila(i,j);
+      const bg = gama(v/mx);
+      const claro = luminanciaCSS(bg) > .55;
+      h += `<td><div class="mx-cel" style="background:${bg};color:${claro?'#0b1318':'#fff'}">${nf(v,0)}%</div></td>`;
+    });
+    h += "</tr>";
+  });
+  h += "</tbody>";
+  $("#mx-tabla").innerHTML = h;
+  $("#mx-leyenda").innerHTML = `<span>0%</span><div class="grad-barra" style="background:${gradCSS()}"></div><span>${nf(mx,0)}%</span>`;
+}
+function renderBandas(){
+  const ms = DATA.municipios, n = ms.length;
+  const vals = valoresFila();
+  const mx = Math.max(...vals);
+  const W = 760, H = 60 + n*54, PAD = 190;
+  const svg = $("#band-svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const y = i => 44 + i*54;
+  let s = `<text x="${PAD}" y="22" text-anchor="middle" font-weight="700" font-size="11" fill="var(--suave)" font-family="var(--f)">ORIGEN</text>
+           <text x="${W-PAD}" y="22" text-anchor="middle" font-weight="700" font-size="11" fill="var(--suave)" font-family="var(--f)">DESTINO</text>`;
+  const totRecibe = ms.map((_,j)=> ms.reduce((a,__,i)=> i===j?a:a+(pctFila(i,j)||0),0));
+  const ordenDer = ms.map((_,i)=>i).sort((a,b)=>totRecibe[b]-totRecibe[a]);
+  const yDer = {}; ordenDer.forEach((idx,pos)=>yDer[idx]=y(pos));
+
+  ms.forEach((_,i)=>ms.forEach((__,j)=>{
+    if (i===j) return;
+    const v = pctFila(i,j); if (v<=0) return;
+    const t = v/mx;
+    const w = 1 + t*9;
+    const color = gama(t);
+    const y1=y(i), y2=yDer[j];
+    const cx1 = PAD+40, cx2 = W-PAD-40;
+    s += `<path d="M${PAD+8},${y1} C${cx1},${y1} ${cx2},${y2} ${W-PAD-8},${y2}"
+            fill="none" stroke="${color}" stroke-width="${w}" opacity=".92"/>`;
+  }));
+  ms.forEach((nom,i)=>{
+    s += `<text class="nodo-et" x="${PAD-12}" y="${y(i)+4}" text-anchor="end">${nom}</text>`;
+  });
+  ordenDer.forEach((idx,pos)=>{
+    s += `<text class="nodo-et" x="${W-PAD+12}" y="${y(pos)+4}" text-anchor="start">${ms[idx]}</text>`;
+  });
+  svg.innerHTML = s;
+  $("#band-leyenda").innerHTML = `<span>0%</span><div class="grad-barra" style="background:${gradCSS()}"></div><span>${nf(mx,0)}%</span>`;
+}
+$("#sel-origen").onchange = renderOrigenUno;
+function renderOrigenUno(){
+  const ms = DATA.municipios;
+  const i = ms.indexOf($("#sel-origen").value || ms[0]);
+  const filas = ms.map((n,j)=> j===i ? null : {n, v:pctFila(i,j)}).filter(Boolean).sort((a,b)=>b.v-a.v);
+  $("#origen-uno-lista").innerHTML = filas.map(f=>`
+    <div class="rk-fila"><span class="rk-mun">${f.n}</span>
+      <span class="rk-pista"><span class="rk-b" style="width:${f.v}%"></span>
+        ${etiquetaCentrada(0, f.v, nf(f.v,1)+"%", "--verde-prof")}</span></div>`).join("");
+}
+
+// ═══ RELACIÓN migración × conmutación (escala fija 0–100) ═══════════════
+function renderCruce(){
+  const filas = DATA.municipios.map(n=>({
+    n, mig: DATA.migra_trabajo[n].pct_migrante_reciente, tra: DATA.migra_trabajo[n].pct_trabaja_fuera,
+  })).sort((a,b)=>b.mig-a.mig);
+  $("#cruce-lista").innerHTML = filas.map(f=>`
+    <div class="mono-grupo"><div class="mono-tit">${f.n}</div>
+      <div class="mono-fila"><span class="mono-et">Migración reciente</span>
+        <span class="mono-pista"><span class="mono-b" style="width:${f.mig}%;background:var(--verde)"></span>
+          ${etiquetaCentrada(0, f.mig, nf(f.mig,1)+"%", "--verde")}</span></div>
+      <div class="mono-fila"><span class="mono-et">Conmutación laboral</span>
+        <span class="mono-pista"><span class="mono-b" style="width:${f.tra}%;background:var(--verde-prof)"></span>
+          ${etiquetaCentrada(0, f.tra, nf(f.tra,1)+"%", "--verde-prof")}</span></div>
+    </div>`).join("");
+}
+
+// ═══ ORIGEN (composición por lugar de nacimiento) ═══════════════════════
+const ORIGEN_RAMPA = ["#0c683b","#4c8c46","#89b84c","#c7cf8e","#e9d9a6"];
+const ORIGEN_CAT = [["aqui","Nació acá"],["region","Otro de la región"],
   ["scz","Resto de Santa Cruz"],["otro_dep","Otro departamento"],["exterior","Exterior"]];
-const CORTO = {"Santa Cruz de la Sierra":"Santa Cruz","Colpa Bélgica":"Colpa Bél."};
-const ab = s => CORTO[s] || s;
-/* Las secciones CAEB vienen con su nombre largo ("I. Actividades de alojamiento y
-   de servicio de comidas"). Truncar a ciegas parte la palabra al medio y parece
-   un defecto de render; se usa el nombre corto ESTÁNDAR de cada sección, que
-   además es como se la nombra al hablar. El completo sigue en el tooltip.
-   Si apareciera una sección sin entrada, cae a un recorte por palabras — nunca a
-   media palabra. */
+const UMBRAL_ETQ = 2;
+function renderOrigen(){
+  const filas = DATA.municipios.map(n=>{
+    const o = DATA.origen[n], base = o.total - o.sd;
+    return {n, o, base};
+  });
+  filas.sort((a,b)=> (a.o.aqui/a.base) - (b.o.aqui/b.base));
+  const ocultos = [];
+  $("#or-lista").innerHTML = filas.map(({n,o,base})=>{
+    const segs = ORIGEN_CAT.map(([k],i)=>{
+      const pct = o[k]/base*100;
+      if (pct < UMBRAL_ETQ) ocultos.push(pct);
+      const txt = pct>=UMBRAL_ETQ ? nf(pct,1)+"%" : "";
+      const clr = luminanciaHex(ORIGEN_RAMPA[i]) > .55 ? "#0b1318" : "#fff";
+      return `<span class="or-seg" style="width:${pct}%;background:${ORIGEN_RAMPA[i]};color:${clr}"
+                title="${n}: ${ORIGEN_CAT[i][1]} ${nf(pct,1)}%">${txt}</span>`;
+    }).join("");
+    return `<div class="or-fila"><span class="or-mun">${n}</span><span class="or-barra">${segs}</span></div>`;
+  }).join("");
+  $("#or-leyenda").innerHTML = ORIGEN_CAT.map(([k,lab],i)=>
+    `<span><i style="background:${ORIGEN_RAMPA[i]}"></i>${lab}</span>`).join("");
+  $("#or-nota").textContent = ocultos.length
+    ? `Los tramos menores a ${UMBRAL_ETQ}% no muestran cifra dentro de la barra: van de ${nf(Math.min(...ocultos),1)}% a ${nf(Math.max(...ocultos),1)}%.`
+    : "";
+}
+
+// ═══ PERFIL — diverging desde cero, izquierda/derecha ═══════════════════
+const CARACTERISTICAS = [
+  ["edad_mediana","Edad mediana", v=>nf(v,0), " años", 45],
+  ["anios_estudio","Años de estudio", v=>nf(v,1), "", 16],
+  ["pct_superior","% con educación superior", v=>nf(v,0), "%", 100],
+];
+function filaDivergente(nombre, valorIzq, valorDer, tope, formatoTxt){
+  const aIzq = Math.min(50, valorIzq/tope*50), aDer = Math.min(50, valorDer/tope*50);
+  const bgIzq = colorTema("--verde");
+  const bgDer = colorTema("--verde-prof");
+  const clrIzq = luminanciaCSS(bgIzq) > .55 ? "#0b1318" : "#fff";
+  const clrDer = luminanciaCSS(bgDer) > .55 ? "#0b1318" : "#fff";
+  return `<div class="bf-fila"><span class="bf-mun">${nombre}</span>
+    <span class="bf-pista"><span class="bf-cero"></span>
+      <span class="bf-izq" style="width:${aIzq}%"></span>
+      <span class="bf-der" style="width:${aDer}%"></span>
+      <span class="pista-v" style="left:${50-aIzq/2}%;color:${clrIzq}">${formatoTxt(valorIzq)}</span>
+      <span class="pista-v" style="left:${50+aDer/2}%;color:${clrDer}">${formatoTxt(valorDer)}</span>
+    </span></div>`;
+}
+let modoPerfil = "ind";
+$$("#seg-modo-pf button").forEach(b=>b.onclick=()=>{
+  $$("#seg-modo-pf button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  modoPerfil = b.dataset.v;
+  $("#pf-campo-ind").style.display = modoPerfil==="ind" ? "" : "none";
+  $("#pf-campo-mun").style.display = modoPerfil==="mun" ? "" : "none";
+  renderPerfil();
+});
+$("#pf-car").onchange = renderPerfil;
+$("#pf-mun").onchange = renderPerfil;
+function renderPerfil(){
+  const [car, lab, fmt, unidad, tope] = CARACTERISTICAS.find(c=>c[0]===$("#pf-car").value) || CARACTERISTICAS[0];
+  if (modoPerfil==="ind"){
+    $("#pf-eje").innerHTML = `<span></span>
+      <span class="r"><b>${tope}${unidad}</b><b>0</b><b>${tope}${unidad}</b></span>`;
+    $("#pf-eje").style.gridTemplateColumns = "180px 1fr";
+    const filas = DATA.municipios.map(n=>({
+      n, a: DATA.conmuta[n].sale[car], b: DATA.conmuta[n].queda[car],
+    })).sort((x,y)=> y.a - x.a);
+    $("#pf-lista").innerHTML = filas.map(f=>filaDivergente(f.n, f.a, f.b, tope, fmt)).join("");
+  } else {
+    $("#pf-eje").innerHTML = "";
+    const n = $("#pf-mun").value || DATA.municipios[0];
+    const c = DATA.conmuta[n];
+    $("#pf-lista").innerHTML = CARACTERISTICAS.map(([k,lab,fmt,unidad,tope])=>{
+      const vs=c.sale[k], vq=c.queda[k];
+      const wS=Math.min(100,vs/tope*100), wQ=Math.min(100,vq/tope*100);
+      return `<div class="mono-grupo"><div class="mono-tit">${lab} (escala: 0 a ${tope}${unidad})</div>
+        <div class="mono-fila"><span class="mono-et">Trabaja en otro municipio de la región</span>
+          <span class="mono-pista"><span class="mono-b" style="width:${wS}%;background:var(--verde)"></span>
+            ${etiquetaCentrada(0, wS, fmt(vs)+unidad, "--verde")}</span></div>
+        <div class="mono-fila"><span class="mono-et">Trabaja en su propio municipio</span>
+          <span class="mono-pista"><span class="mono-b" style="width:${wQ}%;background:var(--verde-prof)"></span>
+            ${etiquetaCentrada(0, wQ, fmt(vq)+unidad, "--verde-prof")}</span></div>
+      </div>`;
+    }).join("");
+  }
+}
+
+// ═══ AUTOCONTENCIÓN + RUBRO ══════════════════════════════════════════
+const RUBROS = [["G","Comercio"],["F","Construcción"],["C","Manufactura"],
+  ["A","Agricultura"],["O","Administración pública"],["P","Enseñanza"],["Q","Salud"]];
+$("#auto-car").onchange = renderAuto;
+$("#auto-mun").onchange = renderAuto;
+
 const CAEB = {A:"Agricultura y ganadería", B:"Minería", C:"Manufactura",
   D:"Electricidad y gas", E:"Agua y saneamiento", F:"Construcción", G:"Comercio",
-  H:"Transporte y almacenamiento", I:"Alojamiento y comidas", J:"Información y comunicaciones",
-  K:"Finanzas y seguros", L:"Actividades inmobiliarias", M:"Profesionales y técnicas",
+  H:"Transporte", I:"Alojamiento y comidas", J:"Información y comunicaciones",
+  K:"Finanzas y seguros", L:"Inmobiliarias", M:"Profesionales y técnicas",
   N:"Servicios administrativos", O:"Administración pública", P:"Enseñanza", Q:"Salud",
-  R:"Arte y entretenimiento", S:"Otros servicios", T:"Hogares empleadores",
-  U:"Organismos internacionales"};
-function ramaCorta(s){
-  const m = s.match(/^([A-Z])\.\s*/);
-  if (m && CAEB[m[1]]) return CAEB[m[1]];
-  const t = s.replace(/^[A-Z]\.\s*/,"").split(/[,;]/)[0].trim();
-  if (t.length <= 28) return t;
-  return t.slice(0, t.lastIndexOf(" ", 28)) + "…";
+  R:"Arte y entretenimiento", S:"Otros servicios", T:"Hogares empleadores", U:"Organismos internacionales"};
+const ramaCorta = s => { const m=s.match(/^([A-Z])\.\s*/); return (m&&CAEB[m[1]]) ? CAEB[m[1]]
+  : s.replace(/^[A-Z]\.\s*/,"").split(/[,;]/)[0].trim().slice(0,28); };
+
+let MXD_GLOBAL = null;
+function calcularMxdGlobal(){
+  let mx = 1;
+  DATA.municipios.forEach(n=>{
+    const c = DATA.conmuta[n];
+    const claves = [...new Set([...Object.keys(c.sale.rama||{}), ...Object.keys(c.queda.rama||{})])];
+    claves.forEach(k=>{
+      if (/incompleta|especificar/i.test(k)) return;
+      const d = Math.abs((c.sale.rama[k]||0) - (c.queda.rama[k]||0));
+      if (d > mx) mx = d;
+    });
+  });
+  return mx;
 }
-
-let D, F, N, ORD, G = {};
-
-Promise.all([
-  fetch("../datos/flujos_perfil.json").then(r=>r.json()),
-  fetch("../datos/flujos_metro.json").then(r=>r.json()),
-]).then(([d,f])=>{
-  D = d; F = f;
-  N = Object.fromEntries(d.municipios.map(m=>[m.cod_ine,m.nombre]));
-  ORD = d.municipios.map(m=>m.cod_ine);
-  if (new URLSearchParams(location.search).get("tema")==="dark"){
-    document.body.classList.add("dark"); $("#tema").textContent = "Modo claro";
+function renderAuto(){
+  if (modoAuto==="ind"){
+    const sel = $("#auto-car").value;
+    $("#auto-eje").innerHTML = `<span></span><span class="r"><b>100%</b><b>50%</b><b>0</b><b>50%</b><b>100%</b></span>`;
+    if (sel === "__auto__"){
+      $("#auto-vista").innerHTML = DATA.municipios.map(n=>{
+        const queda = DATA.autocontencion[n], sale = 100-queda;
+        return filaDivergente(n, sale, queda, 100, v=>nf(v,1)+"%");
+      }).join("");
+    } else {
+      const filas = DATA.municipios.map(n=>{
+        const c = DATA.conmuta[n];
+        return {n, a: ramaPorLetra(c.sale.rama, sel), b: ramaPorLetra(c.queda.rama, sel)};
+      }).sort((x,y)=>y.a-x.a);
+      $("#auto-vista").innerHTML = filas.map(f=>filaDivergente(f.n, f.a, f.b, 100, v=>nf(v,1)+"%")).join("");
+    }
+  } else {
+    if (MXD_GLOBAL===null) MXD_GLOBAL = calcularMxdGlobal();
+    $("#auto-eje").innerHTML = "";
+    const n = $("#auto-mun").value || DATA.municipios[0];
+    const c = DATA.conmuta[n];
+    const claves = [...new Set([...Object.keys(c.sale.rama||{}), ...Object.keys(c.queda.rama||{})])]
+      .filter(k=>!/incompleta|especificar/i.test(k));
+    const filas = claves.map(k=>({k, a:(c.sale.rama||{})[k]||0, b:(c.queda.rama||{})[k]||0}))
+      .map(x=>({...x, d:x.a-x.b})).filter(x=>Math.abs(x.d)>=1).sort((a,b)=>a.d-b.d);
+    const auto = DATA.autocontencion[n];
+    $("#auto-vista").innerHTML = `
+      <div class="rk-fila"><span class="rk-mun">${n} — autocontención</span>
+        <span class="rk-pista"><span class="rk-b" style="width:${auto}%"></span>
+          ${etiquetaCentrada(0, auto, nf(auto,1)+"%", "--verde-prof")}</span></div>
+      <h3 class="sub" style="margin:1rem 1.1rem .2rem">Diferencia por rubro entre quien trabaja en otro municipio y quien lo hace en el propio (pp, escala fija ±${nf(MXD_GLOBAL,0)}pp)</h3>
+      ${filas.map(f=>{
+        const w = Math.abs(f.d)/MXD_GLOBAL*50;
+        const izq = f.d>=0 ? 50 : 50-w;
+        const colorVar = f.d>=0 ? "--verde" : "--verde-prof";
+        return `<div class="div-fila"><span class="div-et">${ramaCorta(f.k)}</span>
+          <span class="div-pista"><span class="div-cero"></span>
+            <span class="div-b" style="left:${izq}%;width:${w}%;background:var(${colorVar})"></span>
+            ${etiquetaCentrada(izq, w, sg(f.d)+"pp", colorVar)}
+          </span></div>`;
+      }).join("")}`;
   }
-  $("#tema").onclick=()=>{
-    document.body.classList.toggle("dark");
-    $("#tema").textContent = oscuro() ? "Modo claro" : "Modo oscuro";
-    todo();
-  };
-  addEventListener("resize", ()=>Object.values(G).forEach(g=>g.resize()));
-  todo();
+}
+let modoAuto = "ind";
+$$("#seg-modo-auto button").forEach(b=>b.onclick=()=>{
+  $$("#seg-modo-auto button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  modoAuto = b.dataset.v;
+  $("#auto-campo-ind").style.display = modoAuto==="ind" ? "" : "none";
+  $("#auto-campo-mun").style.display = modoAuto==="mun" ? "" : "none";
+  renderAuto();
 });
 
-/* En 390 px no entran ni las mismas marcas de eje ni el mismo margen para los
-   nombres: con cinco cortes el eje escribe "-40k-20k0k20k40k" de corrido, y una
-   leyenda que envuelve a tres líneas se monta sobre la primera barra. */
-const chico = () => innerWidth < 560;
-const cortes = () => chico() ? 3 : 5;
-const eje = () => ({color: oscuro()?"#94a7b0":"#66757e",
-  fontSize: chico()?10:11, fontFamily:"Inter"});
-const grid = c => ({left: chico()? Math.min(c.l||150, 92) : (c.l||150),
-  right: chico()? Math.min(c.r||24, 44) : (c.r||24),
-  top: (c.t||46) + (chico() ? (c.leg||0) : 0), bottom:c.b||30});
-const sinLinea = {axisLine:{show:false}, axisTick:{show:false}};
-const tip = extra => ({
-  backgroundColor: oscuro()?"#0b1318":"#fff",
-  borderColor:"#00000022",
-  textStyle:{color: oscuro()?"#e8eef2":"#0b1318", fontFamily:"Inter", fontSize:12},
-  ...extra});
-function pon(id, opt){
-  if (!G[id]) G[id] = echarts.init($("#"+id));
-  G[id].setOption(opt, true);
-}
-/* Barra fina con la punta redondeada del lado del dato: la punta anclada a la
-   línea base es lo que hace que se lea el largo y no el rectángulo. */
-const punta = lado => lado==="der" ? [0,4,4,0] : [4,0,0,4];
+// ═══ construcción de DATA a partir de los archivos reales del tablero ═══
+function construirDatos(mm, fp, fmt){
+  const nombres = fp.municipios.map(m=>m.nombre);
+  const cod2nombre = {}; fp.municipios.forEach(m=>cod2nombre[m.cod_ine]=m.nombre);
 
-function todo(){ sintesis(); saldo(); origen(); matriz(); perfilLlegados(); conmutacion(); }
+  const autocontencion={}, contexto={}, migra_trabajo={};
+  mm.forEach(m=>{
+    autocontencion[m.nombre] = m.municipal.autocontencion_laboral;
+    contexto[m.nombre] = {pob_total:m.municipal.pob_total};
+    migra_trabajo[m.nombre] = {pct_migrante_reciente:m.municipal.pct_migrante_reciente,
+                                pct_trabaja_fuera:m.municipal.pct_trabaja_fuera};
+  });
 
-/* ═══ SÍNTESIS ═══════════════════════════════════════════════════════════════ */
-function sintesis(){
-  const R = D.region, rec = D.reciente;
-  const llegados = ORD.reduce((a,c)=>a+rec[c].entran,0);
-  const uni = ORD.reduce((a,c)=>a+rec[c].universo,0);
-  const top = ORD.slice().sort((a,b)=>rec[b].entran/rec[b].universo - rec[a].entran/rec[a].universo)[0];
-  const pierde = ORD.filter(c=>rec[c].neto<0);
-  const conm = R.conmutan.n;
+  const origen={};
+  Object.entries(fp.origen).forEach(([cod,o])=>{
+    const n = cod2nombre[cod]; if (!n) return;
+    origen[n] = {aqui:o.aqui, region:o.region, scz:o.scz, otro_dep:o.otro_dep, exterior:o.exterior,
+                 sd:o.sd, total:o.total};
+  });
 
-  $("#lede").innerHTML = `Entre 2019 y 2024 llegaron <b>${nf(llegados)} personas</b> a los nueve `
-    + `municipios de la Región Metropolitana — el <b>${nf(100*llegados/uni,1)}%</b> de su población `
-    + `de cinco años o más. El crecimiento no se reparte parejo: la capital suma más gente que `
-    + `nadie en números absolutos, pero es <b>${ab(N[top])}</b> el que se transformó, con `
-    + `<b>${nf(100*rec[top].entran/rec[top].universo,1)}%</b> de sus habitantes llegados en ese `
-    + `lustro. Y mientras el anillo se puebla, <b>${nf(conm)} personas</b> cruzan un límite `
-    + `municipal cada día para ir a trabajar.`;
+  const conmuta={};
+  Object.entries(fp.conmuta).forEach(([cod,c])=>{
+    const n = cod2nombre[cod]; if (!n) return;
+    const pick = p => ({n:p.n, pct_mujer:p.pct_mujer, edad_mediana:p.edad_mediana,
+                        anios_estudio:p.anios_estudio, pct_superior:p.pct_superior, rama:p.rama||{}});
+    conmuta[n] = {sale:pick(c.perfil_sale), queda:pick(c.perfil_queda), ocupados:c.ocupados};
+  });
 
-  const t = [
-    {k:"Llegaron entre 2019 y 2024", v:nf(llegados), d:`${nf(100*llegados/uni,1)}% de la población de 5 años o más`},
-    {k:"El que más se transformó", v:nf(100*rec[top].entran/rec[top].universo,1)+"%", d:`de ${ab(N[top])} llegó en los últimos 5 años`},
-    {k:"Municipios con saldo negativo", v:pierde.length, d: pierde.length ? pierde.map(c=>N[c]).join(", ")+" pierde población" : "ninguno pierde población", neg:pierde.length>0},
-    {k:"Conmutan a diario", v:nf(conm), d:`cruzan un límite municipal para trabajar`},
-  ];
-  $("#tiles").innerHTML = t.map(x=>`<div class="tile${x.neg?" neg":""}">`
-    +`<div class="k">${x.k}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join("");
+  const matrices={};
+  ["trabajo","residencia5"].forEach(tipo=>{
+    const info = fmt.matrices[tipo];
+    const M = nombres.map(()=>nombres.map(()=>0));
+    Object.entries(info.filas).forEach(([cod,fila])=>{
+      const ni = nombres.indexOf(cod2nombre[cod]);
+      if (ni<0) return;
+      fila.a.forEach((v,j)=>{
+        const codDest = fmt.municipios[j].cod_ine;
+        const nj = nombres.indexOf(cod2nombre[codDest]);
+        if (nj>=0) M[ni][nj]=v;
+      });
+    });
+    matrices[tipo] = {M};
+  });
+
+  return {municipios:nombres, autocontencion, contexto, migra_trabajo, origen, conmuta, matrices};
 }
 
-/* ═══ 1 · SALDO ══════════════════════════════════════════════════════════════ */
-function saldo(){
-  const rec = D.reciente;
-  const o = ORD.slice().sort((a,b)=>rec[a].neto-rec[b].neto);
-  /* Se redondea el límite a un múltiplo de 10k: con el borde en 42,7k ECharts
-     dibujaba marca en 40k Y en el borde, las dos rotuladas "43k", y quedaba un
-     "40k 43k" pisado en la punta del eje. */
-  const max = Math.ceil(Math.max(...o.map(c=>Math.abs(rec[c].neto)))*1.12/10000)*10000;
-
-  $("#dek1").innerHTML = `El saldo es la resta simple: cuántos llegaron menos cuántos se fueron. `
-    + `Ocho de los nueve municipios ganan población, y el único que la pierde es `
-    + `<b>Montero</b> — la segunda ciudad de la región, que expulsa más gente de la que recibe.`;
-
-  /* POLARIDAD ⇒ divergente centrado en cero. Con una secuencial, un saldo de −778
-     y uno de +38.777 se pintarían con la misma familia de color y el signo —que es
-     lo único que importa acá— se perdería. */
-  pon("g-neto", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:132, r:96, t:14, b:26}),
-    tooltip: tip({trigger:"item", formatter:p=>{
-      const c=o[p.dataIndex], v=rec[c];
-      return `<b>${N[c]}</b><br>saldo <b>${sg(v.neto)}</b><br>`
-        + `<span style="opacity:.75">entran ${nf(v.entran)} · salen ${nf(v.salen)}</span>`;}}),
-    xAxis:{type:"value", min:-max, max:max, splitNumber:cortes(), ...sinLinea,
-      axisLabel:{...eje(), formatter:v=>nf(v/1000)+"k"},
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    yAxis:{type:"category", data:o.map(c=>ab(N[c])), ...sinLinea, axisLabel:eje()},
-    series:[{
-      type:"bar", barWidth:15,
-      data:o.map(c=>({value:rec[c].neto,
-        itemStyle:{color: rec[c].neto>=0 ? DIV[6] : DIV[1],
-          borderRadius: rec[c].neto>=0 ? punta("der") : punta("izq")}})),
-      /* `offset` acepta un array, NO una función: pasarle una callback hacía que
-         ECharts descartara la etiqueta entera y las cifras no se dibujaban. */
-      label:{show:true, position:"right", ...eje(), fontWeight:600,
-        formatter:p=>sg(p.value), color: oscuro()?"#e8eef2":"#0b1318"}
-    }],
+function iniciar(){
+  CARACTERISTICAS.forEach(([k,lab])=>{
+    const o=document.createElement("option"); o.value=k; o.textContent=lab; $("#pf-car").appendChild(o);
   });
-  $("#cap-neto").innerHTML = `<b>Saldo migratorio 2019→2024</b>, en personas. `
-    + `La capital gana ${sg(rec[ORD.find(c=>N[c].startsWith("Santa Cruz"))].neto)} pero con una `
-    + `rotación enorme: entran ${nf(rec[ORD.find(c=>N[c].startsWith("Santa Cruz"))].entran)} y `
-    + `salen ${nf(rec[ORD.find(c=>N[c].startsWith("Santa Cruz"))].salen)}.`;
-
-  /* MAGNITUD comparable entre municipios ⇒ secuencial, ordenada. El saldo absoluto
-     premia al grande por ser grande; la tasa dice cuánto CAMBIÓ cada lugar. */
-  const o2 = ORD.slice().sort((a,b)=>rec[a].entran/rec[a].universo - rec[b].entran/rec[b].universo);
-  const tasa = c => 100*rec[c].entran/rec[c].universo;
-  const mx = Math.max(...o2.map(tasa));
-  $("#dek1").innerHTML += ` Pero el saldo absoluto premia al grande por ser grande. `
-    + `La tasa —qué proporción de los vecinos de hoy llegó en el último lustro— dice otra cosa.`;
-  pon("g-tasa", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:132, r:76, t:14, b:26}),
-    tooltip: tip({trigger:"item", formatter:p=>{
-      const c=o2[p.dataIndex], v=rec[c];
-      return `<b>${N[c]}</b><br><b>${nf(tasa(c),1)}%</b> llegó entre 2019 y 2024<br>`
-        + `<span style="opacity:.75">${nf(v.entran)} de ${nf(v.universo)} personas de 5+</span>`;}}),
-    xAxis:{type:"value", max:Math.ceil(mx/5)*5, splitNumber:cortes(), ...sinLinea,
-      axisLabel:{...eje(), formatter:v=>v+"%"},
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    yAxis:{type:"category", data:o2.map(c=>ab(N[c])), ...sinLinea, axisLabel:eje()},
-    series:[{
-      type:"bar", barWidth:15,
-      data:o2.map(c=>({value:+tasa(c).toFixed(1),
-        itemStyle:{color: sec()[Math.min(7, Math.round(tasa(c)/mx*7))], borderRadius:punta("der")}})),
-      label:{show:true, position:"right", ...eje(), fontWeight:600,
-        formatter:p=>nf(p.value,1)+"%", color: oscuro()?"#e8eef2":"#0b1318"}
-    }],
+  const optAuto = document.createElement("option"); optAuto.value="__auto__"; optAuto.textContent="Autocontención laboral";
+  $("#auto-car").appendChild(optAuto);
+  RUBROS.forEach(([letra,lab])=>{
+    const o=document.createElement("option"); o.value=letra; o.textContent="% que trabaja en: "+lab;
+    $("#auto-car").appendChild(o);
   });
-  $("#cap-tasa").innerHTML = `<b>Intensidad del cambio</b>: qué porcentaje de los residentes de `
-    + `5 años o más vivía en otro municipio o país en 2019. En <b>${ab(N[o2[o2.length-1]])}</b> es `
-    + `más de uno de cada cuatro. <b>Universo</b>: quienes declararon dónde vivían; los menores `
-    + `de 5 quedan fuera porque no existían.`;
+  DATA.municipios.forEach(n=>{
+    ["sel-origen","pf-mun","auto-mun"].forEach(id=>{
+      const o=document.createElement("option"); o.value=n; o.textContent=n; $("#"+id).appendChild(o);
+    });
+  });
+
+  $("#portada-tarjetas").innerHTML = GRAFICOS.map(([id,lab,desc],i)=>`
+    <button class="tarjeta" data-ir="${id}">
+      <div class="prev" style="background:${ORIGEN_RAMPA[i]}"></div>
+      <div class="cuerpo"><div class="num">Gráfico ${i+1}</div><h3>${lab}</h3><p>${desc}</p></div>
+    </button>`).join("");
+  $$(".tarjeta").forEach(t=> t.onclick = () => irAGrafico(t.dataset.ir));
+
+  $("#expl-flujo").innerHTML = EXPL_FLUJO[tipoFlujo];
+  renderBase(); renderMatriz(); renderBandas();
+  renderOrigenUno();
+  renderCruce();
+  renderOrigen();
+  renderPerfil();
+  renderAuto();
+
+  $("#estado-carga").style.display = "none";
+  $("#contenido").style.display = "";
 }
 
-/* ═══ 2 · ORIGEN ═════════════════════════════════════════════════════════════ */
-function origen(){
-  const O = D.origen;
-  const o = ORD.slice().sort((a,b)=>
-    (O[a].aqui/O[a].total) - (O[b].aqui/O[b].total));
-  const pct = (c,k) => 100*O[c][k]/O[c].total;
-
-  $("#dek2").innerHTML = `Acá no hay fecha: es de dónde salió la gente que hoy vive en cada `
-    + `municipio, sin importar cuándo llegó. La escala va de "nació acá" a "nació en el `
-    + `exterior", y cuanto más claro es un municipio, menos de su población es originaria.`;
-
-  pon("g-origen", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:132, r:24, t:44, b:26, leg:46}),
-    legend:{top:0, left:0, itemWidth:11, itemHeight:11, itemGap:14,
-      textStyle:{...eje(), fontSize:10.5}, data:ORIGEN.map(x=>x[1])},
-    tooltip: tip({trigger:"axis", axisPointer:{type:"shadow"},
-      formatter: ps => {
-        const c = o[ps[0].dataIndex];
-        return `<b>${N[c]}</b><br>` + ps.map(p=>
-          `${p.marker}${p.seriesName} <b>${nf(p.value,1)}%</b> `
-          + `<span style="opacity:.6">(${nf(O[c][ORIGEN[p.seriesIndex][0]])})</span>`).join("<br>");
-      }}),
-    xAxis:{type:"value", max:100, ...sinLinea, axisLabel:{...eje(), formatter:v=>v+"%"},
-      splitLine:{show:false}},
-    yAxis:{type:"category", data:o.map(c=>ab(N[c])), ...sinLinea, axisLabel:eje()},
-    series: ORIGEN.map(([k,lab],i)=>({
-      name:lab, type:"bar", stack:"o", barWidth:19,
-      /* 2px de fondo entre segmentos: apilados a tope se leen como una sola
-         barra continua y se pierde dónde termina cada origen */
-      itemStyle:{color:ORIG()[i], borderColor: oscuro()?"#16222a":"#fff", borderWidth:2},
-      label:{show:true, ...eje(), fontSize:9.5, fontWeight:600,
-        color: i<=1 ? "#fff" : (oscuro()?"#0b1318":"#0b1318"),
-        formatter:p=>p.value>=6 ? nf(p.value,0)+"%" : ""},
-      data:o.map(c=>+pct(c,k).toFixed(1)),
-    })),
-  });
-  const menos = o[0];
-  $("#cap-origen").innerHTML = `<b>Composición por lugar de nacimiento</b>, en % de la población `
-    + `residente. En <b>${N[menos]}</b> sólo el <b>${nf(pct(menos,"aqui"),1)}%</b> nació ahí. `
-    + `Las declaraciones parciales ("departamento sin municipio") se clasifican por su `
-    + `departamento en vez de descartarse.`;
-
-  let h = "<table><thead><tr><th>municipio</th>"
-    + ORIGEN.map(x=>`<th>${x[1]}</th>`).join("") + "<th>total</th></tr></thead><tbody>";
-  o.slice().reverse().forEach(c=>{
-    h += `<tr><td>${N[c]}</td>` + ORIGEN.map(([k])=>`<td>${nf(O[c][k])}</td>`).join("")
-      + `<td><b>${nf(O[c].total)}</b></td></tr>`;
-  });
-  $("#t-origen").innerHTML = h + "</tbody></table>";
-}
-
-/* ═══ 3 · MATRIZ INTERNA ═════════════════════════════════════════════════════ */
-function matriz(){
-  const rec = D.reciente;
-  const o = ORD.slice().sort((a,b)=>rec[b].universo-rec[a].universo);
-  /* ⚠️ La orientación se verifica contra el dato, no se supone: en
-     `analisis_flujos.py`, `desde[X]` cuenta a los que HOY viven en el municipio del
-     registro y en 2019 vivían en X ⇒ FILA = dónde vive hoy, COLUMNA = de dónde
-     vino. El texto decía lo contrario y el tooltip lo correcto; una matriz leída
-     al revés invierte todas las conclusiones sin fallar. */
-  $("#dek3").innerHTML = `Un flujo es un número por <b>par</b> de municipios, así que no entra `
-    + `en un mapa de colores. Cada <b>fila</b> es un municipio de hoy y cada <b>columna</b>, de `
-    + `dónde venía esa gente en 2019. Se excluye la diagonal —quedarse no es mudarse— para que `
-    + `se vea el movimiento y no el quedarse quieto.`;
-
-  /* ⚠️ El color de la etiqueta va POR DATO. `label.color` NO acepta callback en
-     ECharts: le pasa de largo y todas las celdas terminan del mismo tono, con lo
-     que las cifras sobre los escalones claros salen lavadas. Ya pasó una vez en
-     la vista exploratoria de flujos. */
-  const mudo = oscuro() ? "#1b262d" : "#f4f1ea";
-  let mx=0;
-  o.forEach(dest=>o.forEach(org=>{ if(dest!==org) mx=Math.max(mx, rec[dest].desde[org]||0); }));
-  const datos=[];
-  o.forEach((dest,fy)=>o.forEach((org,fx)=>{
-    const y = o.length-1-fy;
-    if (dest===org){
-      /* La diagonal se EXCLUYE, y tiene que verse excluida: dejarla en cero la
-         pintaría del tono más claro de la rampa y se leería "nadie se movió",
-         que es una afirmación distinta de "acá no se mide nada". */
-      datos.push({value:[fx,y,null], itemStyle:{color:mudo}, label:{show:false}});
-      return;
-    }
-    const v = rec[dest].desde[org]||0;
-    datos.push({value:[fx,y,v], label:{show:v>=mx*.04,
-      color: v > mx*.55 ? (oscuro()?"#0b1318":"#fff") : (oscuro()?"#cfe0e6":"#0b1318")}});
-  }));
-
-  pon("g-matriz", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:150, r:24, t:56, b:20}),
-    tooltip: tip({formatter:p=>{
-      const dest=o[o.length-1-p.value[1]], org=o[p.value[0]];
-      if (dest===org) return `<b>${N[dest]}</b><br><span style="opacity:.7">se quedó: ${nf(rec[dest].desde[org]||0)}</span>`;
-      return `<b>${N[org]}</b> → <b>${N[dest]}</b><br>${nf(p.value[2])} personas`;}}),
-    xAxis:{type:"category", data:o.map(c=>ab(N[c])), position:"top", ...sinLinea,
-      name:"vivía en 2019 ↓", nameLocation:"start", nameGap:22,
-      nameTextStyle:{...eje(), fontSize:10, fontWeight:600, align:"right"},
-      axisLabel:{...eje(), fontSize:10, interval:0}, splitArea:{show:false}},
-    yAxis:{type:"category", data:o.map(c=>ab(N[c])).reverse(), ...sinLinea,
-      name:"vive hoy", nameLocation:"end", nameGap:16,
-      nameTextStyle:{...eje(), fontSize:10, fontWeight:600, align:"right"},
-      axisLabel:{...eje(), fontSize:10.5}, splitArea:{show:false}},
-    visualMap:{show:false, min:0, max:mx, dimension:2, inRange:{color:sec()}},
-    series:[{type:"heatmap", data:datos,
-      itemStyle:{borderColor: oscuro()?"#16222a":"#fff", borderWidth:2},
-      label:{fontSize:9, fontFamily:"Inter", formatter:p=>nf(p.value[2])},
-      emphasis:{itemStyle:{borderColor:"#ee9b00", borderWidth:2.4}}}],
-  });
-  const lg = ORD.find(c=>N[c]==="La Guardia"), cap = ORD.find(c=>N[c].startsWith("Santa Cruz"));
-  $("#cap-matriz").innerHTML = `<b>Mudanzas internas 2019→2024</b>: la <b>fila</b> es dónde vive `
-    + `hoy la persona; la <b>columna</b>, dónde vivía en 2019. Filas y columnas van en el mismo `
-    + `orden. <b>La capital es el gran origen</b> y el intercambio es marcadamente `
-    + `de una sola dirección: mandó ${nf(rec[lg].desde[cap])} personas a La Guardia y recibió `
-    + `${nf(rec[cap].desde[lg])} de vuelta.`;
-}
-
-/* ═══ 4 · PERFIL ═════════════════════════════════════════════════════════════ */
-function perfilLlegados(){
-  const A = D.region.llegados, B = D.region.estaban;
-  $("#dek4").innerHTML = `Se comparan los que <b>llegaron de fuera de la región</b> entre 2019 y `
-    + `2024 contra los que <b>ya vivían en su mismo municipio</b>. La sorpresa está en lo que `
-    + `<i>no</i> los diferencia: llegan con la misma escolaridad que la población que los recibe.`;
-
-  const M = [
-    ["% mujeres", A.pct_mujer, B.pct_mujer, "%"],
-    ["Edad mediana", A.edad_mediana, B.edad_mediana, " años"],
-    ["Años de estudio (15+)", A.anios_estudio, B.anios_estudio, ""],
-    ["% con nivel superior", A.pct_superior, B.pct_superior, "%"],
-    ["% se autoidentifica indígena", A.pct_indigena, B.pct_indigena, "%"],
-  ];
-  pon("g-perfil", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:172, r:52, t:40, b:26, leg:16}),
-    legend:{top:0, left:0, itemWidth:11, itemHeight:11, textStyle:{...eje(), fontSize:10.5}},
-    tooltip: tip({trigger:"axis", axisPointer:{type:"shadow"}}),
-    xAxis:{type:"value", ...sinLinea, axisLabel:eje(),
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    yAxis:{type:"category", data:M.map(m=>m[0]).reverse(), ...sinLinea,
-      axisLabel:{...eje(), fontSize:10.5}},
-    series:[
-      {name:"Llegaron 2019–2024", type:"bar", barWidth:11, barGap:"18%",
-        itemStyle:{color:S1(), borderRadius:punta("der")},
-        data:M.map(m=>m[1]).reverse(),
-        label:{show:true, position:"right", ...eje(), fontSize:10, fontWeight:600,
-          color: oscuro()?"#e8eef2":"#0b1318", formatter:p=>nf(p.value,1)}},
-      {name:"Ya vivían acá", type:"bar", barWidth:11,
-        itemStyle:{color:S2(), borderRadius:punta("der")},
-        data:M.map(m=>m[2]).reverse(),
-        label:{show:true, position:"right", ...eje(), fontSize:10, fontWeight:600,
-          color: oscuro()?"#e8eef2":"#0b1318", formatter:p=>nf(p.value,1)}},
-    ],
-  });
-  $("#cap-perfil").innerHTML = `Los recién llegados tienen <b>la misma escolaridad</b> que la `
-    + `población que ya estaba (${nf(A.anios_estudio,2)} contra ${nf(B.anios_estudio,2)} años) `
-    + `pero <b>casi el doble de autoidentificación indígena</b> `
-    + `(${nf(A.pct_indigena,1)}% contra ${nf(B.pct_indigena,1)}%). `
-    + `<b>n</b> = ${nf(A.n)} llegados y ${nf(B.n)} residentes de siempre.`;
-
-  const bandas = Object.keys(A.edades);
-  pon("g-edades", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:56, r:20, t:40, b:30}),
-    legend:{top:0, left:0, itemWidth:11, itemHeight:11, textStyle:{...eje(), fontSize:10.5}},
-    tooltip: tip({trigger:"axis", axisPointer:{type:"shadow"},
-      formatter: ps => `<b>${ps[0].axisValue} años</b><br>`
-        + ps.map(p=>`${p.marker}${p.seriesName} <b>${nf(p.value,1)}%</b>`).join("<br>")}),
-    xAxis:{type:"category", data:bandas, ...sinLinea, axisLabel:eje()},
-    yAxis:{type:"value", ...sinLinea, axisLabel:{...eje(), formatter:v=>v+"%"},
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    series:[
-      {name:"Llegaron 2019–2024", type:"bar", barWidth:20, barGap:"18%",
-        itemStyle:{color:S1(), borderRadius:[4,4,0,0]},
-        data:bandas.map(b=>A.edades[b])},
-      {name:"Ya vivían acá", type:"bar", barWidth:20,
-        itemStyle:{color:S2(), borderRadius:[4,4,0,0]},
-        data:bandas.map(b=>B.edades[b])},
-    ],
-  });
-  $("#cap-edades").innerHTML = `<b>Estructura de edades</b>, en % de cada grupo. La migración `
-    + `reciente está cargada de <b>adultos jóvenes</b>: se mudan los que están entrando al `
-    + `mercado laboral y formando hogar, no las familias ya asentadas.`;
-}
-
-/* ═══ 5 · CONMUTACIÓN ════════════════════════════════════════════════════════ */
-function conmutacion(){
-  const A = D.region.conmutan, B = D.region.no_conmutan;
-  $("#dek5").innerHTML = `Esto ya no es migración: son <b>${nf(A.n)} personas que no se mudaron</b> `
-    + `y cruzan un límite municipal todos los días para trabajar. El censo codifica el lugar de `
-    + `trabajo <b>sólo hasta el municipio</b>, así que se puede saber a qué municipio va cada `
-    + `quien y a qué rama entra — pero no en qué parte de la ciudad.`;
-
-  const M = [
-    ["% mujeres", A.pct_mujer, B.pct_mujer],
-    ["Edad mediana", A.edad_mediana, B.edad_mediana],
-    ["Años de estudio (15+)", A.anios_estudio, B.anios_estudio],
-    ["% con nivel superior", A.pct_superior, B.pct_superior],
-    ["% se autoidentifica indígena", A.pct_indigena, B.pct_indigena],
-  ];
-  pon("g-conm", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:172, r:52, t:40, b:26, leg:16}),
-    legend:{top:0, left:0, itemWidth:11, itemHeight:11, textStyle:{...eje(), fontSize:10.5}},
-    tooltip: tip({trigger:"axis", axisPointer:{type:"shadow"}}),
-    xAxis:{type:"value", ...sinLinea, axisLabel:eje(),
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    yAxis:{type:"category", data:M.map(m=>m[0]).reverse(), ...sinLinea,
-      axisLabel:{...eje(), fontSize:10.5}},
-    series:[
-      {name:"Conmuta a otro municipio", type:"bar", barWidth:11, barGap:"18%",
-        itemStyle:{color:S1(), borderRadius:punta("der")}, data:M.map(m=>m[1]).reverse(),
-        label:{show:true, position:"right", ...eje(), fontSize:10, fontWeight:600,
-          color: oscuro()?"#e8eef2":"#0b1318", formatter:p=>nf(p.value,1)}},
-      {name:"Trabaja donde vive", type:"bar", barWidth:11,
-        itemStyle:{color:S2(), borderRadius:punta("der")}, data:M.map(m=>m[2]).reverse(),
-        label:{show:true, position:"right", ...eje(), fontSize:10, fontWeight:600,
-          color: oscuro()?"#e8eef2":"#0b1318", formatter:p=>nf(p.value,1)}},
-    ],
-  });
-  $("#cap-conm").innerHTML = `Conmutar es <b>marcadamente masculino</b>: `
-    + `${nf(100-A.pct_mujer,1)}% de quienes cruzan son hombres, contra ${nf(100-B.pct_mujer,1)}% `
-    + `de quienes trabajan donde viven. Y son <b>más educados</b>: `
-    + `${nf(A.pct_superior,1)}% con nivel superior contra ${nf(B.pct_superior,1)}%.`;
-
-  /* SOBRE / SUB-REPRESENTACIÓN = polaridad ⇒ divergente centrado en cero. Poner
-     las dos series apiladas o lado a lado escondería el dato: lo que importa no
-     es cuánto pesa cada rama, es en cuáles el que se mueve está de más. */
-  const ks = [...new Set([...Object.keys(A.rama), ...Object.keys(B.rama)])]
-    .map(k=>({k, a:A.rama[k]||0, b:B.rama[k]||0, d:(A.rama[k]||0)-(B.rama[k]||0)}))
-    .filter(x=>Math.abs(x.d)>=.3 && !/incompleta|especificar/i.test(x.k))
-    .sort((x,y)=>x.d-y.d);
-  const mxd = Math.ceil(Math.max(...ks.map(x=>Math.abs(x.d))) * 1.15);
-  pon("g-rama", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:186, r:64, t:16, b:34}),
-    tooltip: tip({trigger:"item", formatter:p=>{
-      const x=ks[p.dataIndex];
-      return `<b>${x.k}</b><br>conmuta <b>${nf(x.a,1)}%</b> · trabaja donde vive `
-        + `<b>${nf(x.b,1)}%</b><br><span style="opacity:.75">diferencia ${sg(x.d,1)} pp</span>`;}}),
-    xAxis:{type:"value", min:-mxd, max:mxd, splitNumber:cortes(), ...sinLinea,
-      axisLabel:{...eje(), formatter:v=>sg(v,0)+" pp"},
-      splitLine:{lineStyle:{color: oscuro()?"#1d2c34":"#efeadf"}}},
-    yAxis:{type:"category", data:ks.map(x=>ramaCorta(x.k)), ...sinLinea,
-      axisLabel:{...eje(), fontSize:10.5}},
-    series:[{type:"bar", barWidth:13,
-      data:ks.map(x=>({value:+x.d.toFixed(1),
-        itemStyle:{color: x.d>=0 ? DIV[6] : DIV[2],
-          borderRadius: x.d>=0 ? punta("der") : punta("izq")}})),
-      label:{show:true, position:"right", ...eje(), fontSize:10, fontWeight:600,
-        color: oscuro()?"#e8eef2":"#0b1318", formatter:p=>sg(p.value,1)}}],
-  });
-  $("#cap-rama").innerHTML = `<b>En qué ramas está de más el que se mueve</b>: diferencia en `
-    + `puntos porcentuales entre la composición de los que conmutan y la de los que trabajan `
-    + `donde viven. A la derecha, las ramas que <b>exigen desplazarse</b> — obra y campo están `
-    + `donde están, no donde vive el trabajador. A la izquierda, las que se resuelven en el `
-    + `propio barrio.`;
-
-  /* Adónde va cada uno: la matriz de trabajo del motor de flujos, normalizada por
-     fila (en crudo la capital se come la escala con 719.126 en una celda). */
-  const T = F.matrices.trabajo.filas;
-  const o = ORD.slice().sort((a,b)=>T[b].declarado-T[a].declarado);
-  const ix = Object.fromEntries(F.municipios.map((m,i)=>[m.cod_ine,i]));
-  const cols = o.map(c=>ab(N[c])).concat(["Resto país","Depto./prov."]);
-  const dat=[];
-  const tinta = pct => pct>55 ? (oscuro()?"#0b1318":"#fff") : (oscuro()?"#cfe0e6":"#0b1318");
-  const cel = (x,y,n,pct) => ({value:[x,y,n,pct],
-    label:{show:pct>=0.5, color:tinta(pct)}});      // color por dato, no por callback
-  o.forEach((org,fy)=>{
-    const r=T[org], tot=r.declarado||1, y=o.length-1-fy;
-    o.forEach((dst,fx)=>dat.push(cel(fx,y,r.a[ix[dst]],100*r.a[ix[dst]]/tot)));
-    dat.push(cel(o.length,  y, r.fuera,  100*r.fuera/tot));
-    dat.push(cel(o.length+1,y, r.parcial,100*r.parcial/tot));
-  });
-  pon("g-trab", {
-    backgroundColor:"transparent", animationDuration:500,
-    grid: grid({l:150, r:24, t:56, b:20}),
-    tooltip: tip({formatter:p=>{
-      const org=o[o.length-1-p.value[1]];
-      return `<b>${N[org]}</b> → <b>${cols[p.value[0]]}</b><br>${nf(p.value[2])} personas<br>`
-        + `<span style="opacity:.7">${nf(p.value[3],1)}% de sus ocupados</span>`;}}),
-    xAxis:{type:"category", data:cols, position:"top", ...sinLinea,
-      axisLabel:{...eje(), fontSize:10, interval:0}, splitArea:{show:false}},
-    yAxis:{type:"category", data:o.map(c=>ab(N[c])).reverse(), ...sinLinea,
-      axisLabel:{...eje(), fontSize:10.5}, splitArea:{show:false}},
-    visualMap:{show:false, min:0, max:100, dimension:3, inRange:{color:sec()}},
-    series:[{type:"heatmap", data:dat,
-      itemStyle:{borderColor: oscuro()?"#16222a":"#fff", borderWidth:2},
-      label:{fontSize:9, fontFamily:"Inter", formatter:p=>nf(p.value[3],1)+"%"},
-      emphasis:{itemStyle:{borderColor:"#ee9b00", borderWidth:2.4}}}],
-  });
-  $("#cap-trab").innerHTML = `<b>Dónde trabaja quien vive en cada municipio</b>, en % de sus `
-    + `ocupados. La diagonal es la retención; la primera columna, la dependencia de la capital. `
-    + `<b>Universo</b>: ocupados que declararon municipio de trabajo, sin corte de edad — ver la `
-    + `nota metodológica.`;
-}
+Promise.all([
+  fetch("../datos/municipios_municipal.json").then(r=>r.json()),
+  fetch("../datos/flujos_perfil.json").then(r=>r.json()),
+  fetch("../datos/flujos_metro.json").then(r=>r.json()),
+]).then(([mm, fp, fmt])=>{
+  DATA = construirDatos(mm, fp, fmt);
+  iniciar();
+}).catch(err=>{
+  console.error(err);
+  $("#estado-carga").textContent = "No se pudieron cargar los datos. Probá recargar la página.";
+});
 </script>
 </body>
 </html>
