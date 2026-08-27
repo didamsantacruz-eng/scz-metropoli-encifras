@@ -44,8 +44,6 @@ a{color:inherit}
 .barra{background:var(--verde-hondo);position:relative;z-index:5}
 .barra .envoltura{display:flex;align-items:center;gap:16px;height:70px}
 .barra img{height:36px;width:auto;display:block;flex:none}
-.marca{margin:0;font-size:14.5px;font-weight:600;color:#fff;line-height:1.25;
-       letter-spacing:.004em;max-width:38ch}
 .barra nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
 .barra nav a{color:#b9d3ac;text-decoration:none;font-weight:500;white-space:nowrap;
              padding:3px 0;border-bottom:2px solid transparent}
@@ -188,19 +186,8 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 }
 @media (max-width:760px){
   .envoltura{padding:0 18px}
-  /* ── EL ENCABEZADO EN EL TELÉFONO ──────────────────────────────────────
-     ⚠️ LA MARCA NO ENCOGÍA: SE IBA A LA FILA DE ABAJO. `.marca` no declaraba
-        `flex`, así que su base era el ancho del TEXTO ENTERO (~490 px), y con
-        `flex-wrap:wrap` un ítem que no entra NO se encoge: salta de línea.
-        Resultado en 390 px: el logo solo en la primera fila, la marca ocupando
-        una segunda a dos renglones enteros y la navegación una tercera. Tres
-        filas para un encabezado.
-        Con `flex:1 1 0` la marca toma lo que sobra al lado del logo y parte
-        adentro, en dos renglones cortos que miden lo mismo que el logo. */
   .barra .envoltura{height:auto;flex-wrap:wrap;gap:0;padding-top:11px}
   .barra img{height:26px}
-  .marca{flex:1 1 0;min-width:0;max-width:none;margin-left:11px;
-         font-size:10.5px;line-height:1.3;letter-spacing:.012em}
   .barra nav{margin:9px -18px 0;padding:0 18px 10px;width:calc(100% + 36px);
              gap:18px;font-size:13px;overflow-x:auto;scrollbar-width:none}
   .barra nav::-webkit-scrollbar{display:none}
@@ -255,8 +242,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 
 <header class="barra">
   <div class="envoltura">
-    <img src="img/scz-oscuro.png" alt="Gobierno Autónomo Departamental de Santa Cruz">
-    <p class="marca">Dirección de la Instancia Departamental de Asuntos Metropolitanos</p>
+    <img src="img/didam-oscuro.png" alt="DIDAM — Dirección de la Instancia Departamental de Asuntos Metropolitanos">
     <nav>
       <a href="municipal/">Municipal</a>
       <a href="manzana/">A nivel manzana</a>
