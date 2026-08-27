@@ -47,6 +47,7 @@ header{background:var(--topbar);color:#fff;padding:.9rem 1.4rem;display:flex;ali
   width:100%;text-align:left;vertical-align:top;background:var(--papel);border:1px solid var(--linea);
   overflow:hidden;transition:transform .12s,box-shadow .12s}
 .tarjeta:hover, .tarjeta:focus-visible{transform:translateY(-3px);box-shadow:0 8px 18px #12203524;outline:none}
+.tarjeta.activa{border-color:var(--verde-prof);box-shadow:0 0 0 1px var(--verde-prof)}
 .tarjeta .prev{height:78px;width:100%;flex:none}
 .tarjeta .cuerpo{padding:.8rem .9rem .9rem;flex:1}
 .tarjeta .num{font:600 .6rem var(--f);color:var(--suave);text-transform:uppercase;letter-spacing:.06em}
@@ -54,6 +55,8 @@ header{background:var(--topbar);color:#fff;padding:.9rem 1.4rem;display:flex;ali
 .tarjeta p{font-size:.74rem;color:var(--suave);line-height:1.45;margin:0}
 
 main{max-width:1180px;margin:0 auto;padding:1.5rem 1.4rem 4rem}
+.num-sec{display:block;font:700 .68rem var(--f);color:var(--verde-prof);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:.4rem}
 h2{font:600 1.15rem/1.3 var(--fd);margin:0 0 .3rem;letter-spacing:-.005em}
 h3.sub{font:600 .9rem/1.3 var(--fd);margin:1.5rem 0 .3rem;color:var(--tx)}
 .dek{color:var(--suave);font-size:.82rem;margin:0 0 .8rem;max-width:70ch;line-height:1.55}
@@ -179,6 +182,7 @@ svg.bandas{width:100%;height:auto}
   </section>
 
   <section class="grafico" id="g-matriz">
+    <span class="num-sec">Gráfico 1 de 5</span>
     <h2>Matriz de origen-destino</h2>
     <div class="controles">
       <div class="campo">
@@ -191,8 +195,9 @@ svg.bandas{width:100%;height:auto}
     <div class="expl" id="expl-flujo"></div>
 
     <h3 class="sub">Base de cálculo, por municipio de origen (%)</h3>
-    <p class="dek">Cada fila de la matriz suma 100% sobre esta base — no sobre la población total del
-      municipio.</p>
+    <p class="dek">Cada celda de la matriz es % sobre esta base — no sobre la población total del
+      municipio. Las filas no llegan a 100%: una parte se movió hacia afuera de los nueve
+      municipios, y esa parte no se muestra en la matriz.</p>
     <div class="panel" id="base-lista"></div>
     <div class="eje-escala" style="grid-template-columns:180px 1fr">
       <span></span><span class="r"><b>0%</b><b>25%</b><b>50%</b><b>75%</b><b>100%</b></span></div>
@@ -216,6 +221,7 @@ svg.bandas{width:100%;height:auto}
   </section>
 
   <section class="grafico" id="g-relacion">
+    <span class="num-sec">Gráfico 2 de 5</span>
     <h2>Relación entre migración reciente y conmutación laboral</h2>
     <div class="expl">Dos indicadores independientes, cada uno como % de su propia base — no son partes de
       un mismo total. <b>Migración reciente:</b> % de la población de 5 años o más que llegó entre 2019 y
@@ -230,6 +236,7 @@ svg.bandas{width:100%;height:auto}
   </section>
 
   <section class="grafico" id="g-origen">
+    <span class="num-sec">Gráfico 3 de 5</span>
     <h2>Composición de la población residente por lugar de nacimiento</h2>
     <p class="dek">Sobre quienes declararon su municipio de nacimiento (de toda la vida, sin fecha).</p>
     <div class="panel">
@@ -240,6 +247,7 @@ svg.bandas{width:100%;height:auto}
   </section>
 
   <section class="grafico" id="g-perfil">
+    <span class="num-sec">Gráfico 4 de 5</span>
     <h2>Perfil sociodemográfico de la conmutación laboral</h2>
     <div class="controles">
       <div class="campo"><label>Ver</label>
@@ -260,6 +268,7 @@ svg.bandas{width:100%;height:auto}
   </section>
 
   <section class="grafico" id="g-autocontencion">
+    <span class="num-sec">Gráfico 5 de 5</span>
     <h2>Autocontención laboral y estructura ocupacional</h2>
     <div class="controles">
       <div class="campo"><label>Ver</label>
@@ -313,10 +322,7 @@ function luminanciaCSS(color){
   return .2126*r + .7152*g + .0722*b;
 }
 function gradCSS(){ return `linear-gradient(to right, ${GAMA.join(",")})`; }
-function ramaPorLetra(dictRama, letra){
-  const k = Object.keys(dictRama||{}).find(x=>x.startsWith(letra+"."));
-  return k ? dictRama[k] : 0;
-}
+function ramaPorClave(dictRama, clave){ return (dictRama||{})[clave] || 0; }
 function colorTema(varName){
   /* la clase .dark vive en <body>, no en <html> — leer la variable desde
      documentElement siempre devuelve el valor de :root (modo claro) */
@@ -365,10 +371,16 @@ $("#nav-sel").appendChild(optVacio);
 GRAFICOS.forEach(([id,lab])=>{
   const o=document.createElement("option"); o.value=id; o.textContent=lab; $("#nav-sel").appendChild(o);
 });
+/* el buscador de arriba SÍ puede aislar un gráfico (lo pediste así): oculta
+   los demás. Las tarjetas de la portada NO — sólo saltan a esa sección, y
+   todo sigue scrolleable de corrido debajo, con o sin haber tocado una tarjeta. */
 function irAGrafico(sel){
   $("#nav-sel").value = sel;
   GRAFICOS.forEach(([id])=>{ $("#"+id).style.display = (!sel || sel===id) ? "" : "none"; });
   if (sel) $("#"+sel).scrollIntoView({behavior:"smooth", block:"start"});
+}
+function saltarA(id){
+  $("#"+id).scrollIntoView({behavior:"smooth", block:"start"});
 }
 $("#nav-sel").onchange = () => irAGrafico($("#nav-sel").value);
 
@@ -386,7 +398,16 @@ $$("#seg-tipo button").forEach(b=>b.onclick=()=>{
   renderBase(); renderMatriz(); renderBandas(); renderOrigenUno();
 });
 function M(){ return DATA.matrices[tipoFlujo].M; }
-function totalSinDiag(i){ return M()[i].reduce((a,v,j)=>i===j?a:a+v,0); }
+/* el total real de quienes se movieron desde ese municipio no es la suma de la
+   fila: la fila sólo trae los otros 8 municipios de la región, y una parte del
+   total real se fue a trabajar o a vivir FUERA de los nueve. Se usa el total
+   verdadero (censal) como base, para que el % de cada celda sea sobre el
+   universo completo y no sólo sobre lo que cae dentro de la matriz. */
+function totalSinDiag(i){
+  const real = DATA.matrices[tipoFlujo].totalReal;
+  if (real) return real[i];
+  return M()[i].reduce((a,v,j)=>i===j?a:a+v,0);
+}
 function pctFila(i,j){
   if (i===j) return null;
   const tot = totalSinDiag(i);
@@ -580,19 +601,34 @@ function renderPerfil(){
 }
 
 // ═══ AUTOCONTENCIÓN + RUBRO ══════════════════════════════════════════
-const RUBROS = [["G","Comercio"],["F","Construcción"],["C","Manufactura"],
-  ["A","Agricultura"],["O","Administración pública"],["P","Enseñanza"],["Q","Salud"]];
+const RUBROS = [
+  ["Comercio al por mayor y al por menor","Comercio"],
+  ["Construcción","Construcción"],
+  ["Industrias manufactureras","Manufactura"],
+  ["Agricultura","Agricultura"],
+  ["Administración pública y defensa","Administración pública"],
+  ["Enseñanza","Enseñanza"],
+  ["Actividades de atención de la salud humana y de asistencia social","Salud"],
+];
 $("#auto-car").onchange = renderAuto;
 $("#auto-mun").onchange = renderAuto;
 
-const CAEB = {A:"Agricultura y ganadería", B:"Minería", C:"Manufactura",
-  D:"Electricidad y gas", E:"Agua y saneamiento", F:"Construcción", G:"Comercio",
-  H:"Transporte", I:"Alojamiento y comidas", J:"Información y comunicaciones",
-  K:"Finanzas y seguros", L:"Inmobiliarias", M:"Profesionales y técnicas",
-  N:"Servicios administrativos", O:"Administración pública", P:"Enseñanza", Q:"Salud",
-  R:"Arte y entretenimiento", S:"Otros servicios", T:"Hogares empleadores", U:"Organismos internacionales"};
-const ramaCorta = s => { const m=s.match(/^([A-Z])\.\s*/); return (m&&CAEB[m[1]]) ? CAEB[m[1]]
-  : s.replace(/^[A-Z]\.\s*/,"").split(/[,;]/)[0].trim().slice(0,28); };
+/* nombres cortos para los rubros que salen más largos en el dato del censo */
+const RAMA_CORTA = {
+  "Comercio al por mayor y al por menor":"Comercio",
+  "Actividades de atención de la salud humana y de asistencia social":"Salud",
+  "Actividades de servicios administrativos y de apoyo":"Servicios administrativos",
+  "Actividades de alojamiento y de servicio de comidas":"Alojamiento y comidas",
+  "Actividades de los hogares como empleadores":"Hogares empleadores",
+  "Administración pública y defensa":"Administración pública",
+  "Industrias manufactureras":"Manufactura",
+  "Explotación de minas y canteras":"Minería",
+  "Actividades financieras y de seguros":"Finanzas y seguros",
+  "Actividades profesionales":"Profesionales y técnicas",
+  "Otras actividades de servicios":"Otros servicios",
+  "Descripciones incompletas":"Sin especificar (incompleto)",
+};
+const ramaCorta = s => RAMA_CORTA[s] || s;
 
 let MXD_GLOBAL = null;
 function calcularMxdGlobal(){
@@ -620,7 +656,7 @@ function renderAuto(){
     } else {
       const filas = DATA.municipios.map(n=>{
         const c = DATA.conmuta[n];
-        return {n, a: ramaPorLetra(c.sale.rama, sel), b: ramaPorLetra(c.queda.rama, sel)};
+        return {n, a: ramaPorClave(c.sale.rama, sel), b: ramaPorClave(c.queda.rama, sel)};
       }).sort((x,y)=>y.a-x.a);
       $("#auto-vista").innerHTML = filas.map(f=>filaDivergente(f.n, f.a, f.b, 100, v=>nf(v,1)+"%")).join("");
     }
@@ -660,61 +696,14 @@ $$("#seg-modo-auto button").forEach(b=>b.onclick=()=>{
   renderAuto();
 });
 
-// ═══ construcción de DATA a partir de los archivos reales del tablero ═══
-function construirDatos(mm, fp, fmt){
-  const nombres = fp.municipios.map(m=>m.nombre);
-  const cod2nombre = {}; fp.municipios.forEach(m=>cod2nombre[m.cod_ine]=m.nombre);
-
-  const autocontencion={}, contexto={}, migra_trabajo={};
-  mm.forEach(m=>{
-    autocontencion[m.nombre] = m.municipal.autocontencion_laboral;
-    contexto[m.nombre] = {pob_total:m.municipal.pob_total};
-    migra_trabajo[m.nombre] = {pct_migrante_reciente:m.municipal.pct_migrante_reciente,
-                                pct_trabaja_fuera:m.municipal.pct_trabaja_fuera};
-  });
-
-  const origen={};
-  Object.entries(fp.origen).forEach(([cod,o])=>{
-    const n = cod2nombre[cod]; if (!n) return;
-    origen[n] = {aqui:o.aqui, region:o.region, scz:o.scz, otro_dep:o.otro_dep, exterior:o.exterior,
-                 sd:o.sd, total:o.total};
-  });
-
-  const conmuta={};
-  Object.entries(fp.conmuta).forEach(([cod,c])=>{
-    const n = cod2nombre[cod]; if (!n) return;
-    const pick = p => ({n:p.n, pct_mujer:p.pct_mujer, edad_mediana:p.edad_mediana,
-                        anios_estudio:p.anios_estudio, pct_superior:p.pct_superior, rama:p.rama||{}});
-    conmuta[n] = {sale:pick(c.perfil_sale), queda:pick(c.perfil_queda), ocupados:c.ocupados};
-  });
-
-  const matrices={};
-  ["trabajo","residencia5"].forEach(tipo=>{
-    const info = fmt.matrices[tipo];
-    const M = nombres.map(()=>nombres.map(()=>0));
-    Object.entries(info.filas).forEach(([cod,fila])=>{
-      const ni = nombres.indexOf(cod2nombre[cod]);
-      if (ni<0) return;
-      fila.a.forEach((v,j)=>{
-        const codDest = fmt.municipios[j].cod_ine;
-        const nj = nombres.indexOf(cod2nombre[codDest]);
-        if (nj>=0) M[ni][nj]=v;
-      });
-    });
-    matrices[tipo] = {M};
-  });
-
-  return {municipios:nombres, autocontencion, contexto, migra_trabajo, origen, conmuta, matrices};
-}
-
 function iniciar(){
   CARACTERISTICAS.forEach(([k,lab])=>{
     const o=document.createElement("option"); o.value=k; o.textContent=lab; $("#pf-car").appendChild(o);
   });
   const optAuto = document.createElement("option"); optAuto.value="__auto__"; optAuto.textContent="Autocontención laboral";
   $("#auto-car").appendChild(optAuto);
-  RUBROS.forEach(([letra,lab])=>{
-    const o=document.createElement("option"); o.value=letra; o.textContent="% que trabaja en: "+lab;
+  RUBROS.forEach(([clave,lab])=>{
+    const o=document.createElement("option"); o.value=clave; o.textContent="% que trabaja en: "+lab;
     $("#auto-car").appendChild(o);
   });
   DATA.municipios.forEach(n=>{
@@ -728,7 +717,7 @@ function iniciar(){
       <div class="prev" style="background:${ORIGEN_RAMPA[i]}"></div>
       <div class="cuerpo"><div class="num">Gráfico ${i+1}</div><h3>${lab}</h3><p>${desc}</p></div>
     </button>`).join("");
-  $$(".tarjeta").forEach(t=> t.onclick = () => irAGrafico(t.dataset.ir));
+  $$(".tarjeta").forEach(t=> t.onclick = () => saltarA(t.dataset.ir));
 
   $("#expl-flujo").innerHTML = EXPL_FLUJO[tipoFlujo];
   renderBase(); renderMatriz(); renderBandas();
@@ -740,14 +729,26 @@ function iniciar(){
 
   $("#estado-carga").style.display = "none";
   $("#contenido").style.display = "";
+
+  /* al deslizar, el buscador de arriba (que queda fijo) y la tarjeta de la
+     portada que corresponde se van marcando solos, para saber en qué
+     sección estás sin tener que mirar el título */
+  const obs = new IntersectionObserver(entradas=>{
+    entradas.forEach(e=>{
+      if (!e.isIntersecting) return;
+      const id = e.target.id;
+      $("#nav-sel").value = id;
+      $$(".tarjeta").forEach(t=> t.classList.toggle("activa", t.dataset.ir===id));
+    });
+  }, {rootMargin:"-110px 0px -65% 0px", threshold:0});
+  GRAFICOS.forEach(([id])=>{
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
 }
 
-Promise.all([
-  fetch("../datos/municipios_municipal.json").then(r=>r.json()),
-  fetch("../datos/flujos_perfil.json").then(r=>r.json()),
-  fetch("../datos/flujos_metro.json").then(r=>r.json()),
-]).then(([mm, fp, fmt])=>{
-  DATA = construirDatos(mm, fp, fmt);
+fetch("../datos/dinamica_metro9.json").then(r=>r.json()).then(d=>{
+  DATA = d;
   iniciar();
 }).catch(err=>{
   console.error(err);
