@@ -81,6 +81,13 @@ def main():
             gru_mz[i["key"]] = g["label"]
 
     por_slug = {slug(m["nombre"]): m["nombre"] for m in munis}
+    # ★ EL ÍNDICE GUARDA LA CLAVE Y EL CÓDIGO, no sólo las etiquetas. Con el
+    #   título y el nombre del municipio alcanzaba para BUSCAR, pero no para
+    #   ENLAZAR: el tablero se dirige por `#i=<clave>&m=<código INE>`, y ni la
+    #   clave ni el código se pueden deducir de un rótulo en castellano.
+    #   ⚠️ En el enlace va el código INE («070104»), no el `sigep` interno:
+    #   es el mismo criterio que usa el tablero al escribir su propia URL.
+    cod_slug = {slug(m["nombre"]): m["cod_ine"] for m in munis}
     laminas = []
 
     # ── municipales: un archivo por indicador ────────────────────────────
@@ -93,7 +100,7 @@ def main():
             print("  ⚠️ sin catálogo:", p.name)
             continue
         laminas.append({"n": "municipal", "t": i["label"], "g": gru_mun[p.stem],
-                        "m": "", "f": "municipal/" + p.name,
+                        "m": "", "k": p.stem, "f": "municipal/" + p.name,
                         "mi": "mini/municipal/" + p.stem + ".webp",
                         "kb": round(p.stat().st_size / 1024)})
 
@@ -111,7 +118,8 @@ def main():
             print("  ⚠️ sin catálogo:", p.name)
             continue
         laminas.append({"n": "manzana", "t": i["label"], "g": gru_mz[clave],
-                        "m": por_slug.get(sl, sl), "f": "manzana/" + p.name,
+                        "m": por_slug.get(sl, sl), "k": clave,
+                        "ci": cod_slug.get(sl, ""), "f": "manzana/" + p.name,
                         "mi": "mini/manzana/" + p.stem + ".webp",
                         "kb": round(p.stat().st_size / 1024)})
 

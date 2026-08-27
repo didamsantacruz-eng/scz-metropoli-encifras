@@ -7,10 +7,14 @@ Cada lámina responde tres preguntas sobre el mismo dato, que es lo que una
 imagen suelta necesita para poder viajar sin el tablero al lado:
 
   1. **Dónde** — el mapa de las manzanas de ese municipio.
-  2. **Cómo se reparte adentro** — la caja p25-p75 con su mediana, contra las
-     de los otros ocho. Es la lectura que el promedio municipal esconde: en 57
-     de los 91 indicadores la desigualdad DENTRO de un municipio supera todo el
-     rango ENTRE los nueve.
+  2. **Cómo se reparte adentro** — el CUADRO de los nueve municipios: cuántas
+     manzanas tiene cada uno con ficha y en qué valores caen su mínimo, su
+     primer cuarto, su mediana, su tercer cuarto y su máximo. Es la lectura
+     que el promedio municipal esconde: en 57 de los 91 indicadores la
+     desigualdad DENTRO de un municipio supera todo el rango ENTRE los nueve.
+     Hasta 2026-08-27 esto era una tira de cajas y bigotes; se cambió por un
+     cuadro porque obligaba a traducir una leyenda de cuatro trazos antes de
+     poder leer un número, y los valores sólo salían impresos en las puntas.
   3. **Contra qué se compara** — la cifra del municipio y la de la región.
 
 ⚠️ LA COBERTURA VA ESCRITA EN LA LÁMINA. El INE suprime la ficha de las
@@ -526,141 +530,203 @@ def lamina(sl, clave, ind, mun, st, salida):
     y -= .096 if hay_nota_recorte else .082
     fig.text(X, y, "DISTRIBUCI\u00d3N DENTRO DE CADA MUNICIPIO", color=E.TINTA,
              fontsize=8.5, family=E.F_BOLD, va="top")
-    # El rengl\u00f3n "X va de A a B entre sus manzanas" se fue: los dos n\u00fameros
-    # ahora van escritos en las puntas del hilo, dentro del gr\u00e1fico, que es
-    # donde se leen sin tener que buscarlos.
-    # ★ EL SUELO DEL GRÁFICO Y EL RENGLÓN DE LA LEYENDA, CON LA CUENTA HECHA
-    #   (2026-08-20). La leyenda «hilo · trazo · caja · marca» iba a `PIE + .004`
-    #   con `va="top"`: a cuerpo 8 ocupa 8/72/9 = .0123 de figura, así que
-    #   TERMINABA en .0897 mientras la franja del pie EMPIEZA en PIE − .006 =
-    #   .092. No estaba cerca del borde: estaba metida DENTRO, .0023 de figura
-    #   —unos 4 px del lienzo—. Y a cuerpo 7 caía justo encima del filo.
-    #   Ahora las tres alturas se derivan de una cuenta, no de un tanteo:
-    #     franja del pie ................................. termina en .092
-    #     leyenda (va=top, alto .0123) ....... de .1180 a .1057  → 13 px de aire
-    #     rótulos del eje (pad 3 pt + alto .0123) ... bajan hasta .1272
-    #     suelo del gráfico ............................. .1440
-    ALTO_TXT = 8 / 72 / 9            # alto de un renglón a cuerpo 8, en figura
-    PAD_EJE = 3 / 72 / 9             # el `pad` de los rótulos del eje, en figura
-    Y_LEYENDA = PIE + .020           # arranque del renglón de la leyenda
-    BASE_GRAF = Y_LEYENDA + ALTO_TXT + PAD_EJE + ALTO_TXT + .008
-    alto = y - .018 - BASE_GRAF
-    # ★ EL CANAL DE LOS NOMBRES SE MIDE (2026-08-20). Era .120 a ojo; el nombre
-    #   más largo —«Santa Cruz de la Sierra»— ocupa .0966 en negrita a 10 pt, y
-    #   lo que sobraba se lo estaba quedando el margen en vez del gráfico.
-    #   Con .108 el nombre entra con aire y el eje gana ancho, que es donde hacen
-    #   falta: en las cifras de las puntas del hilo.
-    CANAL_NOM = .108
-    axd = fig.add_axes([X + CANAL_NOM, BASE_GRAF, W - CANAL_NOM, alto])
-    axd.set_facecolor(E.FONDO)
-    for lado in ("top", "right", "left"):
-        axd.spines[lado].set_visible(False)
-    axd.spines["bottom"].set_color(E.LINEA)
+    # ★ EL RÓTULO DE LA DERECHA DICE LAS DOS COSAS QUE NINGUNA COLUMNA PUEDE
+    #   DECIR: en qué orden vienen las filas y en qué unidad están las cifras.
+    #   Sin lo primero el orden se lee como arbitrario; sin lo segundo habría
+    #   que repetir «%» —o peor, «hab/ha»— cincuenta y cuatro veces.
+    u_txt = {"%": "%", "hab": "personas",
+             "hab/ha": "habitantes por hectárea"}.get(u, u)
+    fig.text(X + W, y, "ordenados por su mediana  ·  cifras en " + u_txt,
+             color=E.SUAVE, fontsize=8, family=E.F_MED, va="top", ha="right")
+
+    # ══ EL CUADRO ════════════════════════════════════════════════════════
+    # ✂ SE FUE LA TIRA DE CAJAS Y BIGOTES (pedido de Carlos, 2026-08-27).
+    #   Un solo renglón codificaba cuatro cosas a la vez —hilo fino, trazo
+    #   grueso, caja y marca— y había que traducir una leyenda antes de poder
+    #   leer un número. Los valores, además, sólo salían impresos en las
+    #   puntas, y ni siquiera en todas las filas: la regla los escondía cuando
+    #   no entraban. El cuadro dice exactamente lo mismo con los números
+    #   puestos, uno por celda, y no deja nada que decodificar.
+    #
+    # ★ LAS COLUMNAS SE NOMBRAN EN CASTELLANO, NO EN PERCENTILES. «p25» hay
+    #   que saberlo de antes; «1 de cada 4» se entiende leyéndolo. Y «25%»
+    #   —la abreviatura obvia— acá es la peor opción de las tres: casi todos
+    #   estos indicadores YA se miden en por ciento y el encabezado se
+    #   confundiría con la unidad del dato.
     filas = sorted(s_["dist"].items(), key=lambda kv: -kv[1]["p50"])
     nom = {x["sigep"]: x["nombre"] for x in mun}
 
-    # ★ EL EJE: rango completo, pero acotado cuando una sola manzana lo estira.
-    #   El bigote p10-p90 cubre el 80% CENTRAL, no el rango, y llamarlo "de X a
-    #   Y" era falso: quedaba fuera una manzana de cada diez en cada punta. Ahora
-    #   se dibuja el mínimo y el máximo de verdad.
-    #   ⚠️ Con el mínimo y el máximo crudos el eje se rompe: en `densidad` hay
-    #   una manzana de 4.447 hab/ha contra un p90 de 220, y las nueve cajas
-    #   quedarían apretadas en el 5% izquierdo. Cuando la cola se aleja más de
-    #   1,2 veces el ancho del 80% central, el eje se corta ahí y las filas que
-    #   siguen más allá se marcan con un ángulo — nunca en silencio.
-    lo_p = min(x["p10"] for _, x in filas); hi_p = max(x["p90"] for _, x in filas)
-    lo_t = min(x.get("min", x["p10"]) for _, x in filas)
-    hi_t = max(x.get("max", x["p90"]) for _, x in filas)
-    span = (hi_p - lo_p) or (abs(hi_p) * .1 or 1)
-    lo = lo_t if (lo_p - lo_t) <= span*1.2 else lo_p - span*.25
-    hi = hi_t if (hi_t - hi_p) <= span*1.2 else hi_p + span*.25
-    if hi <= lo:
-        hi = lo + 1
-    cortado = False
-    # ★ LOS DOS EXTREMOS, ESCRITOS SOBRE CADA HILO. Sin número, el hilo dice
-    #   que hay cola pero no cuánta, y había que ir a buscar el eje. Van arriba
-    #   de la línea y no en la punta: en la punta se salían del cuadro.
-    #   Se mide cuánto ocupa cada rótulo EN UNIDADES DEL DATO para saber si los
-    #   dos entran; cuando el rango es angosto se cae el mínimo y queda el
-    #   máximo, que es el que casi siempre sorprende.
-    ancho_eje = (W - CANAL_NOM) * 16.0                 # pulgadas reales del eje
-    dato_x_pulgada = ((hi + (hi-lo)*.03) - lo) / max(ancho_eje, .01)
+    # forma corta de la unidad, la que entra en una frase corrida
+    u_frase = {"%": "%", "hab": " personas"}.get(u, (" " + u) if u else "")
 
-    def ancho_dato(txt, fs):
-        return ancho_de(fig, txt, fs, E.F_TXT) * 16.0 * dato_x_pulgada
+    def num(v):
+        """El valor SIN su unidad y con los MISMOS decimales en toda la columna.
 
-    for n, (sg, dd) in enumerate(filas):
-        yy = len(filas) - n
+        Dos reglas, y las dos son de cuadro y no de cifra suelta:
+
+        · LA UNIDAD SE ESCRIBE UNA VEZ, en el rótulo. Repetida en las 54
+          celdas —«4.447 hab/ha»— la columna deja de ser una columna.
+
+        · LOS DECIMALES SE DECLARAN POR UNIDAD, no se deducen del tamaño de
+          cada número. `E.fmt` los elige por magnitud —cero decimales de 100
+          para arriba, uno para abajo—, que es lo correcto para una cifra
+          suelta y veneno para una columna: dejaba «118» pegado a «77,5» y
+          las dos cifras parecían medidas con distinta precisión. Acá los
+          conteos van enteros y todo lo demás con un decimal, de arriba abajo.
+        """
+        if v is None:
+            return "s/d"
+        dec = 0 if u in ("hab", "viv") else 1
+        return f"{v:,.{dec}f}".replace(",", "@").replace(".", ",").replace("@", ".")
+
+    def val(v, unidad=True):
+        """La misma cifra del cuadro, para citarla en la frase de lectura: si
+        el cuadro dice 77,1 la frase no puede decir 77."""
+        return num(v) + (u_frase if unidad else "")
+
+    # ── el renglón que enseña a leer el cuadro ───────────────────────────
+    # ★ SE ARMA CON LOS DATOS DE ESTA LÁMINA, no es una nota genérica. Lee en
+    #   voz alta la fila propia —la única que el lector ya tiene ubicada— y
+    #   con eso quedan aprendidas las otras ocho. Una leyenda que nombra
+    #   trazos enseña a mirar; una frase con los números adentro enseña a leer.
+    ALTO_TXT = 8.5 / 72 / 9          # alto de un renglón a cuerpo 8,5, en figura
+    SALTO = ALTO_TXT * 1.42
+    p50s = [x["p50"] for _, x in filas]
+    # sin ninguna fila no hay cuadro que armar: se dice y se sale, en vez de
+    # dejar el hueco mudo o reventar en un max() de lista vacía
+    if not p50s:
+        fig.text(X, y - .040, "Sin manzanas suficientes para repartir este "
+                 "indicador.", color=E.SUAVE, fontsize=9, family=E.F_TXT,
+                 va="top")
+        p50s = [0]
+    rango_med = max(p50s) - min(p50s)
+
+    def dif(v):
+        """Una diferencia entre porcentajes se mide en PUNTOS, no en por
+        ciento: decir «21,3%» de brecha sería otra cifra y otra cosa."""
+        return num(v) + (" pp" if u == "%" else u_frase)
+
+    if d:
+        brecha = d["p75"] - d["p25"]
+        # `E.fmt(n, "hab")` es el formateo de conteo —miles con punto y sin
+        # sufijo—, que es justo lo que necesita un recuento de manzanas.
+        tramos = [
+            ("Cómo se lee:", E.TINTA, E.F_BOLD),
+            ("en " + m["nombre"] + ", la mitad de sus " + E.fmt(d["n"], "hab") +
+             " manzanas con ficha no pasa de " + val(d["p50"]) +
+             "; la más baja marca " + val(d["min"], False) +
+             " y la más alta, " + val(d["max"], False) + ".",
+             E.TINTA, E.F_TXT, True),
+            ("La mitad del medio", E.TINTA, E.F_SEMI),
+            ("de sus manzanas abarca " + dif(brecha) +
+             ", y entre las medianas de los nueve municipios hay " +
+             dif(rango_med) + ": " +
+             ("adentro de un solo municipio el dato se reparte más desigual "
+              "que entre los nueve."
+              if brecha > rango_med else
+              "acá la distancia entre municipios pesa más que la de adentro."),
+             E.TINTA, E.F_TXT),
+        ]
+    else:
+        # sin ficha suficiente para deciles no se inventa una lectura: se dice
+        tramos = [
+            ("Cómo se lee:", E.TINTA, E.F_BOLD),
+            ("cada fila reparte las manzanas de un municipio de menor a mayor. "
+             "La mediana parte el grupo en dos mitades; entre «1 de cada 4» y "
+             "«3 de cada 4» cae la mitad del medio.", E.TINTA, E.F_TXT),
+        ]
+    _, n_ln = parrafo(fig, X, 0, tramos, 8.5, SALTO, W, dibujar=False)
+    # La última línea tiene que APOYAR sobre la franja del pie, no meterse
+    # adentro: el párrafo baja desde su techo, así que el techo se calcula
+    # hacia arriba desde el suelo y no al revés.
+    Y_LECTURA = PIE + .014 + ALTO_TXT + SALTO * (n_ln - 1)
+    parrafo(fig, X, Y_LECTURA, tramos, 8.5, SALTO, W)
+
+    # ── la grilla del cuadro ─────────────────────────────────────────────
+    BASE = Y_LECTURA + .018          # suelo del cuadro
+    TOP = y - .030                   # techo, bajo el rótulo de la sección
+    H_BANDA = .019                   # franja del rótulo «aquí cae la mitad…»
+    H_ENC = .021                     # renglón de los rótulos de columna
+    h_fila = (TOP - BASE - H_BANDA - H_ENC) / max(len(filas), 1)
+
+    # ★ EL ANCHO DEL CANAL DEL NOMBRE SE MIDE, NO SE TANTEA: «Santa Cruz de
+    #   la Sierra» a cuerpo 9,5 en negrita es el más largo de los nueve.
+    w_nom = ancho_de(fig, "Santa Cruz de la Sierra", 9.5, E.F_BOLD) + .012
+    w_n = .052                       # la columna del recuento, más angosta
+    w_val = (W - w_nom - w_n) / 5    # las cinco cifras, todas iguales
+    xr = [X + w_nom + w_n]           # borde derecho de cada columna
+    xr += [xr[0] + w_val * (k + 1) for k in range(5)]
+    PAD = .007                       # aire a la derecha de cada cifra
+
+    # ★ LA MITAD DEL MEDIO, PINTADA. Es el único recurso gráfico que queda, y
+    #   hace el trabajo que hacía la caja gris: agrupa las tres columnas del
+    #   centro para que se lean como un tramo y no como tres cifras sueltas.
+    #   Es el crema del pie —no un gris—: un gris acá abriría un segundo plano
+    #   sobre el fondo y ensuciaría la lámina entera.
+    fig.add_artist(Rectangle((xr[1], BASE), xr[4] - xr[1], TOP - BASE,
+                             transform=fig.transFigure, facecolor=E.PIE_BANDA,
+                             edgecolor="none", zorder=0))
+    fig.text((xr[1] + xr[4]) / 2, TOP - H_BANDA * .55,
+             "AQUÍ CAE LA MITAD DE SUS MANZANAS", color=E.SUAVE,
+             fontsize=7.5, family=E.F_BOLD, ha="center", va="center", zorder=3)
+
+    # ── los rótulos de columna ───────────────────────────────────────────
+    y_enc = TOP - H_BANDA - H_ENC * .52
+    fig.text(X, y_enc, "MUNICIPIO", color=E.SUAVE, fontsize=7.5,
+             family=E.F_BOLD, ha="left", va="center", zorder=3)
+    ENC = ["MANZANAS", "MÍNIMO", "1 DE CADA 4", "MEDIANA", "3 DE CADA 4",
+           "MÁXIMO"]
+    # ★ EL CUERPO DE LOS RÓTULOS SE MIDE CONTRA LA COLUMNA, no se elige. A 7,5
+    #   «3 DE CADA 4» ocupa .66" en una columna de .78" y con el aire de la
+    #   derecha quedaba a dos décimas de milímetro de la cifra de al lado.
+    fs_enc = 7.5
+    while fs_enc > 6.0 and max(ancho_de(fig, e, fs_enc, E.F_BOLD)
+                               for e in ENC) > w_val - PAD * 1.6:
+        fs_enc -= .25
+    for k, t in enumerate(ENC):
+        # la mediana es la columna que manda —ordena las filas y es la cifra
+        # grande de arriba—, así que su rótulo va en tinta y no en gris
+        fig.text(xr[k] - PAD, y_enc, t, color=E.TINTA if k == 3 else E.SUAVE,
+                 fontsize=fs_enc, family=E.F_BOLD, ha="right", va="center",
+                 zorder=3)
+    y_filas = TOP - H_BANDA - H_ENC
+    fig.add_artist(plt.Line2D([X, X + W], [y_filas, y_filas],
+                              transform=fig.transFigure, color=E.LINEA, lw=.9,
+                              zorder=2))
+
+    # ── las nueve filas ──────────────────────────────────────────────────
+    for n_, (sg, dd) in enumerate(filas):
+        yc = y_filas - h_fila * (n_ + .5)
         propio = sg == m["sigep"]
-        vmin = dd.get("min", dd["p10"]); vmax = dd.get("max", dd["p90"])
-        x_ini, x_fin = max(vmin, lo), min(vmax, hi)
-        # 1 · el rango entero, en hilo fino
-        axd.plot([x_ini, x_fin], [yy, yy], color="#b9c0ba", lw=.7, zorder=1)
-        # el ángulo avisa que la fila sigue más allá del eje
-        recorte_izq = vmin < lo - 1e-9
-        recorte_der = vmax > hi + 1e-9
-        for hay, lim, mk in ((recorte_izq, lo, "<"), (recorte_der, hi, ">")):
-            if hay:
-                axd.plot([lim], [yy], marker=mk, ms=3.4, color="#8a938c",
-                         zorder=4, clip_on=False)
-                cortado = True
-        # los dos números del hilo
-        # con la fila más alta —una línea menos arriba— las cifras de las
-        # puntas suben medio punto y dejan de leerse como letra chica
-        fs_r = 7.5 if propio else 7.0
-        fam_r = E.F_SEMI if propio else E.F_TXT
-        t_min = ("‹ " if recorte_izq else "") + E.fmt(vmin, u)
-        t_max = E.fmt(vmax, u) + (" ›" if recorte_der else "")
-        # El mínimo se escribe siempre en la fila de la lámina; en las otras,
-        # sólo si se despega del arranque del eje. Casi todos los mínimos son 0
-        # y nueve "0 hab/ha" repetidos son ruido, no información.
-        entran = (ancho_dato(t_min, fs_r) + ancho_dato(t_max, fs_r)) * .60 <= (x_fin - x_ini)
-        vale = propio or recorte_izq or (vmin - lo) > (hi - lo) * .02
-        if entran and vale:
-            axd.text(x_ini, yy + .36, t_min, ha="left", va="bottom",
-                     fontsize=fs_r, color=E.TINTA, family=fam_r, zorder=5)
-        # El máximo sigue la misma regla que el mínimo: se escribe en la fila
-        # de la lámina, cuando la fila se sale del eje, o cuando se despega del
-        # tope. Casi todos los municipios llegan a 100% y nueve «100,0%»
-        # apilados en columna son ruido, no información.
-        if propio or recorte_der or (hi - vmax) > (hi - lo) * .02:
-            axd.text(x_fin, yy + .36, t_max, ha="right", va="bottom",
-                     fontsize=fs_r, color=E.TINTA, family=fam_r, zorder=5)
-        # 2 · el 80% central, en trazo grueso
-        axd.plot([dd["p10"], dd["p90"]], [yy, yy], color="#7f8a82", lw=1.8, zorder=2)
-        # 3 · la mitad más común
-        axd.add_patch(Rectangle((dd["p25"], yy - .21),
-                                max(dd["p75"]-dd["p25"], (hi-lo)*.004), .42,
-                                facecolor=E.VERDE_INS if propio else "#c4cdc6",
-                                edgecolor="none", zorder=3))
-        # 4 · la mediana
-        axd.plot([dd["p50"]]*2, [yy-.29, yy+.29],
-                 color=E.TINTA, lw=1.7 if propio else 1.3, zorder=4)
-        # ★ TODOS EN NEGRITA (pedido de Carlos, 2026-08-20). Antes sólo el
-        #   municipio de la lámina lo estaba y los otros ocho quedaban en un
-        #   redondo que se leía como secundario. La distinción del propio se
-        #   mantiene por COLOR —el verde institucional—, que ya es el de su caja
-        #   y su mediana: el peso deja de ser la marca y pasa a ser la norma.
-        axd.text(-.025, yy, nom.get(sg, ""), ha="right", va="center",
-                 transform=axd.get_yaxis_transform(), fontsize=10,
-                 color=E.VERDE_INS if propio else E.TINTA, family=E.F_BOLD)
-    axd.set_xlim(lo, hi + (hi-lo)*.03); axd.set_ylim(.35, len(filas)+.75)
-    axd.set_yticks([])
-    axd.tick_params(axis="x", colors=E.TINTA, labelsize=8, length=0, pad=3)
-    for lbl in axd.get_xticklabels():
-        lbl.set_family(E.F_TXT)
-    # la leyenda del gráfico, en una línea al pie del propio gráfico
-    # La leyenda entra en un rengl\u00f3n midi\u00e9ndola, no a ojo: con el cuerpo fijo se
-    # pasaba del margen y el \u00faltimo tramo \u2014justo el que explica el \u00e1ngulo\u2014 se
-    # cortaba fuera del lienzo sin que nada lo delatara.
-    ley = ("hilo: rango entero, con sus extremos   \u00b7   trazo: 80% central   \u00b7   "
-           "caja: mitad m\u00e1s com\u00fan   \u00b7   marca: mediana")
-    if cortado:
-        ley += "   \u00b7   \u203a  sigue m\u00e1s all\u00e1"
-    fs_l = 8.0
-    while fs_l > 6.5 and ancho_de(fig, ley, fs_l, E.F_TXT) > W:
-        fs_l -= .25
-    fig.text(X, Y_LEYENDA, ley, color=E.TINTA, fontsize=fs_l, family=E.F_TXT, va="top")
+        if propio:
+            # ★ LA FILA PROPIA SE MARCA POR COLOR, no por peso: los nueve
+            #   nombres van en negrita (pedido del 2026-08-20) y el verde
+            #   institucional ya es el de su caja en el resto de la lámina.
+            fig.add_artist(Rectangle((X - .009, yc - h_fila * .5), W + .011,
+                                     h_fila, transform=fig.transFigure,
+                                     facecolor=E.VERDE_INS, alpha=.12,
+                                     edgecolor="none", zorder=1))
+        elif n_:
+            fig.add_artist(plt.Line2D([X, X + W], [yc + h_fila * .5] * 2,
+                                      transform=fig.transFigure, color=E.LINEA,
+                                      lw=.5, alpha=.8, zorder=2))
+        tinta = E.VERDE_INS if propio else E.TINTA
+        fig.text(X, yc, nom.get(sg, ""), color=tinta, fontsize=9.5,
+                 family=E.F_BOLD, ha="left", va="center", zorder=3)
+        celdas = [E.fmt(dd["n"], "hab"), num(dd["min"]), num(dd["p25"]),
+                  num(dd["p50"]), num(dd["p75"]), num(dd["max"])]
+        for k, t in enumerate(celdas):
+            # el recuento es contexto, no dato: va en gris para que las cinco
+            # cifras de la derecha queden solas en el primer plano
+            if k == 0:
+                c, f = E.SUAVE, E.F_TXT
+            else:
+                c = tinta if (propio or k == 3) else E.TINTA
+                f = E.F_SEMI if (propio or k == 3) else E.F_TXT
+            fig.text(xr[k] - PAD, yc, t, color=c, fontsize=9.5, family=f,
+                     ha="right", va="center", zorder=3)
+    fig.add_artist(plt.Line2D([X, X + W], [BASE, BASE], transform=fig.transFigure,
+                              color=E.LINEA, lw=.9, zorder=2))
 
     # ══ PIE ══════════════════════════════════════════════════════════════
     # A ras del papel, la ficha técnica se leía como un renglón más de la
