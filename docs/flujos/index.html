@@ -204,7 +204,7 @@ svg.bandas{width:100%;height:auto}
 
     <h3 class="sub">Diagrama de flujo origen-destino</h3>
     <div class="panel"><svg class="bandas" id="band-svg"></svg></div>
-    <div class="grad-leyenda" id="band-leyenda"></div>
+    <div class="leyenda" id="band-leyenda"></div>
 
     <h3 class="sub">Destinos de un municipio de origen</h3>
     <div class="controles">
@@ -449,6 +449,7 @@ function renderBandas(){
   const ms = DATA.municipios, n = ms.length;
   const vals = valoresFila();
   const mx = Math.max(...vals);
+  const colorOrigen = ms.map((_,i)=>gama(n<=1?.5:i/(n-1)));
   const W = 760, H = 60 + n*54, PAD = 190;
   const svg = $("#band-svg");
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
@@ -464,7 +465,7 @@ function renderBandas(){
     const v = pctFila(i,j); if (v<=0) return;
     const t = v/mx;
     const w = 1 + t*9;
-    const color = gama(t);
+    const color = colorOrigen[i];
     const y1=y(i), y2=yDer[j];
     const cx1 = PAD+40, cx2 = W-PAD-40;
     s += `<path d="M${PAD+8},${y1} C${cx1},${y1} ${cx2},${y2} ${W-PAD-8},${y2}"
@@ -477,7 +478,8 @@ function renderBandas(){
     s += `<text class="nodo-et" x="${W-PAD+12}" y="${y(pos)+4}" text-anchor="start">${ms[idx]}</text>`;
   });
   svg.innerHTML = s;
-  $("#band-leyenda").innerHTML = `<span>0%</span><div class="grad-barra" style="background:${gradCSS()}"></div><span>${nf(mx,0)}%</span>`;
+  $("#band-leyenda").innerHTML = ms.map((nom,i)=>
+    `<span><i style="background:${colorOrigen[i]}"></i>${nom}</span>`).join("");
 }
 $("#sel-origen").onchange = renderOrigenUno;
 function renderOrigenUno(){
