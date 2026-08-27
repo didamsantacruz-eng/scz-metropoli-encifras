@@ -43,7 +43,9 @@ a{color:inherit}
 /* ── barra ───────────────────────────────────────────────────────────── */
 .barra{background:var(--verde-hondo);position:relative;z-index:5}
 .barra .envoltura{display:flex;align-items:center;gap:16px;height:70px}
-.barra img{height:36px;width:auto;display:block;flex:none}
+.marca{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:none}
+.barra img{height:34px;width:auto;display:block;flex:none}
+.marca-nombre{font-size:11px;color:#9dbd91;letter-spacing:.01em;white-space:nowrap}
 .barra nav{margin-left:auto;display:flex;gap:24px;font-size:14px}
 .barra nav a{color:#b9d3ac;text-decoration:none;font-weight:500;white-space:nowrap;
              padding:3px 0;border-bottom:2px solid transparent}
@@ -188,6 +190,7 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
   .envoltura{padding:0 18px}
   .barra .envoltura{height:auto;flex-wrap:wrap;gap:0;padding-top:11px}
   .barra img{height:26px}
+  .marca-nombre{display:none}
   .barra nav{margin:9px -18px 0;padding:0 18px 10px;width:calc(100% + 36px);
              gap:18px;font-size:13px;overflow-x:auto;scrollbar-width:none}
   .barra nav::-webkit-scrollbar{display:none}
@@ -242,7 +245,10 @@ footer .txt b{font-style:normal;font-weight:600;color:var(--tinta)}
 
 <header class="barra">
   <div class="envoltura">
-    <img src="img/didam-oscuro.png" alt="DIDAM — Dirección de la Instancia Departamental de Asuntos Metropolitanos">
+    <div class="marca">
+      <img src="img/didam-oscuro.png" alt="DIDAM">
+      <span class="marca-nombre">Dirección de la Instancia Departamental de Asuntos Metropolitanos</span>
+    </div>
     <nav>
       <a href="municipal/">Municipal</a>
       <a href="manzana/">A nivel manzana</a>

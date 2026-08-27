@@ -22,8 +22,10 @@ html,body{margin:0;background:var(--fondo);color:var(--tx);
   font:400 16px/1.55 var(--f);-webkit-font-smoothing:antialiased}
 header{background:var(--topbar);color:#fff;padding:.9rem 1.4rem;display:flex;align-items:center;gap:.9rem;
   position:sticky;top:0;z-index:30}
-.marca{display:flex;align-items:center;flex:none;text-decoration:none}
-.marca img{height:26px;width:auto;display:block}
+.marca{display:flex;flex-direction:column;justify-content:center;gap:.15rem;flex:none;text-decoration:none}
+.marca img{height:24px;width:auto;display:block}
+.marca-nombre{font-size:.62rem;color:rgba(255,255,255,.62);white-space:nowrap}
+@media(max-width:760px){.marca-nombre{display:none}}
 .t-h{font:600 1.02rem/1.2 var(--fd)}
 .t-h b{color:var(--verde)}
 .t-n{font-size:.68rem;color:rgba(255,255,255,.62);margin-top:.15rem}
@@ -155,7 +157,8 @@ svg.bandas{width:100%;height:auto}
 
 <header>
   <a class="marca" href="../index.html" aria-label="Volver al portal">
-    <img src="../img/didam-oscuro.png" alt="DIDAM — Dirección de la Instancia Departamental de Asuntos Metropolitanos">
+    <img src="../img/didam-oscuro.png" alt="DIDAM">
+    <span class="marca-nombre">Dirección de la Instancia Departamental de Asuntos Metropolitanos</span>
   </a>
   <div>
     <div class="t-h"><b>Santa Cruz:</b> dinámica metropolitana</div>

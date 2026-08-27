@@ -106,9 +106,10 @@ body.dark{
 /* ── La marca en la barra superior ────────────────────────────────────────
    El logotipo entregado es apaisado (688×168 ≈ 4,1:1). Se fija por ALTO y el
    ancho sale solo: fijarlo por ancho lo deformaba al encogerse la barra. */
-.marca{display:flex;align-items:center;flex-shrink:0;height:30px;
+.marca{display:flex;flex-direction:column;justify-content:center;gap:2px;flex-shrink:0;height:42px;
   text-decoration:none;transition:opacity .15s}
 .marca img{height:26px;width:auto;display:block}
+.marca-nombre{font-size:.56rem;color:rgba(255,255,255,.62);white-space:nowrap;letter-spacing:.01em}
 .marca:hover{opacity:.82}
 .marca:focus-visible{outline:2px solid var(--scz-verde);outline-offset:3px;border-radius:2px}
 
@@ -120,6 +121,10 @@ body.dark .marca-pie img{content:url("img/scz-oscuro.png")}
 
 /* En pantallas angostas la barra se queda sin sitio: primero se va el
    subtítulo y después el logotipo, antes que apretar los conmutadores. */
+@media (max-width:900px){
+  .marca-nombre{display:none}
+  .marca{height:26px}
+}
 @media (max-width:720px){
   .marca img{height:22px}
 }
