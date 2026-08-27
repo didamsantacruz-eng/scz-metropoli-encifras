@@ -4,14 +4,23 @@
 Ningún número de la hoja se escribe a mano: todos salen de acá, y acá salen del
 censo o de los archivos publicados.
 """
+import os
 import json
 import pathlib
 
 import pandas as pd
 
 AQUI = pathlib.Path(__file__).resolve().parent
-REPO = pathlib.Path(r"C:\Users\HP\OneDrive\Desktop\Proyectos\scz-metropolitana-gobernacion")
-RAW = pathlib.Path(r"C:\Users\HP\cpv2024")
+# ⚠️ RUTAS PORTABLES (2026-08-26). Acá vivían clavadas la ruta del repo en
+#    OneDrive y la del microdato en el disco de Carlos. El repo pasó a manos de
+#    más gente: con la ruta clavada, este script sólo corría en la máquina donde
+#    se escribió.
+#    · REPO se deduce del propio archivo; no hace falta configurarlo.
+#    · RAW es microdato del INE y VIVE FUERA DEL REPO por definición, así que no
+#      se puede deducir: sale de la variable de entorno CPV2024 y, si no está,
+#      cae en la ruta de siempre para no romper esta máquina.
+REPO = pathlib.Path(__file__).resolve().parent.parent
+RAW = pathlib.Path(os.environ.get("CPV2024", r"C:\Users\HP\cpv2024"))
 
 aud = json.loads((AQUI / "auditoria_flujos.json").read_text(encoding="utf-8"))
 perfil_pub = json.loads((REPO / "docs/datos/flujos_perfil.json").read_text(encoding="utf-8"))

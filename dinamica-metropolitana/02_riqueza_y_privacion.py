@@ -54,6 +54,7 @@ C · CAPACIDAD DE PAGO REVELADA
     recurrentes. Sostenerlos es evidencia directa de capacidad de pago, y no
     necesita ningún supuesto sobre el ingreso.
 """
+import os
 import json
 import pathlib
 import sys
@@ -63,7 +64,15 @@ import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-RAW = pathlib.Path(r"C:\Users\HP\cpv2024")
+# ⚠️ RUTAS PORTABLES (2026-08-26). Acá vivían clavadas la ruta del repo en
+#    OneDrive y la del microdato en el disco de Carlos. El repo pasó a manos de
+#    más gente: con la ruta clavada, este script sólo corría en la máquina donde
+#    se escribió.
+#    · REPO se deduce del propio archivo; no hace falta configurarlo.
+#    · RAW es microdato del INE y VIVE FUERA DEL REPO por definición, así que no
+#      se puede deducir: sale de la variable de entorno CPV2024 y, si no está,
+#      cae en la ruta de siempre para no romper esta máquina.
+RAW = pathlib.Path(os.environ.get("CPV2024", r"C:\Users\HP\cpv2024"))
 AQUI = pathlib.Path(__file__).resolve().parent
 BASE = RAW / "base9_metro.parquet"
 SALIDA = RAW / "base9_metro_nivelvida.parquet"

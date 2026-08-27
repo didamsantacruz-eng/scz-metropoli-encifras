@@ -183,7 +183,7 @@ paquete = {
         "fuente": "Censo de Población y Vivienda 2024 (INE Bolivia), microdato",
         "universo": ref["region"]["n"],
         "municipios": N9,
-        "generado_por": "analisis/flujos/01→04",
+        "generado_por": "dinamica-metropolitana/01→04",
         "umbral_perfil": 40,
         "advertencia_vivienda":
             "Los indicadores de vivienda se leen como PERSONAS: «38% con "

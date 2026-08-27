@@ -26,6 +26,7 @@ Para cada relación se calculan las SEIS FAMILIAS de descriptivos:
   hay que escribirla así en la página para que nadie la confunda con un
   porcentaje de viviendas.
 """
+import os
 import json
 import pathlib
 import sys
@@ -35,8 +36,16 @@ import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-RAW = pathlib.Path(r"C:\Users\HP\cpv2024")
-REPO = pathlib.Path(r"C:\Users\HP\OneDrive\Desktop\Proyectos\scz-metropolitana-gobernacion")
+# ⚠️ RUTAS PORTABLES (2026-08-26). Acá vivían clavadas la ruta del repo en
+#    OneDrive y la del microdato en el disco de Carlos. El repo pasó a manos de
+#    más gente: con la ruta clavada, este script sólo corría en la máquina donde
+#    se escribió.
+#    · REPO se deduce del propio archivo; no hace falta configurarlo.
+#    · RAW es microdato del INE y VIVE FUERA DEL REPO por definición, así que no
+#      se puede deducir: sale de la variable de entorno CPV2024 y, si no está,
+#      cae en la ruta de siempre para no romper esta máquina.
+RAW = pathlib.Path(os.environ.get("CPV2024", r"C:\Users\HP\cpv2024"))
+REPO = pathlib.Path(__file__).resolve().parent.parent
 AQUI = pathlib.Path(__file__).resolve().parent
 SAL = AQUI / "salida"
 SAL.mkdir(exist_ok=True)
@@ -108,12 +117,43 @@ b["u_sin_cedula"] = nan_si_no(b.edad.ge(18), b.sin_cedula)
 b["u_cedula_extranjero"] = nan_si_no(b.edad.ge(18), b.cedula_extranjero)
 b["edad_num"] = b.edad
 
+# ⛔⛔ EL TAMAÑO DEL HOGAR TAMBIÉN TIENE UNIVERSO, Y NO LO TENÍA (2026-08-26).
+#    Salía 40,54 personas por hogar en la región. El tamaño real es 3,58
+#    —2.282.770 personas entre 637.667 hogares, y el promedio POR HOGAR de esta
+#    misma columna da 3,58—, así que la columna estaba bien y el promedio, mal.
+#    Dos cosas se sumaban:
+#    1. Es un atributo del HOGAR promediado sobre PERSONAS. Eso da Σn²/Σn, «el
+#       tamaño del hogar de la persona promedio», que está sesgado por tamaño
+#       por construcción. Es el mismo error que `lamina_municipal.py` ya tiene
+#       documentado un nivel más arriba, con municipios en vez de hogares.
+#    2. Y lo vuelve absurdo la cola: las viviendas COLECTIVAS entraban como si
+#       fueran hogares. `v01_tipoviv` 12 es «recinto penitenciario» y promedia
+#       7.318 personas — ese único registro de 8.645 es Palmasola—; la 8 es
+#       hospital con internación (263) y la 9 cuartel (202). Son 279 viviendas
+#       sobre 20 personas, el 0,04% de los hogares, y solas levantaban la media
+#       de 3,58 a 40,54.
+#    ⇒ Se restringe a vivienda PARTICULAR, que es el universo con el que el INE
+#      publica todo lo de vivienda y el que ya declara el tablero («sobre las
+#      viviendas particulares»). Medido: fuera del universo queda el 1,86% de
+#      las personas, y de los otros doce indicadores de vivienda ninguno se
+#      mueve más de 1,2 puntos —`pers_por_dormitorio` y `pers_por_habitacion`
+#      no se mueven nada, porque los dormitorios de un cuartel escalan con su
+#      gente—. O sea que el defecto era de ESTE campo, no del recorte.
+#    ⚠️ La restricción NO se aplica a los demás indicadores a propósito: quien
+#      vive en un cuartel o en un penal sigue siendo una persona y su edad, su
+#      educación y su origen son datos válidos. Lo que no es válido es tratar a
+#      ese edificio como un hogar.
+PARTICULAR = b.v01_tipoviv.isin(["1", "2", "3", "4", "5", "6"])
+b["u_tam_hogar"] = nan_si_no(PARTICULAR, b.tot_pers_hog)
+print(f"  vivienda particular: {int(PARTICULAR.sum()):,} de {len(b):,} personas "
+      f"({(~PARTICULAR).mean() * 100:.2f}% fuera del universo del hogar)")
+
 # (nombre publicable, columna, familia)  —  las booleanas salen como %
 ESCALARES = [
     # 1 · quién es
     ("pct_mujer", "mujer", 1), ("pct_jefe", "jefe", 1),
     ("pct_indigena", "indigena", 1), ("pct_discapacidad", "discap", 1),
-    ("tam_hogar", "tot_pers_hog", 1),
+    ("tam_hogar", "u_tam_hogar", 1),      # ⚠️ restringido: ver PARTICULAR arriba
     # 2 · qué sabe
     ("anios_estudio", "anios_estudio", 2), ("pct_superior", "u_superior", 2),
     ("pct_sin_nivel", "u_sin_nivel", 2), ("pct_analfabeto", "u_analfabeto", 2),

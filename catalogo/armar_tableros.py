@@ -220,9 +220,11 @@ def anotar_serie(grupos, fichas, con12):
 #   ocupadas»: el título repetido más contabilidad. Decía sobre qué se divide,
 #   nunca qué se está mirando.
 #   Pedido de Carlos: «que se entienda solo leyendo qué nos muestra el gráfico».
-#   Ahora hay una definición ESCRITA para cada uno de los 237 indicadores, en
-#   `catalogo/definiciones.json`, redactada contra la expresión real (`e24`) y
-#   no contra el título —varios títulos prometen más de lo que el dato mide—.
+#   Ahora hay una definición ESCRITA para cada uno de los 243 indicadores del
+#   tablero municipal, en `catalogo/definiciones.json`, redactada contra la
+#   expresión real (`e24`) y no contra el título —varios títulos prometen más de
+#   lo que el dato mide—. Se arma con `catalogo/armar_definiciones.py` desde
+#   `definiciones_a/b/c.py`, que son la fuente de verdad.
 DEFINICIONES = json.loads((AQUI / "definiciones.json").read_text(encoding="utf-8"))
 
 
@@ -392,11 +394,22 @@ def main():
     # ★ LOS FISCALES SE CONSERVAN TAL CUAL. No salen del microdato censal sino de
     #   la ejecución presupuestaria del MEFP (30 indicadores × 10 gestiones, en
     #   `fiscal.json`), así que no pasan por los motores ni por esta validación:
-    #   se toman del catálogo anterior, que ya los tenía descritos. Sin esto el
+    #   se toman del catálogo anterior, que ya los tenía calculados. Sin esto el
     #   tablero municipal perdía el bloque fiscal entero respecto del que había.
+    #
+    #   ⛔ PERO LA DESCRIPCIÓN SÍ SE REESCRIBE (2026-08-26). Copiarlos «tal cual»
+    #      incluía copiar su texto de origen, y ese texto es justo el que se pidió
+    #      quitar: «Porcentaje del ingreso total que proviene de la Coparticipación
+    #      Tributaria del TGN» empieza por la fórmula, nombra el denominador y usa
+    #      una sigla sin abrir. Peor: al saltarse `describir()` se saltaban también
+    #      su aviso, así que los treinta figuraban como cubiertos sin estarlo —el
+    #      aviso decía la verdad sobre lo que miraba, y no miraba estos—.
+    #      Ahora pasan por la misma puerta que los censales: definición declarada
+    #      en `definiciones_c.py`, y si falta alguna, se avisa.
     viejo = json.loads((SALIDA / "catalogo_tablero.json").read_text(encoding="utf-8"))
     g_fis = [{"key": g["key"], "label": g["label"],
-              "indicadores": [i for i in g["indicadores"] if i.get("fuente") == "fiscal"]}
+              "indicadores": [dict(i, desc=describir({"k": i["key"], "l": i["label"]}, glosario))
+                              for i in g["indicadores"] if i.get("fuente") == "fiscal"]}
              for g in viejo["grupos"]]
     g_fis = [g for g in g_fis if g["indicadores"]]
     print(f"  + bloque fiscal: {len(g_fis)} categorías · "
