@@ -200,8 +200,16 @@ main{padding:26px 0 60px}
 .donde{font-size:12.5px;color:var(--tenue);margin:0;
        display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
        overflow:hidden}
-.pie-t{margin-top:auto;border-top:1px solid var(--linea);padding:11px 17px;
-       display:flex;align-items:center;justify-content:space-between;gap:10px}
+/* ★ DOS RENGLONES DESDE QUE HAY DOS ACCIONES (2026-08-27). Con la ficha y un
+   solo enlace entraba justo en una línea; al sumar «Ver en el mapa» la tarjeta
+   —300 px— dejó de dar: el enlace nuevo se partía en tres líneas y «Descargar»
+   se salía por el borde derecho. Apretar el cuerpo de letra habría escondido el
+   problema un rato, hasta el primer municipio de nombre largo. La ficha técnica
+   sube a su propio renglón, que es lo que menos importa de los tres, y las dos
+   acciones quedan enfrentadas abajo con el ancho entero para ellas. */
+.pie-t{margin-top:auto;border-top:1px solid var(--linea);padding:10px 17px 12px;
+       display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.acciones{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .ficha{font-size:11.5px;color:var(--tenue);font-variant-numeric:tabular-nums;
        white-space:nowrap}
 .baja{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
@@ -211,6 +219,30 @@ main{padding:26px 0 60px}
           stroke-linecap:round;stroke-linejoin:round;
           transition:transform .25s ease}
 .baja:hover svg{transform:translateY(2px)}
+/* ★ EL SEGUNDO ENLACE DE LA TARJETA: al mapa vivo (2026-08-27). El banco daba
+   una imagen y ahí se terminaba el camino; el tablero que la produjo estaba a
+   dos clics y a una búsqueda, y nada en la lámina decía que existiera. Va del
+   mismo cuerpo que «Descargar» pero SIN relleno ni color propio: descargar es
+   lo que la mayoría viene a hacer acá, y dos botones con el mismo peso obligan
+   a elegir antes de leer. */
+.vivo{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
+  font-weight:600;color:var(--tenue);text-decoration:none;transition:color .18s ease}
+.vivo:hover{color:var(--verde-ins)}
+.vivo svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round}
+.vivo{white-space:nowrap}
+/* El aviso de que se llegó con un filtro puesto desde otra página. Sin esto el
+   lector aterriza en una grilla de una sola lámina y no tiene cómo saber que
+   el resto del banco sigue ahí: parece un banco vacío, no un banco filtrado. */
+.desde{display:none;align-items:center;gap:10px;margin:0 0 18px;padding:11px 15px;
+  background:var(--tarjeta);border:1px solid var(--linea);
+  border-left:3px solid var(--verde-ins);font-size:13.5px;color:var(--tx)}
+.desde.on{display:flex}
+.desde b{font-weight:600}
+.desde button{margin-left:auto;flex:none;border:1px solid var(--linea);
+  background:transparent;font:inherit;font-size:12.5px;font-weight:600;
+  color:var(--tenue);padding:5px 11px;cursor:pointer;transition:.18s ease}
+.desde button:hover{color:var(--verde-ins);border-color:var(--verde-ins)}
 .vacio{padding:70px 0;text-align:center;color:var(--tenue)}
 .vacio b{display:block;font-family:var(--ft);font-size:22px;color:var(--tinta);
          font-weight:500;margin-bottom:6px}
@@ -396,6 +428,8 @@ footer .fuerte{font-style:normal;font-weight:600;color:var(--tinta);
 </div>
 
 <main><div class="envoltura">
+  <p class="desde" id="desde"><span id="desde-tx"></span>
+    <button id="desde-x" type="button">Ver todo el banco</button></p>
   <div class="grilla" id="grilla"></div>
   <button class="mas" id="mas" hidden>Ver más</button>
   <div class="vacio" id="vacio" hidden>
@@ -501,6 +535,13 @@ document.getElementById("c-total").textContent =
   DATOS.laminas.length.toLocaleString("es-BO");
 
 let nivel = "municipal", texto = "", tope = 24;
+/* ★ FILTRO POR INDICADOR, que los menús no pueden dar. Tema y municipio
+   filtran por su rótulo en castellano; para llegar desde el tablero hace falta
+   apuntar a la CLAVE, que es lo único que identifica un indicador sin
+   ambigüedad —hay rótulos que se repiten entre bloques—. No tiene menú propio
+   a propósito: no es una forma de explorar el banco, es cómo se aterriza en él
+   desde otra página, y se quita con el botón del aviso. */
+let clave = null;
 const grilla = document.getElementById("grilla");
 
 /* ★ UN SOLO MOTOR PARA LOS DOS MENÚS. Tema y municipio filtran igual y se ven
@@ -539,8 +580,66 @@ function filtrar(){
   const q = sinTilde(texto.trim());
   return DATOS.laminas.filter(l =>
     l.n === nivel
+    && (!clave || l.k === clave)
     && MENUS.every(m => !m.sel || l[m.campo] === m.sel)
     && (!q || l._b.includes(q)));
+}
+
+/* ── llegar de afuera con un filtro puesto ────────────────────────────────
+   ★ EL BANCO SE PUEDE CITAR (2026-08-27). Los dos tableros mandan acá cuando
+     el lector pide «las nueve láminas de este indicador», y sin una dirección
+     que lleve el filtro adentro sólo podían dejarlo en la portada del banco a
+     buscar a mano lo que ya había elegido en el mapa.
+       ?n=manzana|municipal   la pestaña
+       ?k=<clave>             el indicador exacto
+       ?m=<municipio>         el municipio, por su nombre (el que filtra el menú)
+       ?q=<texto>             el buscador, para lo que no tiene clave
+   ⚠️ Va en QUERY y no en hash: el hash de esta página no lo usa nadie, pero el
+      de los tableros SÍ —`#i=…&m=…`—, y usar el mismo canal para dos gramáticas
+      distintas es cómo se cruzan los enlaces cuando alguien copia y pega. */
+function entrarDesdeURL(){
+  const p = new URLSearchParams(location.search);
+  const n = p.get("n");
+  if (n === "manzana" || n === "municipal"){
+    nivel = n;
+    document.querySelectorAll(".pestanas button").forEach(b =>
+      b.setAttribute("aria-selected", b.dataset.nivel === nivel));
+  }
+  clave = p.get("k") || null;
+  const mm = p.get("m");
+  if (mm) (MENUS.find(x => x.id === "muni") || {}).sel = mm;
+  /* `t` es el bloque temático, y es con lo que llegan los dos tableros desde su
+     salida «Banco»: no filtra a una lámina sino al vecindario de la que se
+     estaba mirando. No necesita aviso —el menú de Tema ya queda mostrando cuál
+     es—, que es justo la diferencia con `k`, que no tiene menú donde verse. */
+  const tt = p.get("t");
+  if (tt) (MENUS.find(x => x.id === "tema") || {}).sel = tt;
+  const q = p.get("q");
+  if (q){ texto = q; el("q").value = q; }
+  pintarAviso();
+}
+
+/* El aviso nombra lo que se filtró CON SUS PALABRAS, no con la clave: quien
+   llega desde el tablero reconoce el título del indicador, no `pct_sus`. */
+function pintarAviso(){
+  const caja = el("desde");
+  const mm = (MENUS.find(x => x.id === "muni") || {}).sel;
+  if (!clave){ caja.className = "desde"; return; }
+  const una = DATOS.laminas.find(l => l.k === clave && l.n === nivel);
+  const que = una ? una.t : clave;
+  el("desde-tx").innerHTML = "Llegaste desde el mapa: se muestran sólo las "
+    + "láminas de <b>" + que + "</b>" + (mm ? " en <b>" + mm + "</b>" : "") + ".";
+  caja.className = "desde on";
+}
+
+function limpiarFiltro(){
+  clave = null; texto = ""; el("q").value = "";
+  MENUS.forEach(m => m.sel = null);
+  tope = 24;
+  /* la dirección también se limpia: si no, recargar volvería a filtrar y el
+     botón parecería no haber hecho nada */
+  try { history.replaceState(null, "", location.pathname); } catch (_) {}
+  pintarAviso(); pintarMenus(); render();
 }
 
 function pintarMenus(){
@@ -577,6 +676,26 @@ function pintarMenus(){
   });
 }
 
+/* ★ DE LA LÁMINA AL MAPA VIVO. La lámina es una foto: dice cómo se reparte el
+   dato pero no deja pasar el mouse por una manzana, ni cambiar de año, ni
+   comparar con otro indicador. El tablero se dirige por hash —el mismo que él
+   escribe cuando el lector elige algo— así que el enlace abre exactamente la
+   vista de la lámina y no la portada del tablero.
+   ⚠️ En `m` va el CÓDIGO INE y no el nombre: es lo que el tablero sabe leer.
+   Sin clave no hay enlace: antes que mandar a una vista equivocada, nada. */
+function alMapa(l){
+  if (!l.k) return "";
+  const destino = l.n === "manzana"
+    ? "../manzana/#i=" + encodeURIComponent(l.k)
+        + (l.ci ? "&m=" + encodeURIComponent(l.ci) : "")
+    : "../municipal/#i=" + encodeURIComponent(l.k);
+  return '<a class="vivo" href="' + destino + '" ' +
+         'title="Abre el tablero en este mismo indicador' +
+         (l.m ? ', con ' + l.m + ' señalado' : '') + '">' +
+         '<svg viewBox="0 0 24 24"><path d="M4 7.5 9.5 5l5 2.5L20 5v11.5L14.5 19l-5-2.5L4 19z"/>' +
+         '<path d="M9.5 5v11.5"/><path d="M14.5 7.5V19"/></svg>Ver en el mapa</a>';
+}
+
 function render(){
   const r = filtrar();
   el("conteo").textContent = r.length + (r.length === 1 ? " lámina" : " láminas");
@@ -597,9 +716,12 @@ function render(){
       '</div>' +
       '<div class="pie-t">' +
         '<span class="ficha">3200 &times; 1800 &middot; ' + l.kb + ' KB</span>' +
-        '<a class="baja" href="' + l.f + '" download>' +
-          '<svg viewBox="0 0 24 24"><path d="M12 4v12"/>' +
-          '<path d="M6.5 11.5 12 17l5.5-5.5"/><path d="M5 20h14"/></svg>Descargar</a>' +
+        '<div class="acciones">' +
+          alMapa(l) +
+          '<a class="baja" href="' + l.f + '" download>' +
+            '<svg viewBox="0 0 24 24"><path d="M12 4v12"/>' +
+            '<path d="M6.5 11.5 12 17l5.5-5.5"/><path d="M5 20h14"/></svg>Descargar</a>' +
+        '</div>' +
       '</div>';
     grilla.appendChild(a);
   });
@@ -616,9 +738,14 @@ document.querySelectorAll(".pestanas button").forEach(b => {
       x.setAttribute("aria-selected", x === b));
     nivel = b.dataset.nivel; tope = 24;
     MENUS.forEach(m => m.sel = null);
+    /* cambiar de pestaña es una decisión de explorar: el filtro con el que se
+       llegó desde el mapa se levanta solo, o la otra pestaña saldría vacía */
+    clave = null; pintarAviso();
     cerrarMenus(); pintarMenus(); render();
   };
 });
+el("desde-x").onclick = limpiarFiltro;
+entrarDesdeURL();
 pintarMenus(); render();
 </script>
 </body>

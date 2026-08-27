@@ -155,6 +155,34 @@ def main():
             .replace("/*__PALETA__*/", json.dumps(paleta, ensure_ascii=False, separators=(",", ":"))))
     (BANCO / "index.html").write_text(html, encoding="utf-8")
 
+    # ★ EL ÍNDICE QUE LEEN LOS TABLEROS (2026-08-27). Los dos tableros ofrecen
+    #   «descargar este mapa» y hasta ahora armaban la ruta del PNG de la clave
+    #   del indicador, confiando en que la lámina existía: el comentario decía
+    #   «verificado que los 213 tienen su PNG», o sea que la garantía vivía en
+    #   una frase y no en el código. Bastaba un indicador nuevo en el catálogo
+    #   para publicar un enlace a un archivo que no está.
+    #   Ahora la lista sale de LO QUE HAY EN EL DISCO —lo mismo que ya recorre
+    #   este script— y el tablero sólo ofrece el enlace si la lámina figura acá.
+    #   ⚠️ El nivel manzana va POR MUNICIPIO: son 18 indicadores × 9 municipios
+    #   y el tablero necesita saber si existe la del municipio SEÑALADO, no si
+    #   existe alguna. Las claves son códigos INE, que es como viaja el
+    #   municipio en la URL del tablero.
+    indice = {"municipal": sorted(l["k"] for l in laminas if l["n"] == "municipal"),
+              "manzana": {}}
+    for l in laminas:
+        if l["n"] == "manzana" and l.get("ci"):
+            indice["manzana"].setdefault(l["ci"], []).append(l["k"])
+    for v_ in indice["manzana"].values():
+        v_.sort()
+    destino = DATOS / "banco_indice.json"
+    destino.write_text(json.dumps(indice, ensure_ascii=False, separators=(",", ":")),
+                       encoding="utf-8")
+    print(f"  índice para los tableros: {destino.name} · "
+          f"{len(indice['municipal'])} municipales + "
+          f"{sum(len(v_) for v_ in indice['manzana'].values())} de manzana "
+          f"en {len(indice['manzana'])} municipios "
+          f"({destino.stat().st_size/1024:.1f} KB)")
+
     peso = sum(f.stat().st_size for f in MINIS.rglob("*.webp")) / 1e6
     print(f"\n{len(laminas)} láminas indexadas "
           f"({sum(1 for l in laminas if l['n']=='municipal')} municipales + "

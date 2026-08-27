@@ -260,7 +260,8 @@ body.dark .aviso b{color:var(--orange)}
       termómetro: la leyenda es un bloque centrado que se estira hasta ocupar
       todo el ancho libre entre los dos paneles, así que abajo no hay esquina
       libre. Arriba sí, y de paso queda en el mismo sitio que en el teléfono. */
-#lamina{position:fixed;z-index:9;left:calc(var(--panel-w) + 26px);top:74px}
+#lamina{position:fixed;z-index:9;left:calc(var(--panel-w) + 26px);top:74px;
+  display:flex;align-items:stretch;gap:7px}
 #lamina:empty{display:none}
 /* Ficha flotante en vez de pastilla: con dos renglones el lector entiende QUÉ
    se lleva —una lámina imprimible, no una captura de pantalla— sin tener que
@@ -276,6 +277,15 @@ body.dark .aviso b{color:var(--orange)}
 .lam-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
 .lam-link b{font-size:.7rem;font-weight:700;color:var(--tx);line-height:1.15;white-space:nowrap}
 .lam-link em{font-style:normal;font-size:.57rem;color:var(--suave);line-height:1.2;white-space:nowrap}
+/* La salida al banco entero, por el mismo tema. Deliberadamente más chica y sin
+   filete de color: es «qué más hay», no la acción principal de la pastilla. */
+.lam-mas{display:inline-flex;align-items:center;padding:0 11px;
+  background:var(--glass);border:1px solid var(--linea);box-shadow:var(--sh);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  font-size:.63rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--suave);text-decoration:none;
+  transition:color .2s ease,border-color .2s ease}
+.lam-mas:hover{color:var(--sel);border-color:var(--sel)}
 /* ⚠️ ESTA ANULACIÓN VA DESPUÉS DE LA REGLA BASE, no en el bloque de móvil de
    más arriba: tienen la misma especificidad, así que gana la última que se lee.
    Puesta antes, la pastilla conservaba su  de escritorio y en el teléfono
@@ -287,6 +297,9 @@ body.dark .aviso b{color:var(--orange)}
   /* en el teléfono la segunda línea se come el ancho del mapa: queda el título,
      que ya dice que se descarga */
   .lam-link em{display:none}
+  /* y la salida al banco se va del todo: en 320 px de ancho compite con la
+     acción principal por el mismo pulgar */
+  .lam-mas{display:none}
   .lam-link{padding:8px 11px 8px 9px}
 }
 
@@ -837,6 +850,7 @@ function difIntercensal(a, b, ind){
   return esConteo(ind) ? (a ? 100 * (b - a) / a : null) : b - a;
 }
 let MZS = null, sel = null;   // MZS = estadísticas precalculadas del nivel manzana
+let BANCO = null;             // qué láminas del banco existen, por ámbito
 // Escala vigente (la que acaba de pintar el mapa). El tooltip la lee para dar el
 // chip de color, la posición en la rampa y el percentil sin recalcular nada.
 let ESC = null;
@@ -1333,6 +1347,14 @@ Promise.all([
      tiene nivel manzana — el municipal no lo tiene y no debe pedir nada. */
   if (CAT.niveles && CAT.niveles.manzana)
     MZS = await fetch("datos/mz_stats.json").then(r => r.json()).catch(() => null);
+  /* ★ QUÉ LÁMINAS EXISTEN DE VERDAD (2026-08-27). La pastilla de descarga
+     armaba la ruta del PNG con la clave del indicador y confiaba en que el
+     archivo estuviera: la garantía vivía en un comentario, no en el código, y
+     un indicador nuevo en el catálogo publicaba un enlace roto. `armar_sitio.py`
+     escribe este índice recorriendo el disco, así que si la lámina no está, el
+     enlace no aparece. 7 KB, y un fallo sólo saca la pastilla: nunca la deja
+     apuntando a un 404. */
+  BANCO = await fetch("datos/banco_indice.json").then(r => r.json()).catch(() => null);
   anio_i = FIS.anios.length - 1;
   MUN.forEach(m => { m.geom = gmun.features.find(f => f.properties.sigep === m.sigep); });
 
@@ -3059,21 +3081,7 @@ function ficha(e, i){
                   : ((r => r && r.v !== null ? r.v : null)(refRegion(i))));
   /* La lámina existe para los 213 censales; los 30 fiscales no tienen. */
   const _lam = document.getElementById("lamina");
-  if (_lam)
-    _lam.innerHTML = (i.fuente !== "fiscal")
-      /* ★ ES UNA DESCARGA, Y LO DICE (pedido de Carlos, 2026-08-26). Antes
-         decía «Ver la lámina» y abría el PNG en otra pestaña: el lector no
-         tenía forma de saber que ahí había una imagen lista para imprimir y
-         para pegar en un informe, que es el valor real del banco.
-         `download` la baja con el nombre del indicador en vez de dejar un
-         `pct_alcantarillado.png` suelto en la carpeta de descargas. */
-      ? `<a class="lam-link" href="../banco/municipal/${i.key}.png"
-             download="${slugDe(i.label)}-metropoli-scz.png"
-             title="Lámina de «${i.label}» · los nueve municipios, con el cambio 2012→2024">
-           <span class="lam-i" aria-hidden="true">▤</span>
-           <span class="lam-tx"><b>Descargar este mapa</b>
-             <em>Lámina PNG 3200×1800, lista para imprimir</em></span></a>`
-      : "";
+  if (_lam) _lam.innerHTML = pastillaLamina(i);
   g.querySelectorAll(".kpi[data-s]").forEach(el => el.onclick = () => seleccionar(el.dataset.s));
   document.querySelectorAll("#dist .ds-hit").forEach(el =>
     el.onclick = () => seleccionar(el.dataset.s));
@@ -3130,6 +3138,92 @@ function seleccionar(s){
    cada manzana (`generar_pmtiles.py` lo toma del nombre de archivo). */
 const slugDe = s => s.toLowerCase().normalize("NFD")
   .replace(/[̀-ͯ]/g, "").replace(/ /g, "_");
+
+/* ══ LA PASTILLA DE LA LÁMINA ════════════════════════════════════════════
+   ★ APUNTABA SIEMPRE A LA LÁMINA MUNICIPAL (arreglado 2026-08-27). Los dos
+     tableros salen de esta misma plantilla, así que el tablero DE MANZANA
+     ofrecía «descargar este mapa» y bajaba el mapa de los nueve municipios
+     —otro recorte, otro dato— con el nombre del indicador que estabas viendo.
+     Para colmo es el peor error posible en un banco de imágenes: la lámina
+     equivocada no se ve equivocada, se ve bien y dice otra cosa.
+
+   Ahora la pastilla mira DÓNDE está y QUÉ hay:
+
+     · tablero municipal → la lámina de los nueve municipios;
+     · tablero de manzana con un municipio señalado → la lámina amanzanada de
+       ESE municipio, que es exactamente lo que el lector tiene en pantalla;
+     · tablero de manzana sin municipio señalado → no hay una lámina de «toda
+       la región por manzana» y no se inventa: se ofrece el banco filtrado por
+       este indicador, que son las nueve, una por municipio.
+
+   ⚠️ Sólo se ofrece lo que EXISTE en `banco_indice.json`. Los 18 indicadores
+      que rinden a nivel manzana son un subconjunto de los 59 del tablero: para
+      los otros 41 la pastilla no aparece, en vez de enlazar a un archivo que
+      no está. */
+function laminaDeManzana(i){
+  if (!BANCO || !BANCO.manzana || !sel) return null;
+  const m = MUN.find(x => x.sigep === sel);
+  if (!m) return null;
+  const hay = BANCO.manzana[m.cod_ine];
+  return (hay && hay.includes(i.key)) ? m : null;
+}
+
+function pastillaLamina(i){
+  if (!i || i.fuente === "fiscal") return "";        // los 30 fiscales no tienen
+  const enBanco = (a, k) => !!(a && a.includes(k));
+  let href, baja, tit, tx, sub;
+  if (hayManzana()){
+    const m = laminaDeManzana(i);
+    if (m){
+      const sl = slugDe(m.nombre);
+      href = `../banco/manzana/${sl}__${i.key}.png`;
+      baja = `${slugDe(i.label)}-${sl}-por-manzana.png`;
+      tit  = `Lámina de «${i.label}» por manzana en ${m.nombre}`;
+      /* «Descargar Cotoca» se lee como si se bajara el municipio: el verbo se
+         queda con su objeto —el mapa— y el municipio baja al subtítulo, que es
+         donde ya se dice qué recorte es. */
+      tx   = "Descargar este mapa";
+      sub  = `${m.nombre} por manzana · PNG 3200×1800`;
+    } else {
+      /* sin municipio señalado —o con uno que no tiene lámina de este
+         indicador— el destino honesto es el banco, no un PNG cualquiera */
+      const alguna = BANCO && BANCO.manzana &&
+        Object.values(BANCO.manzana).some(a => a.includes(i.key));
+      if (!alguna) return "";
+      href = `../banco/?n=manzana&k=${encodeURIComponent(i.key)}`;
+      baja = null;
+      tit  = `Las nueve láminas de «${i.label}» por manzana, una por municipio`;
+      tx   = "Ver las nueve láminas";
+      sub  = "Una por municipio, en el banco de gráficos";
+    }
+  } else {
+    if (!enBanco(BANCO && BANCO.municipal, i.key)) return "";
+    /* ★ ES UNA DESCARGA, Y LO DICE (pedido de Carlos, 2026-08-26). Antes decía
+       «Ver la lámina» y abría el PNG en otra pestaña: el lector no tenía forma
+       de saber que ahí había una imagen lista para imprimir y para pegar en un
+       informe, que es el valor real del banco. */
+    href = `../banco/municipal/${i.key}.png`;
+    baja = `${slugDe(i.label)}-metropoli-scz.png`;
+    tit  = `Lámina de «${i.label}» · los nueve municipios, con el cambio 2012→2024`;
+    tx   = "Descargar este mapa";
+    sub  = "Lámina PNG 3200×1800, lista para imprimir";
+  }
+  /* El segundo enlace lleva al banco entero por el mismo tema: es la salida
+     para «esto me sirvió, qué más hay», que antes no existía en ninguno de los
+     dos tableros. Se esconde en móvil, donde la pastilla ya va justa. */
+  const g = (CAT.grupos.find(x => x.indicadores.some(y => y.key === i.key)) || {}).label;
+  const mas = g
+    ? `<a class="lam-mas" href="../banco/?n=${hayManzana() ? "manzana" : "municipal"}` +
+      `&t=${encodeURIComponent(g)}" title="Todas las láminas de «${g}» en el banco">` +
+      /* «Banco» a secas no dice qué hay del otro lado —y fuera de este sitio se
+         lee como entidad financiera—: la etiqueta nombra la cosa, no la sección. */
+      `Más láminas</a>`
+    : "";
+  return `<a class="lam-link" href="${href}"${baja ? ` download="${baja}"` : ""}
+             title="${tit}">
+           <span class="lam-i" aria-hidden="true">▤</span>
+           <span class="lam-tx"><b>${tx}</b><em>${sub}</em></span></a>${mas}`;
+}
 
 const PARTICULAS = new Set(["de","del","la","las","los","el","y","en"]);
 function tituloCaso(s){
